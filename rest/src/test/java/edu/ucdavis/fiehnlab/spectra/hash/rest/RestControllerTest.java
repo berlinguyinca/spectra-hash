@@ -69,9 +69,7 @@ public class RestControllerTest {
                 .webAppContextSetup(context).build();
         RestAssuredMockMvc.mockMvc = mockMvc;
 
-//        RestAssured.port = port;
-
-        System.out.println(RestAssured.baseURI);
+        RestAssured.port = port;
     }
 
     @org.junit.After
@@ -83,10 +81,35 @@ public class RestControllerTest {
     public void testConvert() throws Exception {
 
         given().log().all()
-        .contentType("application/json")
-        .body(spectra)
+                .contentType("application/json")
+                .body(spectra)
                 .when()
                 .post("/generate/mona")
-                .then().log().all();
+                .then().log().all().statusCode(HttpStatus.OK.value());
     }
+
+
+    @org.junit.Test
+    public void testConvert2() throws Exception {
+
+        given().log().all()
+                .contentType("application/json")
+                .body(spectra)
+                .when()
+                .post("/generate/hmdb")
+                .then().log().all().statusCode(HttpStatus.OK.value());
+    }
+
+    @org.junit.Test
+    public void testConvert3() throws Exception {
+
+        given().log().all()
+                .contentType("application/json")
+                .body(spectra)
+                .when()
+                .post("/generate/i hate white spaces")
+                .then().log().all().statusCode(HttpStatus.OK.value());
+    }
+
+
 }

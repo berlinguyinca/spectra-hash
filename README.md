@@ -14,12 +14,12 @@ java-rest (in progress)
 ## api:
 very simple example, needs file readers and specific implementations
 
-...
+```
         SpectraHashMonaAlphaImpl impl = new SpectraHashMonaAlphaImpl();
         Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100,1),new Ion(101,2),new Ion(102,3)));
 
         String hash = impl.generate(spectrum,"mona");
-...
+```
 
 ## rest service:
 
@@ -27,7 +27,7 @@ the rest module provides a simple web service to calculate a hash code, for a su
 
 to convert a given spectra to the rest server, you will need to request it the following way:
 
-...
+```
 Request method:	POST
 Request path:	/generate/DATABASE_NAME
 Headers:		Content-Type=application/json
@@ -51,6 +51,6 @@ Body:
         
     }
 }
-...
+```
 
 this will return you the generated spectra-hash in the latest official version.

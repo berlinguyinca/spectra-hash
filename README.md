@@ -54,3 +54,11 @@ Body:
 ```
 
 this will return you the generated spectra-hash in the latest official version.
+
+## building
+
+```
+mvn clean install
+```
+
+will build your project and you can find the build jar files, in the target directories of the project.

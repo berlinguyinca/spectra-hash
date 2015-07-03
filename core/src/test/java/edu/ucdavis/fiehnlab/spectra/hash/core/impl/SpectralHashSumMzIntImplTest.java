@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import org.junit.Test;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
@@ -12,23 +13,10 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 /**
  * 
  */
-public class SpectralHashSumMzIntImplTest {
+public class SpectralHashSumMzIntImplTest extends AbstractSpectraHashImplTester {
 
-    @Test
-    public void testGenerate() throws Exception {
-
-
-        SpectralHashSumMzIntImpl impl = new SpectralHashSumMzIntImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100, 1), new Ion(101, 2), new Ion(102, 3)),"mona");
-
-        String hash = impl.generate(spectrum);
-
-        System.out.println(hash);
-        System.out.println(hash.length());
-
-        assertEquals("sum0000000000000000000000000000000000000000000000000000000000020267",hash);
-        
+    @Override
+    SpectraHash getHashImpl() {
+        return new SpectralHashSumMzIntImpl();
     }
 }

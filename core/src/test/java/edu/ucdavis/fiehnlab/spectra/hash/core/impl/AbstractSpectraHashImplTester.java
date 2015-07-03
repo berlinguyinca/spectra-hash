@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectraHandler;
 import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectrumReader;
 import org.junit.Test;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,22 +57,39 @@ public abstract class AbstractSpectraHashImplTester {
     abstract SpectraHash getHashImpl();
 
     @Test
-    public void testBinBaseSpectraHash(){
+    public void testBinBaseSpectraHash() throws IOException {
+        FileWriter out = new FileWriter("binbase.hash-" + this.getHashImpl().getClass().getSimpleName());
+
+        int i = 0;
+
         for(Spectrum s : getBinBaseSpectra()){
             String hash = getHashImpl().generate(s);
 
-            System.out.println(hash);
+            out.write(i + "\t" + hash + "\n");
+            i++;
         }
+
+        out.flush();
+        out.close();
+
     }
 
 
     @Test
-    public void testMonaSpectraHash(){
+    public void testMonaSpectraHash() throws IOException {
+        FileWriter out = new FileWriter("mona.hash-" + this.getHashImpl().getClass().getSimpleName());
+
+        int i = 0;
+
         for(Spectrum s : getMonaSpectra()){
             String hash = getHashImpl().generate(s);
 
-            System.out.println(hash);
+            out.write(i + "\t" + hash + "\n");
+            i++;
         }
+
+        out.flush();
+        out.close();
     }
 
 

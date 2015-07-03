@@ -151,6 +151,6 @@ public abstract class AbstractSpectralHash implements SpectraHash{
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() +"/" + precission;
+        return this.getClass().getSimpleName() +"-" + precission;
     }
 }

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * test case for 1 ion
@@ -11,7 +11,7 @@ public class IonTest {
     public void testToString() throws Exception {
         Ion ion = new Ion(100.0222222,122.011111);
 
-        assertEquals("test if the toString method generates the right Ion representation", "100.0222:122.0111", ion.toString());
+	    assertEquals("test if the toString method generates the right Ion representation", "100.022222:122.011111", ion.toString());
     }
 
     @org.junit.Test

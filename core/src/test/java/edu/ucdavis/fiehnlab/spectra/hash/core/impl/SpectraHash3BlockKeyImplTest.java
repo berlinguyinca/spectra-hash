@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 /**
  * Created by wohlg_000 on 7/3/2015.
  */
-public class SpectraHash3BlockKeyImplTest {
+public class SpectraHash3BlockKeyImplTest extends AbstractSpectraHashImplTester {
 
     @Test
     public void testGenerate() throws Exception {
@@ -43,5 +43,10 @@ public class SpectraHash3BlockKeyImplTest {
 
         assertEquals("5d20a4d7ee6c49d52f70734bae8bae0f1bab67a4-16840fdada28160115bf616ff1bf716ef9eba88a83ebc259c2fc9a601bb66f14-0",hash);
 
+    }
+
+    @Override
+    SpectraHash getHashImpl() {
+        return new SpectraHash3BlockKeyImpl();
     }
 }

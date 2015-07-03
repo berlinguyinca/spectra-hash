@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class SpectraHashMonaAlphaImpl extends AbstractSpectralHash {
 
-    public SpectraHashMonaAlphaImpl() throws NoSuchAlgorithmException {
+    public SpectraHashMonaAlphaImpl()  {
     }
 
     /**

@@ -38,6 +38,16 @@ public class Spectrum implements edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum
     }
 
     public edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum toRelative() {
-        return new SpectrumImpl(getIons(),getMetaData()).toRelative();
+        return new SpectrumImpl(getIons(),getMetaData(),getOrigin()).toRelative();
+    }
+
+    private String origin;
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 }

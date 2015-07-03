@@ -23,22 +23,24 @@ public class SpectrumReader {
         Scanner scanner = new Scanner(reader);
 
         while(scanner.hasNextLine()){
-            String line = scanner.nextLine();
+            String line = scanner.nextLine().trim();
 
-            List<Ion> ions= new ArrayList<Ion>();
+            if(line.contains(":") && line.contains(" ")) {
+                List<Ion> ions = new ArrayList<Ion>();
 
-            for(String s: line.split(" ")){
-                Ion ion = new Ion();
+                for (String s : line.split(" ")) {
+                    Ion ion = new Ion();
 
-                String[] content = s.split(":");
+                    String[] content = s.split(":");
 
-                ion.setMass(Double.parseDouble(content[0]));
-                ion.setIntensity(Double.parseDouble(content[1]));
+                    ion.setMass(Double.parseDouble(content[0]));
+                    ion.setIntensity(Double.parseDouble(content[1]));
 
-                ions.add(ion);
+                    ions.add(ion);
+                }
+
+                handler.handle(new SpectrumImpl(ions));
             }
-
-            handler.handle(new SpectrumImpl(ions));
         }
     }
 

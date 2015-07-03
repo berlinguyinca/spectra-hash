@@ -36,7 +36,7 @@ public class RestController {
             logger.info("received spectrum: " + spectrum);
             logger.info("definied origin: " + origin);
 
-            String hash = spectraHash.generate(spectrum, origin);
+            String hash = spectraHash.generate(spectrum);
             logger.info("generated hash: " + hash);
             return hash;
 

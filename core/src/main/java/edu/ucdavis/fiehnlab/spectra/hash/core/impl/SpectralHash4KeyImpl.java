@@ -42,9 +42,9 @@ public class SpectralHash4KeyImpl extends AbstractSpectralHash implements Spectr
         //build the actual hash
         StringBuilder completeHash = new StringBuilder();
 
-        completeHash.append(firstBlock(spectrum));
+        completeHash.append(encodeSpectra(spectrum));
         completeHash.append("-");
-        completeHash.append(secondBlock(spectrum));
+        completeHash.append(encodeTop10Ions(spectrum));
         completeHash.append("-");
         completeHash.append(thirdBlock(spectrum));
         completeHash.append("-");
@@ -61,73 +61,4 @@ public class SpectralHash4KeyImpl extends AbstractSpectralHash implements Spectr
         return hash;
     }
 
-    private String firstBlock(Spectrum spectrum) {
-
-        List<Ion> ions = spectrum.getIons();
-
-        StringBuilder first = new StringBuilder();
-
-        //sort by mass
-        Collections.sort(ions, new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o1.getMass().compareTo(o2.getMass());
-            }
-        });
-
-
-        //build the first string
-        for (int i = 0; i < ions.size(); i++) {
-            first.append(String.format("%.6f", ions.get(i).getMass()));
-            first.append(":");
-            first.append(String.format("%.6f", ions.get(i).getIntensity()));
-
-            //add our seperator
-            if (i < ions.size() - 1) {
-                first.append(" ");
-            }
-        }
-
-
-        //notify obsers in case they want to know about progress of the hashing
-        String block = first.toString();
-        String hash = DigestUtils.sha256Hex(block);
-        this.notifyListener(new HashingEvent(hash, block, 1, spectrum));
-        return hash;
-    }
-
-    private String secondBlock(Spectrum spectrum) {
-        StringBuilder second = new StringBuilder();
-        List<Ion> ions = spectrum.getIons();
-
-        //sort by intensity
-        Collections.sort(ions, new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o2.getIntensity().compareTo(o1.getIntensity());
-            }
-        });
-
-        //build the second string
-        for (int i = 0; i < ions.size(); i++) {
-            second.append(String.format("%.6f", ions.get(i).getMass()));
-
-            if (i == 10) {
-                //we only want top 10 ions
-                break;
-            }
-
-            if (i < ions.size() - 1) {
-                second.append(",");
-            }
-
-        }
-
-        String block = second.toString();
-        String hash = DigestUtils.sha1Hex(block);
-        this.notifyListener(new HashingEvent(hash, block, 0, spectrum));
-        return hash;
-    }
-
-    public String getVersion() {
-        return "0";
-    }
 }

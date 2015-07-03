@@ -28,4 +28,41 @@ public class SpectrumReaderTest {
 
 
     }
+
+
+    @Test
+    public void testReadSpectrum2() throws Exception {
+
+        SpectrumReader reader = new SpectrumReader();
+
+        reader.readSpectrum(new StringReader("test\t100:1 101:2 103:3"), new SpectraHandler() {
+            public void handle(Spectrum s) {
+                spectrum = s;
+            }
+        });
+
+        assertNotNull(spectrum);
+
+        assertEquals("test",spectrum.getOrigin());
+
+    }
+
+    @Test
+    public void testReadSpectrum3() throws Exception {
+
+        SpectrumReader reader = new SpectrumReader();
+
+        reader.readSpectrum(new StringReader("test\t100:1 101:2 103:3\t1"), new SpectraHandler() {
+            public void handle(Spectrum s) {
+                spectrum = s;
+            }
+        });
+
+        assertNotNull(spectrum);
+
+        assertEquals("test_1",spectrum.getOrigin());
+
+    }
+
+
 }

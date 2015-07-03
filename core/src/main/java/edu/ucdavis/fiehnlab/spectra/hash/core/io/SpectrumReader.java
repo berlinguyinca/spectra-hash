@@ -25,21 +25,32 @@ public class SpectrumReader {
         while(scanner.hasNextLine()){
             String line = scanner.nextLine().trim();
 
+            String origin = "unknown";
+
+            if(line.contains("\t")){
+                String t[] = line.split("\t");
+
+                origin = t[0];
+                line = t[1];
+
+                if(t.length == 3){
+                    origin = origin + "_" + t[2];
+                }
+            }
+
             if(line.contains(":") && line.contains(" ")) {
                 List<Ion> ions = new ArrayList<Ion>();
 
                 for (String s : line.split(" ")) {
-                    Ion ion = new Ion();
-
                     String[] content = s.split(":");
 
+                    Ion ion = new Ion();
                     ion.setMass(Double.parseDouble(content[0]));
                     ion.setIntensity(Double.parseDouble(content[1]));
-
                     ions.add(ion);
                 }
 
-                handler.handle(new SpectrumImpl(ions));
+                handler.handle(new SpectrumImpl(ions,origin));
             }
         }
     }

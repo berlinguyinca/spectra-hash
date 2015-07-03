@@ -20,4 +20,7 @@ public class SpectraHash3BlockKeyImplTest extends AbstractSpectraHashImplTester 
     SpectraHash getHashImpl() {
         return new SpectraHash3BlockKeyImpl();
     }
+
+
+
 }

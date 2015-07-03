@@ -21,27 +21,17 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class AbstractSpectraHashImplTester {
 
-    List<Spectrum> getBinBaseSpectra(){
+    public static final String MONA_TESTDATA_1 = "/mona/spectra-hash-test-spectra.txt";
+    public static final String MONA_TESTDATA_2 = "/mona/spectra-hash-min-spectra.txt";
+    public static final String BINBASE_TESTDATA_1 = "/binbase/bins.spectra";
+    public static final String BINBASE_TESTDATA_2 = "/binbase/alanine.bin.annotations";
+
+    private List<Spectrum> getSpectrums(String fileName) {
         final List<Spectrum> data = new ArrayList<Spectrum>();
 
         SpectrumReader reader = new SpectrumReader();
 
-        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream("/binbase/bins.spectra")), new SpectraHandler() {
-            public void handle(Spectrum spectrum) {
-                data.add(spectrum);
-            }
-        });
-
-        return data;
-
-    }
-
-    List <Spectrum> getMonaSpectra(){
-        final List<Spectrum> data = new ArrayList<Spectrum>();
-
-        SpectrumReader reader = new SpectrumReader();
-
-        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream("/mona/spectra-hash-test-spectra.txt")), new SpectraHandler() {
+        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream(fileName)), new SpectraHandler() {
             public void handle(Spectrum spectrum) {
                 data.add(spectrum);
             }
@@ -49,6 +39,16 @@ public abstract class AbstractSpectraHashImplTester {
 
         return data;
     }
+
+    List <Spectrum> getMonaSpectraTest1(){
+        return getSpectrums(MONA_TESTDATA_1);
+    }
+
+
+    List <Spectrum> getMonaSpectraTest2(){
+        return getSpectrums(MONA_TESTDATA_2);
+    }
+
 
     /**
      * get our impl to test
@@ -56,35 +56,15 @@ public abstract class AbstractSpectraHashImplTester {
      */
     abstract SpectraHash getHashImpl();
 
-    @Test
-    public void testBinBaseSpectraHash() throws IOException {
-        FileWriter out = new FileWriter("binbase.hash-" + this.getHashImpl().getClass().getSimpleName());
+    private void runTest(String fileName, List<Spectrum> data) throws IOException {
+        FileWriter out = new FileWriter("target/" + fileName);
 
         int i = 0;
 
-        for(Spectrum s : getBinBaseSpectra()){
+        for(Spectrum s : data){
             String hash = getHashImpl().generate(s);
 
-            out.write(i + "\t" + hash + "\n");
-            i++;
-        }
-
-        out.flush();
-        out.close();
-
-    }
-
-
-    @Test
-    public void testMonaSpectraHash() throws IOException {
-        FileWriter out = new FileWriter("mona.hash-" + this.getHashImpl().getClass().getSimpleName());
-
-        int i = 0;
-
-        for(Spectrum s : getMonaSpectra()){
-            String hash = getHashImpl().generate(s);
-
-            out.write(i + "\t" + hash + "\n");
+            out.write(s.getOrigin() + "\t" + i + "\t" + hash + "\n");
             i++;
         }
 
@@ -104,11 +84,30 @@ public abstract class AbstractSpectraHashImplTester {
 
         String hash = impl.generate(spectrum);
 
-        System.out.println(hash);
-        System.out.println(hash.length());
-
         assertEquals(expected, hash);
 
+    }
+
+
+    @Test
+    public void testBinBaseAllBinSpectraHash() throws IOException {
+        runTest("binbase.hash-" + this.getHashImpl().toString(), getSpectrums(BINBASE_TESTDATA_1));
+    }
+
+    @Test
+    public void testBinBaseAlanineSpectraHash() throws IOException {
+        runTest("binbase.alanine.annotations-" + this.getHashImpl().getClass().getSimpleName(), getSpectrums(BINBASE_TESTDATA_2));
+
+    }
+
+    @Test
+    public void testMonaSpectraHash1() throws IOException {
+        runTest("mona.hash-" + this.getHashImpl().getClass().getSimpleName(), getMonaSpectraTest1());
+    }
+
+    @Test
+    public void testMonaSpectraHash2() throws IOException {
+        runTest("mona-2.hash-" + this.getHashImpl().getClass().getSimpleName(), getSpectrums(MONA_TESTDATA_2));
     }
 
 }

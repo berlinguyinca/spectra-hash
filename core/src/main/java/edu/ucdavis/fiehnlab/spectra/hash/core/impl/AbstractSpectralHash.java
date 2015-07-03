@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  *
  */
 public abstract class AbstractSpectralHash implements SpectraHash{
+
+    private Integer precission;
+
+
     /**
      * registered listeneres
      */
@@ -73,11 +77,11 @@ public abstract class AbstractSpectralHash implements SpectraHash{
 
         //build the first string
         for (int i = 0; i < ions.size(); i++) {
-            buffer.append(String.format("%.6f", ions.get(i).getMass()));
+            buffer.append(String.format("%."+getPrecission() +"f", ions.get(i).getMass()));
             buffer.append(":");
-            buffer.append(String.format("%.6f", ions.get(i).getIntensity()));
+            buffer.append(String.format("%."+getPrecission() +"f", ions.get(i).getIntensity()));
 
-            //add our seperator
+            //add our separator
             if (i < ions.size() - 1) {
                 buffer.append(" ");
             }
@@ -135,5 +139,18 @@ public abstract class AbstractSpectralHash implements SpectraHash{
      */
     protected String getVersion() {
         return "0";
+    }
+
+    public Integer getPrecission() {
+        return precission;
+    }
+
+    public void setPrecission(Integer precission) {
+        this.precission = precission;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() +"/" + precission;
     }
 }

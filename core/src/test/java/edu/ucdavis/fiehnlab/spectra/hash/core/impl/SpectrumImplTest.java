@@ -14,7 +14,7 @@ public class SpectrumImplTest {
     @Test
     public void testGetIons() throws Exception {
         Ion ion= new Ion(120,111);
-        SpectrumImpl impl = new SpectrumImpl(Arrays.asList(ion));
+        SpectrumImpl impl = new SpectrumImpl(Arrays.asList(ion),"mona");
 
         assertTrue(impl.getIons() != null);
         assertTrue(impl.getIons().iterator().next().equals(ion));

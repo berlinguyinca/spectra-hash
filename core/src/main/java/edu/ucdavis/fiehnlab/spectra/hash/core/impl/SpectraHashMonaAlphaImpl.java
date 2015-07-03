@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
-import edu.ucdavis.fiehnlab.spectra.hash.core.util.Hasher;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -13,11 +13,9 @@ import java.util.Map;
 /**
  * the currently utilized hash in MoNA alpha
  */
-public class SpectraHashMonaAlphaImpl implements SpectraHash {
-    private Hasher hasher;
+public class SpectraHashMonaAlphaImpl extends AbstractSpectralHash {
 
     public SpectraHashMonaAlphaImpl() throws NoSuchAlgorithmException {
-        hasher = Hasher.createInstance();
     }
 
     /**
@@ -26,7 +24,7 @@ public class SpectraHashMonaAlphaImpl implements SpectraHash {
      * @param origin
      * @return
      */
-    public String generate(Spectrum spectrum, String origin) {
+    public String generate(Spectrum spectrum) {
 
         StringBuffer buffer = new StringBuffer();
 
@@ -48,7 +46,6 @@ public class SpectraHashMonaAlphaImpl implements SpectraHash {
 
         buffer.delete(buffer.lastIndexOf("-"),buffer.length());
 
-
-        return origin + "-"+hasher.hash(buffer.toString().trim())+"-0";
+        return spectrum.getOrigin() + "-"+ DigestUtils.sha1Hex(buffer.toString().trim())+"-0";
     }
 }

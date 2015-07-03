@@ -5,7 +5,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core;
  */
 public class Ion implements Comparable<Ion>{
     private static String SEPERATOR = ":";
-    private static int PRECESSION = 4;
+    private static int PRECESSION = 6;
 
     private Double mass;
 

@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core;
 
+import edu.ucdavis.fiehnlab.spectra.hash.core.listener.HashingListener;
+
 import java.util.Map;
 
 /**
@@ -10,8 +12,13 @@ public interface SpectraHash {
     /**
      * generates a new spectra hash based on the given spectrum and the origin
      * @param spectrum
-     * @param origin
      * @return
      */
-    String generate(Spectrum spectrum, String origin);
+    String generate(Spectrum spectrum);
+
+    /**
+     * adds an optional listener to the
+     * @param listener
+     */
+    void addListener(HashingListener listener);
 }

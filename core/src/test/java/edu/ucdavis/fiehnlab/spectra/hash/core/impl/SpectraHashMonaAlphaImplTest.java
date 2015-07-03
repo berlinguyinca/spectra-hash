@@ -22,7 +22,7 @@ public class SpectraHashMonaAlphaImplTest {
         SpectraHashMonaAlphaImpl impl = new SpectraHashMonaAlphaImpl();
         Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100,1),new Ion(101,2),new Ion(102,3)));
 
-        String hash = impl.generate(spectrum,"mona");
+        String hash = impl.generate(spectrum);
 
         assertEquals("mona-AAC9C7920625D1CB861051373ADC63D8DBB2BB84-0".toLowerCase(),hash);
 

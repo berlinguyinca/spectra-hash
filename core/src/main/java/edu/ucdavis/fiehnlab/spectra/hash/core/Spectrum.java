@@ -27,4 +27,10 @@ public interface Spectrum {
      * @return
      */
     Spectrum toRelative();
+
+    /**
+     *
+     * @return
+     */
+    public String getOrigin();
 }

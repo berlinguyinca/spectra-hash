@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -26,5 +28,7 @@ public class SpectralHashSumMzIntImplTest {
         System.out.println(hash);
         System.out.println(hash.length());
 
+        assertEquals("sum0000000000000000000000000000000000000000000000000000000000020267",hash);
+        
     }
 }

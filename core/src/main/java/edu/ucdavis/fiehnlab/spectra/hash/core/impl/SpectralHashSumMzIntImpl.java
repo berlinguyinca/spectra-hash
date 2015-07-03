@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class SpectralHashSumMzIntImpl extends AbstractSpectralHash implements Sp
                 return o2.getIntensity().compareTo(o1.getIntensity());
             }
         });
-
+        
         int ionCount = 0;
 
         double hashSum = 0.0;
@@ -45,7 +46,7 @@ public class SpectralHashSumMzIntImpl extends AbstractSpectralHash implements Sp
         }
 
         String hashSumString = String.valueOf(Math.round(hashSum));
-        return "smash" + String.format("%1$64s", hashSumString).replace(' ', '0');
+        return "sum" + String.format("%1$64s", hashSumString).replace(' ', '0');
     }
 
 }

@@ -19,9 +19,8 @@ public class SpectralHashSumMzIntImpl extends AbstractSpectralHash implements Sp
      * @param spectrum
      * @return
      */
-    public String generate(Spectrum spectrum) {
+    public String calculateHash(Spectrum spectrum) {
         //convert to relative
-        spectrum = spectrum.toRelative();
 
         //get ions
         List<Ion> ions = spectrum.getIons();

@@ -1,14 +1,11 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
-import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * the currently utilized hash in MoNA alpha
@@ -21,14 +18,13 @@ public class SpectraHashMonaAlphaImpl extends AbstractSpectralHash {
     /**
      * hashes a simple spectra as done in mona right now
      * @param spectrum
-     * @param origin
      * @return
      */
-    public String generate(Spectrum spectrum) {
+    public String calculateHash(Spectrum spectrum) {
 
         StringBuffer buffer = new StringBuffer();
 
-        List<Ion> ions = spectrum.toRelative().getIons();
+        List<Ion> ions = spectrum.getIons();
 
         Collections.sort(ions);
 

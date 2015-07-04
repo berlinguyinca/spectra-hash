@@ -18,9 +18,7 @@ import java.util.List;
  */
 public class SpectraHash3BlockKeyImpl extends AbstractSpectralHash {
 
-    public String generate(Spectrum spectrum) {
+    public String calculateHash(Spectrum spectrum) {
         return encodeTop10Ions(spectrum)+"-"+encodeSpectra(spectrum)+"-"+getVersion();
     }
-
-
 }

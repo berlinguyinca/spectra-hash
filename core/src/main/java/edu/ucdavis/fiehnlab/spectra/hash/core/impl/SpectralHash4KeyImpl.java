@@ -4,13 +4,9 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.HashingEvent;
-import edu.ucdavis.fiehnlab.spectra.hash.core.listener.HashingListener;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * implementation for the 4 block version
@@ -32,9 +28,8 @@ public class SpectralHash4KeyImpl extends AbstractSpectralHash implements Spectr
      * @param spectrum
      * @return
      */
-    public String generate(Spectrum spectrum) {
+    public String calculateHash(Spectrum spectrum) {
         //convert to relative
-        spectrum = spectrum.toRelative();
 
         //get ions
         List<Ion> ions = spectrum.getIons();

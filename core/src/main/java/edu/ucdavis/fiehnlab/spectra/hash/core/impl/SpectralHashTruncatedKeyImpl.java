@@ -22,7 +22,7 @@ public class SpectralHashTruncatedKeyImpl extends AbstractSpectralHash {
 	 * @param spectrum
 	 * @return
 	 */
-	public String generate(Spectrum spectrum) {
+	public String calculateHash(Spectrum spectrum) {
 		return encodeTop10Ions(spectrum).substring(0, 10) + "-" + encodeSpectra(spectrum).substring(0, 15) + "-" + getVersion();
 	}
 

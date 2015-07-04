@@ -17,7 +17,15 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public abstract class AbstractSpectralHash implements SpectraHash{
 
-    private Integer precission;
+    /**
+     * how to scale the spectra
+     */
+    public static final int SCALE = 1000;
+
+    /**
+     * max precission
+     */
+    private Integer precission = 6;
 
 
     /**
@@ -55,6 +63,14 @@ public abstract class AbstractSpectralHash implements SpectraHash{
         }
     }
 
+    /**
+     * formats a number to our defined precission
+     * @param value
+     * @return
+     */
+    String formatNumber(double value){
+       return String.format("%."+getPrecission() +"f", value);
+    }
 
     /**
      * encodes the actual spectra
@@ -77,9 +93,9 @@ public abstract class AbstractSpectralHash implements SpectraHash{
 
         //build the first string
         for (int i = 0; i < ions.size(); i++) {
-            buffer.append(String.format("%."+getPrecission() +"f", ions.get(i).getMass()));
+            buffer.append(formatNumber(ions.get(i).getMass()));
             buffer.append(":");
-            buffer.append(String.format("%."+getPrecission() +"f", ions.get(i).getIntensity()));
+            buffer.append(formatNumber(ions.get(i).getIntensity()));
 
             //add our separator
             if (i < ions.size() - 1) {
@@ -113,7 +129,7 @@ public abstract class AbstractSpectralHash implements SpectraHash{
 
         //build the second string
         for (int i = 0; i < ions.size(); i++) {
-            buffer.append(String.format("%.6f", ions.get(i).getMass()));
+            buffer.append(formatNumber(ions.get(i).getMass()));
 
             if (i == 10) {
                 //we only want top 10 ions
@@ -153,4 +169,16 @@ public abstract class AbstractSpectralHash implements SpectraHash{
     public String toString() {
         return this.getClass().getSimpleName() +"-" + precission;
     }
+
+    public final String generate(Spectrum spectrum) {
+        spectrum = spectrum.toRelative(SCALE);
+        return calculateHash(spectrum);
+    }
+
+    /**
+     * calculates the actual hash, the spectra WILL be relative at this point
+     * @param spectrum
+     * @return
+     */
+    protected abstract String calculateHash(Spectrum spectrum);
 }

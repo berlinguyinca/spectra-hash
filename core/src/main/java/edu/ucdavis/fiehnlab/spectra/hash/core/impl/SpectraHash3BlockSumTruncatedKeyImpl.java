@@ -6,8 +6,8 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 /**
  * current 3 block implmentations
  *
- * 1:   version + SHA-256, Top 10 Ions, 6 digits, order by intensity
- * 2:   SHA-256, Spectra, 6 digits, order from lowest to highest mass
+ * 1:   version + SHA-256, Top 10 Ions, 6 digits, order by intensity. truncated to 10 digits
+ * 2:   SHA-256, Spectra, 6 digits, order from lowest to highest mass, truncated to 20 digits
  * 3:   SUM, sum of ions limited to 10 digits
  */
 public class SpectraHash3BlockSumTruncatedKeyImpl extends AbstractSpectralHash {
@@ -32,7 +32,7 @@ public class SpectraHash3BlockSumTruncatedKeyImpl extends AbstractSpectralHash {
     }
 
     /**
-     * calculates a total sum, with no digits
+     * calculates a total sum, with no digits, padded by 10 digits
      * @param spectrum
      * @return
      */

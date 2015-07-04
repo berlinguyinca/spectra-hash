@@ -25,8 +25,9 @@ public interface Spectrum {
     /**
      * convmerts the spectrum to a relative spectra
      * @return
+     * @param scale
      */
-    Spectrum toRelative();
+    Spectrum toRelative(int scale);
 
     /**
      *

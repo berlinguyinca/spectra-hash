@@ -47,7 +47,7 @@ public class SpectrumImpl implements Spectrum {
         return metaData;
     }
 
-    public Spectrum toRelative() {
+    public Spectrum toRelative(int scale) {
         double max = 0;
 
         for(Ion ion : getIons()){
@@ -58,7 +58,7 @@ public class SpectrumImpl implements Spectrum {
 
         List<Ion> ions = new ArrayList<Ion>(getIons().size());
         for(Ion ion : getIons()){
-            ions.add(new Ion(ion.getMass(),ion.getIntensity()/max*100));
+            ions.add(new Ion(ion.getMass(),ion.getIntensity()/max*scale));
         }
         return new SpectrumImpl(ions,getMetaData(),getOrigin());
     }

@@ -5,6 +5,8 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectraHandler;
 import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectrumReader;
+import edu.ucdavis.fiehnlab.spectra.hash.core.listener.HashingListener;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileWriter;
@@ -21,34 +23,12 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class AbstractSpectraHashImplTester {
 
-    List<Spectrum> getBinBaseSpectra(){
-        final List<Spectrum> data = new ArrayList<Spectrum>();
+    public static final String MONA_TESTDATA_1 = "/mona/spectra-hash-test-spectra.txt";
+    public static final String MONA_TESTDATA_2 = "/mona/spectra-hash-min-spectra.txt";
+    public static final String BINBASE_TESTDATA_1 = "/binbase/bins.spectra";
+    public static final String BINBASE_TESTDATA_2 = "/binbase/alanine.bin.annotations";
+    public static final String BINBASE_TESTDATA_3 = "/binbase/local/all.bin.annotations";
 
-        SpectrumReader reader = new SpectrumReader();
-
-        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream("/binbase/bins.spectra")), new SpectraHandler() {
-            public void handle(Spectrum spectrum) {
-                data.add(spectrum);
-            }
-        });
-
-        return data;
-
-    }
-
-    List <Spectrum> getMonaSpectra(){
-        final List<Spectrum> data = new ArrayList<Spectrum>();
-
-        SpectrumReader reader = new SpectrumReader();
-
-        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream("/mona/spectra-hash-test-spectra.txt")), new SpectraHandler() {
-            public void handle(Spectrum spectrum) {
-                data.add(spectrum);
-            }
-        });
-
-        return data;
-    }
 
     /**
      * get our impl to test
@@ -56,37 +36,21 @@ public abstract class AbstractSpectraHashImplTester {
      */
     abstract SpectraHash getHashImpl();
 
-    @Test
-    public void testBinBaseSpectraHash() throws IOException {
-        FileWriter out = new FileWriter("binbase.hash-" + this.getHashImpl().getClass().getSimpleName());
+    private void runTest(String fileName, String inputFile) throws IOException {
+        final FileWriter out = new FileWriter("target/" + fileName);
+        final SpectrumReader reader = new SpectrumReader();
 
-        int i = 0;
+        reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream(inputFile)), new SpectraHandler() {
+            public void handle(Spectrum s) {
+                String hash = getHashImpl().generate(s);
 
-        for(Spectrum s : getBinBaseSpectra()){
-            String hash = getHashImpl().generate(s);
-
-            out.write(i + "\t" + hash + "\n");
-            i++;
-        }
-
-        out.flush();
-        out.close();
-
-    }
-
-
-    @Test
-    public void testMonaSpectraHash() throws IOException {
-        FileWriter out = new FileWriter("mona.hash-" + this.getHashImpl().getClass().getSimpleName());
-
-        int i = 0;
-
-        for(Spectrum s : getMonaSpectra()){
-            String hash = getHashImpl().generate(s);
-
-            out.write(i + "\t" + hash + "\n");
-            i++;
-        }
+                try {
+                    out.write(s.getOrigin() + "\t" + hash + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         out.flush();
         out.close();
@@ -104,11 +68,35 @@ public abstract class AbstractSpectraHashImplTester {
 
         String hash = impl.generate(spectrum);
 
-        System.out.println(hash);
-        System.out.println(hash.length());
-
         assertEquals(expected, hash);
 
     }
 
+
+    @Test
+    public void testBinBaseAllBinSpectraHash() throws IOException {
+        runTest("binbase.hash-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_1));
+    }
+
+    @Test
+    public void testBinBaseAlanineSpectraHash() throws IOException {
+        runTest("binbase.alanine.annotations-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_2));
+    }
+
+
+    @Ignore
+    @Test
+    public void testBinBaseAllAnnotationSpectraHash() throws IOException {
+        runTest("binbase.all.annotations-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_3));
+    }
+
+    @Test
+    public void testMonaSpectraHash1() throws IOException {
+        runTest("mona.hash-" + this.getHashImpl().toString(), MONA_TESTDATA_1);
+    }
+
+    @Test
+    public void testMonaSpectraHash2() throws IOException {
+        runTest("mona-2.hash-" + this.getHashImpl().toString(), (MONA_TESTDATA_2));
+    }
 }

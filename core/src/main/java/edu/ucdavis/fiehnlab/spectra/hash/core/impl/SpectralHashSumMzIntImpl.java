@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * implementation for the sum of multiplied m/z and intensities
@@ -27,10 +27,10 @@ public class SpectralHashSumMzIntImpl extends AbstractSpectralHash implements Sp
         List<Ion> ions = spectrum.getIons();
 
         // sort by intensity in decreasing order 
-        ions.sort(new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o2.getIntensity().compareTo(o1.getIntensity());
-            }
+	    Collections.sort(ions, new Comparator<Ion>() {
+		    public int compare(Ion o1, Ion o2) {
+			    return o2.getIntensity().compareTo(o1.getIntensity());
+		    }
         });
         
         int ionCount = 0;

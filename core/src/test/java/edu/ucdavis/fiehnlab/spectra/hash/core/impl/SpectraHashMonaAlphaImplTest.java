@@ -8,6 +8,14 @@ import org.junit.Test;
  */
 public class SpectraHashMonaAlphaImplTest extends AbstractSpectraHashImplTester {
 
+    @Test
+    public void testGenerate() throws Exception {
+
+        SpectraHash impl = getHashImpl();
+
+	    testDefault(impl, "mona-aac9c7920625d1cb861051373adc63d8dbb2bb84-0");
+    }
+
     @Override
     SpectraHash getHashImpl() {
         return new SpectraHashMonaAlphaImpl();

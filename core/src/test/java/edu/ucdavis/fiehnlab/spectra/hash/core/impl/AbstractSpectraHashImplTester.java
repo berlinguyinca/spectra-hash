@@ -40,9 +40,28 @@ public abstract class AbstractSpectraHashImplTester {
      */
     abstract SpectraHash getHashImpl();
 
+    /**
+     * checks that duplicates are not removed in the output files
+     * @throws IOException
+     */
     @Test
     public void testSorterGeneratingDuplicates() throws IOException {
-        runTest("duplicates" + this.getHashImpl().toString(),"/tenIdenticalSpectra");
+        String file = "duplicates" + this.getHashImpl().toString();
+        runTest(file,"/tenIdenticalSpectra");
+
+        file = "target/"+file;
+
+        int counter = 0;
+
+        Scanner scanner = new Scanner(new File(file));
+
+        while(scanner.hasNextLine()){
+            scanner.nextLine();
+            counter++;
+        }
+
+        assertEquals(10,counter);
+        scanner.close();
     }
     /**
      * runs our actual tests on the input and output files
@@ -51,7 +70,7 @@ public abstract class AbstractSpectraHashImplTester {
      * @param inputFile
      * @throws IOException
      */
-    private void runTest(String resultFile, String inputFile) throws IOException {
+    private File runTest(String resultFile, String inputFile) throws IOException {
         final File tempFile = File.createTempFile("temp", "tmp");
         tempFile.deleteOnExit();
         final FileOutputStream temp = new FileOutputStream(tempFile);
@@ -84,7 +103,7 @@ public abstract class AbstractSpectraHashImplTester {
             }
         });
 
-        sortByHash(resultFile, tempFile, serializer);
+       return sortByHash(resultFile, tempFile, serializer);
 
     }
 
@@ -95,7 +114,7 @@ public abstract class AbstractSpectraHashImplTester {
      * @param serializer
      * @throws IOException
      */
-    private void sortByHash(String fileName, File tempFile, ExternalMergeSort.Serializer<TestSpectraImpl> serializer) throws IOException {
+    private File sortByHash(String fileName, File tempFile, ExternalMergeSort.Serializer<TestSpectraImpl> serializer) throws IOException {
         ExternalMergeSort<TestSpectraImpl> sort = ExternalMergeSort.newSorter(serializer, new Comparator<TestSpectraImpl>() {
             public int compare(TestSpectraImpl o1, TestSpectraImpl o2) {
                 return o1.getHash().compareTo(o2.getHash());
@@ -121,6 +140,8 @@ public abstract class AbstractSpectraHashImplTester {
 
             PrintStream output = new PrintStream(new FileOutputStream(out));
 
+            boolean first = true;
+
             TestSpectraImpl last = null;
             while(sorted.hasNext()){
 
@@ -133,9 +154,18 @@ public abstract class AbstractSpectraHashImplTester {
 
                     //onlywrite duplicates and since it's sorted we should be all good
                     if(current.getHash().equals(last.getHash())){
-                        output.print(current.getHash());
-                        output.print("\t");
+                        if(first) {
+                            output.print(last.getOrigin());
+                            output.print("\t");
+                            output.print(last.getHash());
+                            output.print("\n");
+
+                            first = false;
+                        }
+
                         output.print(current.getOrigin());
+                        output.print("\t");
+                        output.print(current.getHash());
                         output.print("\n");
                     }
                 }
@@ -143,9 +173,13 @@ public abstract class AbstractSpectraHashImplTester {
 
             output.flush();
             output.close();
+
+            System.out.println(out + ": " + out.length());
+            return out;
         } finally {
             sorted.close();
         }
+
     }
 
 

@@ -10,9 +10,20 @@ import java.util.*;
  */
 public class SpectrumImpl implements Spectrum {
 
-    public SpectrumImpl(List<Ion> ions, String mona) {
+    public SpectrumImpl(){
+
+    }
+    public SpectrumImpl(ArrayList<Ion> ions, String mona) {
         this.ions = ions;
         this.origin = mona;
+    }
+
+    public void setIons(ArrayList<Ion> ions) {
+        this.ions = ions;
+    }
+
+    public void setMetaData(Map<String, Object> metaData) {
+        this.metaData = metaData;
     }
 
     public String getOrigin() {
@@ -25,15 +36,15 @@ public class SpectrumImpl implements Spectrum {
 
     private String origin;
 
-    private List<Ion> ions;
+    private ArrayList<Ion> ions;
 
     private Map<String,Object> metaData;
 
-    public SpectrumImpl(List<Ion> ions){
+    public SpectrumImpl(ArrayList<Ion> ions){
         this(ions,new HashMap<String,Object>(),"");
     }
 
-    public SpectrumImpl(List<Ion> ions, Map<String, Object> metaData,String origin) {
+    public SpectrumImpl(ArrayList<Ion> ions, Map<String, Object> metaData,String origin) {
         this.ions = ions;
         this.metaData = metaData;
         this.origin = origin;
@@ -56,7 +67,7 @@ public class SpectrumImpl implements Spectrum {
             }
         }
 
-        List<Ion> ions = new ArrayList<Ion>(getIons().size());
+        ArrayList<Ion> ions = new ArrayList<Ion>(getIons().size());
         for(Ion ion : getIons()){
             ions.add(new Ion(ion.getMass(),ion.getIntensity()/max*scale));
         }

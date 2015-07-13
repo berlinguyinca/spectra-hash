@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core;
 
-import java.util.Collection;
-import java.util.Iterator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+
 import java.util.List;
 import java.util.Map;
 
 /**
- * a simple spectrum
+ * describes a spectrum for a splash
  */
 public interface Spectrum {
 
@@ -34,4 +35,10 @@ public interface Spectrum {
      * @return
      */
     public String getOrigin();
+
+    /**
+     * what kind of a spectra do we have
+     * @return
+     */
+    public SpectraType getType();
 }

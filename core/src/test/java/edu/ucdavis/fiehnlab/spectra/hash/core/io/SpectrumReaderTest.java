@@ -1,10 +1,12 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.io;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
+
 import static org.junit.Assert.*;
 
 /**
@@ -31,7 +33,7 @@ public class SpectrumReaderTest {
             public void done() throws IOException {
 
             }
-        });
+        }, SpectraType.MS);
 
         assertNotNull(spectrum);
 
@@ -56,11 +58,11 @@ public class SpectrumReaderTest {
             public void done() throws IOException {
 
             }
-        });
+        }, SpectraType.MS);
 
         assertNotNull(spectrum);
 
-        assertEquals("test",spectrum.getOrigin());
+        assertEquals("test", spectrum.getOrigin());
 
     }
 
@@ -81,11 +83,11 @@ public class SpectrumReaderTest {
             public void done() throws IOException {
 
             }
-        });
+        }, SpectraType.MS);
 
         assertNotNull(spectrum);
 
-        assertEquals("test_1",spectrum.getOrigin());
+        assertEquals("test_1", spectrum.getOrigin());
 
     }
 

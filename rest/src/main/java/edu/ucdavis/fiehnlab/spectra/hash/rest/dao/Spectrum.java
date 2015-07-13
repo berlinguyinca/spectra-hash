@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.rest.dao;
 
-import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
-import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SpectrumImpl;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;

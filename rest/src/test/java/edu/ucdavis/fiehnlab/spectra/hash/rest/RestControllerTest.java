@@ -84,7 +84,7 @@ public class RestControllerTest {
                 .contentType("application/json")
                 .body(spectra)
                 .when()
-                .post("/generate/mona")
+                .post("/splashIt/mona")
                 .then().log().all().statusCode(HttpStatus.OK.value());
     }
 
@@ -96,7 +96,7 @@ public class RestControllerTest {
                 .contentType("application/json")
                 .body(spectra)
                 .when()
-                .post("/generate/hmdb")
+                .post("/splashIt/hmdb")
                 .then().log().all().statusCode(HttpStatus.OK.value());
     }
 
@@ -107,7 +107,7 @@ public class RestControllerTest {
                 .contentType("application/json")
                 .body(spectra)
                 .when()
-                .post("/generate/i hate white spaces")
+                .post("/splashIt/i hate white spaces")
                 .then().log().all().statusCode(HttpStatus.OK.value());
     }
 

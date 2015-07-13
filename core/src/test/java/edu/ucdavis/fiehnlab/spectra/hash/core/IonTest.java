@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core;
 
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+
 import static org.junit.Assert.assertEquals;
 
 /**

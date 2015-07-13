@@ -1,16 +1,14 @@
 package edu.ucdavis.fiehnlab.spectra.hash.rest;
 
-import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
-import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHashFactory;
-import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SpectrumImpl;
 import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.Spectrum;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * simple rest service, which hashes submitted spectra data
@@ -18,7 +16,7 @@ import java.util.HashMap;
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
 
-    private SpectraHash spectraHash;
+    private Splash spectraHash;
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -36,7 +34,7 @@ public class RestController {
             logger.info("received spectrum: " + spectrum);
             logger.info("definied origin: " + origin);
 
-            String hash = spectraHash.generate(spectrum);
+            String hash = spectraHash.splashIt(spectrum);
             logger.info("generated hash: " + hash);
             return hash;
 

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.spectra.hash.core;
+package edu.ucdavis.fiehnlab.spectra.hash.core.types;
 
 /**
  * defines a basic ion for a spectra key

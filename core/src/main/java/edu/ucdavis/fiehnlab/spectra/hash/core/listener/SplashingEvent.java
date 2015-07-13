@@ -3,15 +3,15 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.listener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 
 /**
- * used for internal notifications of building blocks
+ * simple event, recevied by SplashListener
  */
-public class HashingEvent {
+public class SplashingEvent {
 
     private final Spectrum spectrum;
-    private final String hashedValue;
+    private final String processedValue;
 
-    public HashingEvent(String hashedValue, String rawValue, int block, Spectrum spectrum) {
-        this.hashedValue = hashedValue;
+    public SplashingEvent(String processedValue, String rawValue, SplashBlock block, Spectrum spectrum) {
+        this.processedValue = processedValue;
         this.rawValue = rawValue;
         this.block = block;
         this.spectrum = spectrum;
@@ -19,7 +19,7 @@ public class HashingEvent {
 
     private final String rawValue;
 
-    public int getBlock() {
+    public SplashBlock getBlock() {
         return block;
     }
 
@@ -28,11 +28,11 @@ public class HashingEvent {
         return rawValue;
     }
 
-    public String getHashedValue() {
-        return hashedValue;
+    public String getProcessedValue() {
+        return processedValue;
     }
 
-    private final int block;
+    private final SplashBlock block;
 
 
     public Spectrum getSpectrum() {

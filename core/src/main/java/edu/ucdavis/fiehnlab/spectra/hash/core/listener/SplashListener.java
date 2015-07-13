@@ -3,20 +3,20 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.listener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 
 /**
- * Created by wohlg_000 on 7/2/2015.
+ * a simple listener to react to different splashing events
  */
-public interface HashingListener {
+public interface SplashListener {
 
     /**
      * let's listener know that a new hash was created
      * @param e
      */
-    void eventReceived(HashingEvent e);
+    void eventReceived(SplashingEvent e);
 
     /**
      * notificaton that the hashing is finished
      * @param spectrum
-     * @param hash
+     * @param splash
      */
-    void hashingComplete(Spectrum spectrum, String hash);
+    void complete(Spectrum spectrum, String splash);
 }

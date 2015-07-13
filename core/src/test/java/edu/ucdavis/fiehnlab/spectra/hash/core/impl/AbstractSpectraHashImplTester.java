@@ -1,10 +1,13 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
-import edu.ucdavis.fiehnlab.spectra.hash.core.Ion;
-import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHash;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectraHandler;
 import edu.ucdavis.fiehnlab.spectra.hash.core.io.SpectrumReader;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
+import junit.framework.TestResult;
 import org.geirove.exmeso.CloseableIterator;
 import org.geirove.exmeso.ExternalMergeSort;
 import org.geirove.exmeso.kryo.KryoSerializer;
@@ -17,45 +20,16 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 /**
- * Created by wohlg_000 on 7/3/2015.
+ * general testing strategy for splash implementations
  */
 public abstract class AbstractSpectraHashImplTester {
-
-    public static final String MONA_TESTDATA_1 = "/mona/spectra-hash-test-spectra.txt";
-    public static final String MONA_TESTDATA_2 = "/mona/spectra-hash-min-spectra.txt";
-    public static final String BINBASE_TESTDATA_1 = "/binbase/bins.spectra";
-    public static final String BINBASE_TESTDATA_2 = "/binbase/alanine.bin.annotations";
-    public static final String BINBASE_TESTDATA_3 = "/binbase/local/all.spectra";
 
     /**
      * get our impl to test
      *
      * @return
      */
-    abstract SpectraHash getHashImpl();
-
-    /**
-     * checks that duplicates are not removed in the output files
-     *
-     * @throws IOException
-     */
-    @Test
-    public void testSorterGeneratingDuplicates() throws IOException {
-        String file = "duplicates" + this.getHashImpl().toString();
-        TestResult result = runTest(file, "/tenIdenticalSpectra");
-
-        int counter = 0;
-
-        Scanner scanner = new Scanner(result.file);
-
-        while (scanner.hasNextLine()) {
-            scanner.nextLine();
-            counter++;
-        }
-
-        assertEquals(result.duplicates, counter);
-        scanner.close();
-    }
+    abstract Splash getHashImpl();
 
     /**
      * runs our actual tests on the input and output files
@@ -64,10 +38,10 @@ public abstract class AbstractSpectraHashImplTester {
      * @param inputFile
      * @throws IOException
      */
-    private TestResult runTest(String resultFile, String inputFile) throws IOException {
-        final File tempFile = File.createTempFile("temp", "tmp");
+    protected TestResult runTest(String resultFile, String inputFile, SpectraType spectraType, boolean onlyDuplicates) throws IOException {
+        final File tempFile = File.createTempFile("splash", "tmp");
         tempFile.deleteOnExit();
-        final FileOutputStream temp = new FileOutputStream(tempFile);
+        final OutputStream temp = new BufferedOutputStream(new FileOutputStream(tempFile));
         final ExternalMergeSort.Serializer<TestSpectraImpl> serializer = new KryoSerializer<TestSpectraImpl>(TestSpectraImpl.class);
 
         final SpectrumReader reader = new SpectrumReader();
@@ -77,11 +51,11 @@ public abstract class AbstractSpectraHashImplTester {
             }
 
             /**
-             * generate hash and serialize as json for later usage
+             * splashIt hash and serialize as json for later usage
              * @param s
              */
             public void handle(Spectrum s) {
-                String hash = getHashImpl().generate(s);
+                String hash = getHashImpl().splashIt(s);
 
                 TestSpectraImpl impl = new TestSpectraImpl(s, hash);
 
@@ -94,10 +68,12 @@ public abstract class AbstractSpectraHashImplTester {
             }
 
             public void done() throws IOException {
+                temp.flush();
+                temp.close();
             }
-        });
+        }, spectraType);
 
-        return sortByHash(resultFile, tempFile, serializer);
+        return sortByHash(resultFile, tempFile, serializer, onlyDuplicates);
 
     }
 
@@ -106,13 +82,15 @@ public abstract class AbstractSpectraHashImplTester {
      * finds duplicates
      * saves this as file
      * returns a result with the written file and how many duplicates were found
+     * <p/>
+     * is implemented as external sorting, since this will allow us to support large test sets
      *
      * @param fileName
      * @param tempFile
      * @param serializer
      * @throws IOException
      */
-    private TestResult sortByHash(String fileName, File tempFile, ExternalMergeSort.Serializer<TestSpectraImpl> serializer) throws IOException {
+    private TestResult sortByHash(String fileName, File tempFile, ExternalMergeSort.Serializer<TestSpectraImpl> serializer, boolean duplicatesOnly) throws IOException {
         ExternalMergeSort<TestSpectraImpl> sort = ExternalMergeSort.newSorter(serializer, new Comparator<TestSpectraImpl>() {
             public int compare(TestSpectraImpl o1, TestSpectraImpl o2) {
                 return o1.getHash().compareTo(o2.getHash());
@@ -142,29 +120,49 @@ public abstract class AbstractSpectraHashImplTester {
 
             boolean first = true;
 
+            int lines = 0;
             TestSpectraImpl last = null;
             while (sorted.hasNext()) {
 
                 if (last == null) {
                     last = sorted.next();
+                    lines++;
+
+                    if (!duplicatesOnly) {
+                        output.print(last.getOrigin());
+                        output.print("\t");
+                        output.print(last.getHash());
+                        output.print("\n");
+                    }
                 }
 
                 if (sorted.hasNext()) {
+                    lines++;
                     TestSpectraImpl current = sorted.next();
 
-                    //onlywrite duplicates and since it's sorted we should be all good
-                    if (current.getHash().equals(last.getHash())) {
-                        counter++;
-                        if (first) {
-                            output.print(last.getOrigin());
-                            output.print("\t");
-                            output.print(last.getHash());
-                            output.print("\n");
+                    if (duplicatesOnly) {
+                        //onlywrite duplicates and since it's sorted we should be all good
+                        if (current.getHash().equals(last.getHash())) {
+                            counter++;
+                            if (first) {
+                                output.print(last.getOrigin());
+                                output.print("\t");
+                                output.print(last.getHash());
+                                output.print("\n");
 
-                            first = false;
+                                first = false;
+                                counter++;
+                            }
+
+                            output.print(current.getOrigin());
+                            output.print("\t");
+                            output.print(current.getHash());
+                            output.print("\n");
+                        }
+                    } else {
+                        if (current.getHash().equals(last.getHash())) {
                             counter++;
                         }
-
                         output.print(current.getOrigin());
                         output.print("\t");
                         output.print(current.getHash());
@@ -179,6 +177,7 @@ public abstract class AbstractSpectraHashImplTester {
             TestResult result = new TestResult();
             result.file = out;
             result.duplicates = counter;
+            result.linesRead = lines;
 
             return result;
         } finally {
@@ -187,69 +186,23 @@ public abstract class AbstractSpectraHashImplTester {
 
     }
 
-
-    /**
-     * test different implementations of the hashing algo
-     * with spectrum: (100, 1) (101, 2) (102, 3)
-     *
-     * @param impl
-     */
-    public void testDefault(SpectraHash impl, String expected) {
-
-        ArrayList list = new ArrayList();
-        list.add(new Ion(100, 1));
-        list.add(new Ion(101, 2));
-        list.add(new Ion(102, 3));
-
-        Spectrum spectrum = new SpectrumImpl(list, "mona");
-
-        String hash = impl.generate(spectrum);
-
-        assertEquals(expected, hash);
-
-    }
-
-
-    @Test
-    public void testBinBaseAllBinSpectraHash() throws IOException {
-        TestResult result = runTest("binbase.hash-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_1));
-        assertTrue(result.duplicates == 0);
-    }
-
-    @Test
-    public void testBinBaseAlanineSpectraHash() throws IOException {
-        TestResult result = runTest("binbase.alanine.annotations-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_2));
-        assertTrue(result.duplicates == 0);
-    }
-
-    @Ignore
-    @Test
-    public void testBinBaseAllAnnotationSpectraHash() throws IOException {
-        TestResult result = runTest("binbase.all.annotations-" + this.getHashImpl().toString(), (BINBASE_TESTDATA_3));
-        assertTrue(result.duplicates == 0);
-    }
-
-
-    @Test
-    public void testMonaSpectraHash1() throws IOException {
-        TestResult result = runTest("mona.hash-" + this.getHashImpl().toString(), MONA_TESTDATA_1);
-        assertTrue(result.duplicates == 0);
-
-    }
-
-    @Test
-    public void testMonaSpectraHash2() throws IOException {
-        TestResult result = runTest("mona-2.hash-" + this.getHashImpl().toString(), (MONA_TESTDATA_2));
-        assertTrue(result.duplicates == 0);
-
-    }
-
     /**
      * simpleclass to store test results
      */
-    private class TestResult {
+    protected class TestResult {
+        /**
+         * link to the file, containg output information
+         */
         public File file;
 
+        /**
+         * how many duplicates
+         */
         public int duplicates;
+
+        /**
+         * how many lines did we read
+         */
+        public int linesRead;
     }
 }

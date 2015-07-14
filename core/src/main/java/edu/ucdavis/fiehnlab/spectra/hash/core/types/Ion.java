@@ -9,6 +9,25 @@ public class Ion implements Comparable<Ion>{
 
     private Double mass;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ion)) return false;
+
+        Ion ion = (Ion) o;
+
+        if (!getMass().equals(ion.getMass())) return false;
+        return getIntensity().equals(ion.getIntensity());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getMass().hashCode();
+        result = 31 * result + getIntensity().hashCode();
+        return result;
+    }
+
     public Ion(){}
 
     public Ion(double mass, double intensity) {

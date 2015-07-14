@@ -16,12 +16,19 @@ java
 # usage
 
 ## api:
-very simple example, needs file readers and specific implementations
+To generate a new splash, please utilize the following:
+
 
 ```
-    Splash splash = getHashImpl();
+    Splash splash = SplashFactory.create();
     Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100.0, 50)), SpectraType.MS);
     String splash = splash.splashIt(spectrum);
+```
+
+Alternatively, you can also utilize the following code, to directly splash a spectra, if it's accessible as a string representation.
+
+```
+    String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
 
 ## rest service:

@@ -2,13 +2,12 @@ package edu.ucdavis.fiehnlab.spectra.hash.rest;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
-import edu.ucdavis.fiehnlab.spectra.hash.core.SpectraHashFactory;
+import edu.ucdavis.fiehnlab.spectra.hash.core.SplashFactory;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.Spectrum;
 import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.ValidationRequest;
 import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.ValidationResponse;
 import org.apache.log4j.Logger;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +24,7 @@ public class RestController {
     private Logger logger = Logger.getLogger(getClass());
 
     public RestController() {
-        spectraHash = SpectraHashFactory.create();
+        spectraHash = SplashFactory.create();
         logger.info("created hash generator of type: " + spectraHash);
     }
 

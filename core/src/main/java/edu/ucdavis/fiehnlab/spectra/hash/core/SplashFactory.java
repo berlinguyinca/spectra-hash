@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion1;
 /**
  * simple factory to create new hashes
  */
-public class SpectraHashFactory {
+public class SplashFactory {
 
     public static Splash create() {
         return new SplashVersion1();

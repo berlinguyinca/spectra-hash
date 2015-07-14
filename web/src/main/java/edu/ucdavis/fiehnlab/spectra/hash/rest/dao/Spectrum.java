@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.rest.dao;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by wohlg_000 on 7/1/2015.
+ * simple persistent spectra model
  */
 public class Spectrum implements edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum {
 
@@ -38,13 +39,23 @@ public class Spectrum implements edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum
     }
 
     public edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum toRelative(int scale) {
-        return new SpectrumImpl(getIons(),getMetaData(),getOrigin()).toRelative();
+        return new SpectrumImpl(getIons(),getMetaData(),getOrigin(),getType()).toRelative(1000);
     }
 
     private String origin;
 
     public String getOrigin() {
         return origin;
+    }
+
+    public void setType(SpectraType type) {
+        this.type = type;
+    }
+
+    private SpectraType type;
+
+    public SpectraType getType() {
+        return type;
     }
 
     public void setOrigin(String origin) {

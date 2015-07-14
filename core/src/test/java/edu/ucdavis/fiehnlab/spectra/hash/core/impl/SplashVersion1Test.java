@@ -36,6 +36,11 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     public static final String BINBASE_TESTDATA_1 = "/binbase/bins.spectra";
     public static final String BINBASE_TESTDATA_2 = "/binbase/alanine.bin.annotations";
 
+    /**
+     * how is our splash id supposed to look
+     */
+    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{10}-[a-z0-9]{20}-[0-9]{10}";
+
 
     /**
      * checks that duplicates are not removed in the output files
@@ -110,7 +115,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
         Scanner scanner = new Scanner(file);
 
-        Pattern pattern = Pattern.compile("splash[1-5][0-9]-[a-z0-9]{10}-[a-z0-9]{20}-[0-9]{10}");
+        Pattern pattern = Pattern.compile(REGEX);
 
         int lines = 0;
         while (scanner.hasNextLine()) {

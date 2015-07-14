@@ -19,13 +19,13 @@
         <groupId>fiehnlab.ucdavis.edu</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-<!--
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.4.RELEASE</version>
-    </parent>
--->
+    <!--
+        <parent>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-parent</artifactId>
+            <version>1.2.4.RELEASE</version>
+        </parent>
+    -->
     <dependencies>
 
         <dependency>
@@ -43,6 +43,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>1.2.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
             <version>1.2.4.RELEASE</version>
         </dependency>
 

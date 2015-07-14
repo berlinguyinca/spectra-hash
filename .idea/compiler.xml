@@ -24,12 +24,14 @@
         <processorPath useClasspath="true" />
         <module name="core" />
         <module name="rest" />
+        <module name="web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="core" target="1.5" />
       <module name="rest" target="1.5" />
       <module name="spectra-hash" target="1.5" />
+      <module name="web" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

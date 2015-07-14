@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>Splash</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header clearfix">
+        <h3 class="text-muted">Splash - The Spectral Hash Identifier</h3>
+    </div>
+
+    <div class="jumbotron">
+        <h1>Splash</h1>
+
+        <p class="lead">Welcome to the Splash validation and computational page.</p>
+    </div>
+
+    <div class="row marketing">
+        <div class="col-lg-4">
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    What is the splash?
+                </div>
+                <div class="panel-body">
+                    <p>
+                        The Splash, is an unique identifier for Spectra, as the InChI Key is an unique identifier for
+                        chemical compounds.
+                    </p>
+
+                    <p>
+                        The first implementation of the Splash, was the MoNA (<a
+                            href="http://mona.fiehnlab.ucdavis.edu" target="_blank">Massbank of North America</a>) hash
+                        and during the 2015 Metabolomics conference in turned out that people like the idea of an unique
+                        spectra identifier, similar to the InChI Key. Based on the received feedback, a subset of the
+                        attendies started to develop a set of specifications, which allowed us to easily calculate
+                        unique and short identifiers for a wide range of Spectra. This includes MS, IR, UV and NMR
+                        spectra at this point.
+                    </p>
+
+                    <p>If you like to contribute to the development of the splash or just want to let us know what you
+                        think
+                        about the concept, please contact us at <a
+                                href="mailto:wohlgemuth@ucdavis.edu?Subject=Splash">wohlgemuth@ucdavis.edu</a>
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    What can I use it for?
+                </div>
+                <div class="panel-body">
+                    <p>
+                        The main usage of the splash is to be used as database identifier, as well as easily allowing
+                        you to see if 2 spectra are similar to each other. We hope that people will adopt it in their
+                        systems as well, so we can easily compute overlap of databases or use it to reference spectra
+                        between publications.
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Available Implementations of the splash algorithm
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>language</th>
+                            <th>source</th>
+                            <th>validated</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Java</td>
+                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
+                            </td>
+                            <td>x</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Where can I find the specification, to compute the splash
+                </div>
+                <div class="panel-body">
+                    <p>
+                        We are currently in the process of publishing a paper, providing in detail documentation of how
+                        the splash is calculated and it's requirements. If you want to implement it now and can't wait,
+                        we recommend that you look at the reference implementation.
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-8">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Splash your Spectra
+                </div>
+                <div class="panel-body">
+                    <p>To 'splash' your spectra easily, we provide you with a simple REST api, this can be easily
+                        utilized from any programming language and so allows you to compute the splash as easily as
+                        possible, without the need of providing your own implementation</p>
+
+                    <h5>Request URL:</h5>
+
+                    <blockquote>
+                        http://splash.fiehnlab.ucdavis.edu/splash/it
+                        <footer>the request needs to be done, as POST with a JSON load.</footer>
+                    </blockquote>
+
+                    <h5>Example load</h5>
+            <pre>
+{
+    "ions":
+        [
+                {
+                    "mass": 100,
+                    "intensity": 1
+                },
+                {
+                    "mass": 101,
+                    "intensity": 2
+                },
+                {
+                    "mass": 102,
+                    "intensity": 3
+                }
+         ],
+         "type": "MS"
+}
+            </pre>
+
+                    <p>for the type, please pick one of these values.</p>
+
+                    <ol>
+                        <li>MS</li>
+                        <li>NMR</li>
+                        <li>UV</li>
+                        <li>IR</li>
+                        <li>RAMAN</li>
+                    </ol>
+
+
+                    <h5>Example response</h5>
+
+                    <p>upon complication of your request, your response should be a splash.</p>
+                    splash10-72a283bc75-7bd14a1e3e797fe3f2f2-0000202667
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Validate your splash Implementation
+                </div>
+                <div class="panel-body">
+                    <p>Since we plan on only maintaining a limited set of reference implementation, we are providing you
+                        with a simple REST based tool, to easily validate your
+                        implementation against the reference implementation. This does not mean, you should not
+                        developed your own suite of test's to ensure your api works.
+                    </p>
+
+                    <p>The main advantage of the validation api, is to test if your splash algorithm, produces the
+                        identical output, for the same input</p>
+
+                    <h5>Request URL:</h5>
+
+                    <blockquote>http://splash.fiehnlab.ucdavis.edu/splash/validate
+                        <footer>the request needs to be done, as POST with a JSON load.</footer>
+                    </blockquote>
+
+                    <h5>Example load</h5>
+
+                    this is an example for a validate object, send to the validation system. Please be aware that you
+                    need to provide all the fields.
+            <pre>
+{
+    "spectrum": {
+        "ions":
+            [
+                {
+                    "mass": 100,
+                    "intensity": 1
+                },
+                {
+                    "mass": 101,
+                    "intensity": 2
+                },
+                {
+                    "mass": 102,
+                    "intensity": 3
+                }
+            ],
+            "type": "MS"
+    },
+    "splash":"splash10-72a283bc75-7bd14a1e3e797fe3f2f2-0000202667"
+}
+            </pre>
+
+                    <h5>Example response</h5>
+
+                    <p>
+                        this is an exspected response, for your successful request.
+                    </p>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <footer class="footer">
+        <p>&copy; The splash was developed by yada yada yada</p>
+    </footer>
+
+</div>
+<!-- /container -->
+
+</body>
+</html>

@@ -2,7 +2,8 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.io;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
-import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
+import edu.ucdavis.fiehnlab.spectra.hash.core.*;
+import edu.ucdavis.fiehnlab.spectra.hash.core.util.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,7 +33,11 @@ public class SpectrumReader {
 
             String origin = "unknown";
 
+            //in case some people use several spaces instead of a tab...
             line = line.replaceAll(" {2,}", "\t");
+
+            //in case people use csv instead of a tab
+            line = line.replaceAll(",", "\t");
 
             if (line.contains("\t")) {
                 String t[] = line.split("\t");
@@ -46,18 +51,10 @@ public class SpectrumReader {
             }
 
             if (line.contains(":") && line.contains(" ")) {
-                ArrayList<Ion> ions = new ArrayList<Ion>();
 
-                for (String s : line.split(" ")) {
-                    String[] content = s.split(":");
+                Spectrum spectrum = SpectraUtil.convertStringToSpectrum(line,spectraType,origin);
 
-                    Ion ion = new Ion();
-                    ion.setMass(Double.parseDouble(content[0]));
-                    ion.setIntensity(Double.parseDouble(content[1]));
-                    ions.add(ion);
-                }
-
-                handler.handle(new SpectrumImpl(ions, origin, spectraType));
+                handler.handle(spectrum);
             }
         }
 

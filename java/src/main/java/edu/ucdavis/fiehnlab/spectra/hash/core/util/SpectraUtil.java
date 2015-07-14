@@ -20,7 +20,7 @@ public class SpectraUtil {
      * @param type
      * @return
      */
-    public static Spectrum convertStringToSpectrum(String spectra, SpectraType type) {
+    public static Spectrum convertStringToSpectrum(String spectra, SpectraType type, String origin) {
         if (!spectra.matches("^(?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?)(?: (?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?))*?$")) {
             throw new IllegalArgumentException("sorry, your provided spectra string, did not match the exspected pattern!");
         }
@@ -40,6 +40,13 @@ public class SpectraUtil {
 
         }
 
-        return new SpectrumImpl(ionList, type);
+        SpectrumImpl impl = new SpectrumImpl(ionList, type);
+        impl.setOrigin(origin);
+
+        return impl;
+    }
+
+    public static Spectrum convertStringToSpectrum(String spectra, SpectraType type) {
+        return convertStringToSpectrum( spectra,  type, "unknown");
     }
 }

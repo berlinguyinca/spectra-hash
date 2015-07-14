@@ -37,9 +37,13 @@ TODO
 
 TODO
 
+## Python api:
+
+TODO
+
 ## rest service:
 
-the documentation for the REST service, is available as a dedicated index page, once you start the REST server
+the documentation for the REST service, is available as a dedicated index page, once you start the REST server. If you like to use the official webservice, you can find it at http://splash.fiehnlab.ucdavis.edu
 
 ## building
 
@@ -48,3 +52,7 @@ mvn clean install
 ```
 
 will build your project, run all the tests and you can find the build jar files, in the target directories of the project.
+
+##Contributing
+
+if you like to contribute to this project, please feel free to contact me.

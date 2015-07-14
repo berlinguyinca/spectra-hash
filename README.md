@@ -5,17 +5,11 @@ this library is the current reference implementation for the splash. Splash stan
 
 You can access it as a REST service, at http://splash.fiehnlab.ucdavis.edu
 
-Or use one of the availalbe implementations.
-
-This documentation is for the Java version only. Please be aware that this repository also includes, the REST interface, which wraps around the Java API
-
-implementations:
-
-java
+Or use one any of the available implementations, which should have been validated against the REST validation service.
 
 # usage
 
-## api:
+## java api:
 To generate a new splash, please utilize the following:
 
 
@@ -30,6 +24,18 @@ Alternatively, you can also utilize the following code, to directly splash a spe
 ```
     String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
+
+## scala api:
+
+TODO
+
+## C# api:
+
+TODO
+
+## C api:
+
+TODO
 
 ## rest service:
 

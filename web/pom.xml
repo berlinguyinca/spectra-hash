@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rest</artifactId>
+    <artifactId>web</artifactId>
 
     <properties>
         <assertj.version>1.7.0</assertj.version>
@@ -15,22 +15,18 @@
     </properties>
 
     <parent>
-        <artifactId>spectra-hash</artifactId>
+        <artifactId>splash</artifactId>
         <groupId>fiehnlab.ucdavis.edu</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <!--
-        <parent>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-parent</artifactId>
-            <version>1.2.4.RELEASE</version>
-        </parent>
-    -->
+
+    <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+
     <dependencies>
 
         <dependency>
-            <groupId>fiehnlab.ucdavis.edu</groupId>
-            <artifactId>core</artifactId>
+            <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+            <artifactId>java</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

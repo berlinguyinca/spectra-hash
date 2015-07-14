@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * the reference implementation of the Spectral Hash Key
  */
-public class SplashVersion1 implements Splash {
+public final class SplashVersion1 implements Splash {
 
     /**
      * how to scale the spectra
@@ -161,7 +161,7 @@ public class SplashVersion1 implements Splash {
         for (int i = 0; i < ions.size(); i++) {
             buffer.append(formatNumber(ions.get(i).getMass()));
 
-            if (i == 10) {
+            if (i == 10 - 1) {
                 //we only want top 10 ions
                 break;
             }
@@ -191,6 +191,17 @@ public class SplashVersion1 implements Splash {
      * @return
      */
     public final String splashIt(Spectrum spectrum) {
+
+        for (Ion ion : spectrum.getIons()) {
+            if (ion.getIntensity() < 0) {
+                throw new RuntimeException("ion's need to have an intensity larger than zero");
+            }
+            if (ion.getMass() < 0) {
+                throw new RuntimeException("ion's need to have an mass larger than zero");
+            }
+
+        }
+
         //convert the spectrum to relative values
         spectrum = spectrum.toRelative(scalingOfRelativeIntensity);
 
@@ -244,7 +255,7 @@ public class SplashVersion1 implements Splash {
             hashSum += ion.getMass() * ion.getIntensity();
 
             ionCount++;
-            if (ionCount > calculatedSumMaxIonsCount-1) break;
+            if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
 
         String sum = String.format("%0" + calculatedSumMaxDigitPadding + ".0f", hashSum);

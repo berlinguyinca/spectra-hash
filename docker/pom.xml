@@ -12,5 +12,77 @@
     <groupId>splash.fiehnlab.ucdavis.edu</groupId>
     <artifactId>docker</artifactId>
 
+    <dependencies>
+        <dependency>
+            <artifactId>web</artifactId>
+            <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+
+            <!-- builds the actual docker image -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <exec executable="bash">
+                                    <arg line="build.sh push"/>
+                                </exec>
+
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- This goal allows us to get the EAR from the repository for deployment
+                    and install it locally -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>cli</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>
+                                        splash.fiehnlab.ucdavis.edu
+                                    </groupId>
+                                    <artifactId>web</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <destFileName>
+                                        splash.jar
+                                    </destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>
+                                ${project.build.directory}/
+                            </outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>
+                                true
+                            </overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
 
 </project>

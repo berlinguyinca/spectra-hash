@@ -72,7 +72,11 @@ vector<string> split(const string &s, char delimeter) {
 
 
 bool ionPairMzComparator(const pair<double, double> a, const pair<double, double> b) {
-	return a.first < b.first;
+	if(abs(a.first - b.first) < EPS) {
+		return a.second > b.second;
+	} else {
+		return a.first < b.first;
+	}
 }
 
 bool ionPairIntensityComparator(const pair<double, double> a, const pair<double, double> b) {
@@ -145,7 +149,7 @@ string calculateSum(vector<pair<double, double> > &spectrum, char spectrum_type)
 		spectrumSum += (*it).first * (*it).second;
 	}
 	
-	ss << setfill('0') << setw(SPECTRUM_SUM_PADDING) << setprecision(0) << fixed << spectrumSum;
+	ss << setfill('0') << setw(SPECTRUM_SUM_PADDING) << static_cast<long>(spectrumSum);
 
 	if(DEBUG) {
 		cerr << "Spectrum Sum: " << setprecision(PRECISION) << fixed << spectrumSum << " -> " << ss.str() << endl;

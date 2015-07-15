@@ -36,7 +36,7 @@ def encode_top_ions(spectrum, spectrum_type):
 	return hashlib.sha256(s).hexdigest()[: MAX_HASH_CHARACTERS_TOP_IONS]
 
 def encode_spectrum(spectrum, spectrum_type):
-	spectrum = sorted(spectrum, key = lambda x: x[0])
+	spectrum = sorted(spectrum, key = lambda x: (x[0], -x[1]))
 	s = ION_SEPARATOR.join(ION_PAIR_SEPARATOR.join(map(lambda s: ('%0.'+ str(PRECISION) +'f') % s, x)) for x in spectrum)
 	
 	return hashlib.sha256(s).hexdigest()[: MAX_HASH_CHARATERS_ENCODED_SPECTRUM]
@@ -44,7 +44,7 @@ def encode_spectrum(spectrum, spectrum_type):
 
 def calculate_sum(spectrum, spectrum_type):
 	spectrum = sorted(spectrum, key = lambda x: (-x[1], x[0]))[: SPECTRUM_SUM_MAX_IONS]
-	return ('%.0f' % sum(mz * intensity for mz, intensity in spectrum)).zfill(MAX_HASH_CHARACTERS_TOP_IONS)
+	return str(int(sum(mz * intensity for mz, intensity in spectrum))).zfill(MAX_HASH_CHARACTERS_TOP_IONS)
 
 
 def splash_it(spectrum, spectrum_type):

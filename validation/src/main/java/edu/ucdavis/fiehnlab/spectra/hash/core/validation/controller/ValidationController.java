@@ -134,7 +134,7 @@ public class ValidationController implements CommandLineRunner {
             HelpFormatter formatter = new HelpFormatter();
             formatter.setArgName("value");
 
-            formatter.printHelp("splash", "\n\nplease use the following options\n\n", options, "", true);
+            formatter.printHelp("splash", "\n\nplease use the following options\n\n", options, "\n\n", true);
         }
 
     }
@@ -201,6 +201,7 @@ public class ValidationController implements CommandLineRunner {
             }
 
             stream.flush();
+            stream.close();
 
             return counter;
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -289,7 +290,9 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("s", "spectra", true, "which column contains the spectra");
         options.addOption("o", "origin", true, "which column contains the origin information");
 
-        options.addOption("d", "duplicates", false, "only output discovered, careful very very slow!");
+        options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
+        options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin', careful it can be slow!");
+
 
         options.addOption("c", "create", false, "computes a validation file with the default splash implementation, instead of validation the file");
         options.addOption("t", "type", true, "what kind of spectra type is it, options is MS | IR | UV | NMR | RAMAN");

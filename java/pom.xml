@@ -26,14 +26,10 @@
 
         <dependency>
             <groupId>org.geirove.exmeso</groupId>
-            <artifactId>exmeso-jackson</artifactId>
-            <version>0.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.geirove.exmeso</groupId>
             <artifactId>exmeso-kryo</artifactId>
             <version>0.2</version>
+            <scope>test</scope>
+
         </dependency>
     </dependencies>
 

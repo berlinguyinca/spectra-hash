@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IonComperator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThanIntensityComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
@@ -117,11 +118,7 @@ public final class SplashVersion1 implements Splash {
         StringBuilder buffer = new StringBuilder();
 
         //sort by mass
-        Collections.sort(ions, new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o1.getMass().compareTo(o2.getMass());
-            }
-        });
+        Collections.sort(ions,new MassThanIntensityComperator());
 
 
         //build the first string

@@ -140,8 +140,8 @@ string calculateSum(vector<pair<double, double> > &spectrum, char spectrum_type)
 	int i = 0;
 	double spectrumSum = 0.0;
 	stringstream ss;
-
-	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end() && i < SPECTRUM_SUM_MAX_IONS; ++it) {
+	
+	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end() && ++i <= SPECTRUM_SUM_MAX_IONS; ++it) {
 		spectrumSum += (*it).first * (*it).second;
 	}
 	
@@ -207,7 +207,6 @@ int main(int argc, char** argv) {
 		}
 
 		// Print the spectrum id with the calculated splash id
-		cout << id << "," << splashIt(spectrum, '1
-		') << endl;
+		cout << id << "," << splashIt(spectrum, '1') << endl;
 	}
 }

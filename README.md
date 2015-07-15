@@ -64,15 +64,17 @@ java -jar validation/target/validation-1.0-SNAPSHOT.jar -k 2  -o 1 -s 3 -t ms -T
 
 The specified flags in the example mean:
 
-k = which column is your generated splash
-o = which column is your optional origin
-s = which column is your spectra
-t = what is your spectra type
-T = what is your seperator, ',' in this case
-X = continue in case of errors
+* k = which column is your generated splash
+* o = which column is your optional origin
+* s = which column is your spectra
+* t = what is your spectra type
+* T = what is your seperator, ',' in this case
+* X = continue in case of errors
 
-input.csv your input file
-output.csv your output file
+The input and output files are specified as arguments.
+
+* input.csv your input file
+* output.csv your output file
 
 The format for a spectra must be:
 

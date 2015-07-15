@@ -12,6 +12,7 @@
         <module>java</module>
         <module>web</module>
         <module>docker</module>
+        <module>validation</module>
     </modules>
 
 

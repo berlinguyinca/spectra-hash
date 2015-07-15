@@ -47,7 +47,7 @@ public class RestController {
         }
     }
 
-    @RequestMapping(value = "/splash/it/example")
+    @RequestMapping(value = "/splash/it/example" ,method = RequestMethod.GET)
     public Spectrum splashRequestExample() {
         Spectrum spectrum = new Spectrum();
         spectrum.setIons(Arrays.asList(new Ion(100, 1), new Ion(101, 2), new Ion(102, 3)));

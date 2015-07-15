@@ -268,6 +268,40 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         assertTrue(results.size() == 1);
     }
 
+    /**
+     * tests for a block of 2 masses, with same intensity to ensure that the sorting is correct
+     */
+    @Test
+    public void testSecondBlockGenerationThreeMassesThreeDifferentIntensities() {
+
+        Splash splash = getHashImpl();
+
+
+        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100, 1), new Ion(101,2), new Ion(102,3)), SpectraType.MS);
+
+
+        final Collection<Boolean> results = new ArrayList<Boolean>();
+
+        splash.addListener(new SplashListener() {
+            public void eventReceived(SplashingEvent e) {
+
+                switch (e.getBlock()) {
+                    case SECOND:
+                        assertEquals("102.000000 101.000000 100.000000", e.getRawValue());
+                        results.add(true);
+                }
+            }
+
+            public void complete(Spectrum spectrum, String splash) {
+                System.out.println("generated splash: " + splash);
+            }
+        });
+
+        String splashHash = splash.splashIt(spectrum);
+
+        assertTrue(results.size() == 1);
+    }
+
 
     /**
      * test if the generation of the string for block 3 is complete and as expected

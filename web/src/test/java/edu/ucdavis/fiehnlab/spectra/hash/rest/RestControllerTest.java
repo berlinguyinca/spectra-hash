@@ -53,7 +53,8 @@ public class RestControllerTest {
             "\"intensity\": 3\n" +
             "}\n" +
             "],\n" +
-            "\"metaData\": { }\n" +
+            "\"metaData\": { }\n," +
+            "\"type\": \"MS\"\n" +
             "}";
 
     @Autowired
@@ -84,10 +85,9 @@ public class RestControllerTest {
                 .contentType("application/json")
                 .body(spectra)
                 .when()
-                .post("/splashIt/mona")
+                .post("/splash/it")
                 .then().log().all().statusCode(HttpStatus.OK.value());
     }
-
 
     @org.junit.Test
     public void testConvert2() throws Exception {
@@ -96,20 +96,8 @@ public class RestControllerTest {
                 .contentType("application/json")
                 .body(spectra)
                 .when()
-                .post("/splashIt/hmdb")
+                .post("/splash/it")
                 .then().log().all().statusCode(HttpStatus.OK.value());
     }
-
-    @org.junit.Test
-    public void testConvert3() throws Exception {
-
-        given().log().all()
-                .contentType("application/json")
-                .body(spectra)
-                .when()
-                .post("/splashIt/i hate white spaces")
-                .then().log().all().statusCode(HttpStatus.OK.value());
-    }
-
 
 }

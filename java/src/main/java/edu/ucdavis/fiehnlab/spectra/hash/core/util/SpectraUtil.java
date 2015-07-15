@@ -14,17 +14,14 @@ import java.util.List;
 public class SpectraUtil {
 
     /**
-     * converts a string to a spectrum object for us
+     * converts a string to a spectrum object for us, we can't really verify it, since this will cause stack overflow exceptions
+     * due to the complexity or the spectra
      *
      * @param spectra
      * @param type
      * @return
      */
     public static Spectrum convertStringToSpectrum(String spectra, SpectraType type, String origin) {
-        if (!spectra.matches("^(?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?)(?: (?:\\d+?(?:\\.\\d+?)?):(?:\\d+?(?:\\.\\d+?)?))*?$")) {
-            throw new IllegalArgumentException("sorry, your provided spectra string, did not match the exspected pattern!");
-        }
-
 
         String[] pairs = spectra.split(" ");
 

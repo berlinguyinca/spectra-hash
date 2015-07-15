@@ -184,57 +184,60 @@ public class ValidationController implements CommandLineRunner {
             counter++;
             String line = scanner.nextLine();
 
-            String[] columns = line.split(seperator);
+            if (!line.isEmpty()) {
+
+                String[] columns = line.split(seperator);
 
 
-            String spectra = null;
-
-            try {
-                spectra = columns[columnSpectra - 1];
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ParseException("sorry, we did not find a spectra, did you specify the right column?");
-            }
-
-            String origin = "unknown";
-
-            if (columnOrigin != -1) {
-                try {
-                    origin = columns[columnOrigin - 1];
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new ParseException("sorry, we did not find an origin, did you specify the right column?");
-                }
-
-            }
-
-
-            if (!cmd.hasOption("create")) {
-                String splash = null;
+                String spectra = null;
 
                 try {
-                    splash = columns[columnSplash - 1];
+                    spectra = columns[columnSpectra - 1];
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
+                    throw new ParseException("sorry, we did not find a spectra, did you specify the right column?");
                 }
 
-                boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd);
+                String origin = "unknown";
 
-                if (valid) {
-                    counterValid++;
+                if (columnOrigin != -1) {
+                    try {
+                        origin = columns[columnOrigin - 1];
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new ParseException("sorry, we did not find an origin, did you specify the right column?");
+                    }
+
                 }
-                if (counter % interval == 0) {
-                    status(cmd, "splashes valid: " + (double) counterValid / (double) counter * 100 + "%, ");
+
+
+                if (!cmd.hasOption("create")) {
+                    String splash = null;
+
+                    try {
+                        splash = columns[columnSplash - 1];
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
+                    }
+
+                    boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd);
+
+                    if (valid) {
+                        counterValid++;
+                    }
+                    if (counter % interval == 0) {
+                        status(cmd, "splashes valid: " + (double) counterValid / (double) counter * 100 + "%, ");
+                    }
+
+                } else {
+
+                    if (counter % interval == 0) {
+                        status(cmd, "splashing, ");
+                    }
+                    splashIt(spectra, origin, msType, stream, seperator, cmd);
                 }
 
-            } else {
-
-                if (counter % interval == 0) {
-                    status(cmd, "splashing, ");
+                if ((counter % interval) == 0) {
+                    status(cmd, "processed " + counter + " spectra, " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
                 }
-                splashIt(spectra, origin, msType, stream, seperator, cmd);
-            }
-
-            if ((counter % interval) == 0) {
-                status(cmd, "processed " + counter + " spectra, " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
             }
         }
 

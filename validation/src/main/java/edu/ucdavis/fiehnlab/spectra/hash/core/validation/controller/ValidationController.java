@@ -135,6 +135,8 @@ public class ValidationController implements CommandLineRunner {
             formatter.setArgName("value");
 
             formatter.printHelp("splash", "\n\nplease use the following options\n\n", options, "\n\n", true);
+
+            e.printStackTrace(System.out);
         }
 
     }
@@ -153,60 +155,94 @@ public class ValidationController implements CommandLineRunner {
      */
     private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, PrintStream stream, SpectraType msType) throws FileNotFoundException, ParseException {
 
-        status(cmd,"processing your data...\n");
+
+        if (cmd.hasOption("create")) {
+            status(cmd, "splashing your data...\n");
+
+        } else {
+            status(cmd, "validating your splashes...\n");
+
+        }
+        File inputFile = null;
         try {
-            File inputFile = new File(cmd.getArgs()[0]);
+            inputFile = new File(cmd.getArgs()[0]);
 
+            status(cmd, "reading file: " + inputFile + "\n");
 
-            Scanner scanner = new Scanner(inputFile);
-
-            long time = System.currentTimeMillis();
-            int counter = 0;
-            int counterValid = 0;
-            int interval = 10000;
-            while (scanner.hasNextLine()) {
-
-                counter++;
-                String line = scanner.nextLine();
-
-                String[] columns = line.split(seperator);
-
-
-                String spectra = columns[columnSpectra - 1];
-                String origin = "unknown";
-
-                if (columnOrigin != -1) {
-                    origin = columns[columnOrigin - 1];
-                }
-
-                if (!cmd.hasOption("create")) {
-                    String splash = columns[columnSplash - 1];
-
-                    boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd);
-
-                    if (valid) {
-                        counterValid++;
-
-                        if (counter % interval == 0) {
-                            status(cmd, "splashes valid: " + (double)counterValid/(double)counter*100 + "%, " );
-                        }
-                    }
-                } else {
-                    splashIt(spectra, origin, msType, stream, seperator, cmd);
-                }
-
-                if ((counter % interval) == 0) {
-                    status(cmd, "processed " + counter + " spectra " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
-                }
-            }
-
-            stream.flush();
-            stream.close();
-
-            return counter;
         } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
             throw new ParseException("please provide an input file, as first argument");
         }
+        Scanner scanner = new Scanner(inputFile);
+
+        long time = System.currentTimeMillis();
+        int counter = 0;
+        int counterValid = 0;
+        int interval = 10000;
+        while (scanner.hasNextLine()) {
+
+            counter++;
+            String line = scanner.nextLine();
+
+            String[] columns = line.split(seperator);
+
+
+            String spectra = null;
+
+            try {
+                spectra = columns[columnSpectra - 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new ParseException("sorry, we did not find a spectra, did you specify the right column?");
+            }
+
+            String origin = "unknown";
+
+            if (columnOrigin != -1) {
+                try {
+                    origin = columns[columnOrigin - 1];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new ParseException("sorry, we did not find an origin, did you specify the right column?");
+                }
+
+            }
+
+
+            if (!cmd.hasOption("create")) {
+                String splash = null;
+
+                try {
+                    splash = columns[columnSplash - 1];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
+                }
+
+                boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd);
+
+                if (valid) {
+                    counterValid++;
+                }
+                if (counter % interval == 0) {
+                    status(cmd, "splashes valid: " + (double) counterValid / (double) counter * 100 + "%, ");
+                }
+
+            } else {
+
+                if (counter % interval == 0) {
+                    status(cmd, "splashing, ");
+                }
+                splashIt(spectra, origin, msType, stream, seperator, cmd);
+            }
+
+            if ((counter % interval) == 0) {
+                status(cmd, "processed " + counter + " spectra, " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
+            }
+        }
+
+        stream.flush();
+        stream.close();
+
+        return counter;
+
     }
 
     private void status(CommandLine cmd, String message) {
@@ -255,6 +291,23 @@ public class ValidationController implements CommandLineRunner {
 
         boolean valid = (splash.equals(code));
 
+        if (!valid) {
+            String[] reference = code.split("-");
+            String[] provided = splash.split("-");
+
+            String format = "%1$30s";
+            status(cmd, String.format(format, "reference: ") + code + "\n");
+            status(cmd, String.format(format, "provided: ") + splash + "\n");
+            status(cmd, String.format(format, "origin: ") + origin + "\n");
+
+
+            status(cmd, String.format(format, "first block identical: ") + reference[0].equals(provided[0]) + "\n");
+            status(cmd, String.format(format, "second block identical: ") + reference[1].equals(provided[1]) + "\n");
+            status(cmd, String.format(format, "third block identical: ") + reference[2].equals(provided[2]) + "\n");
+            status(cmd, String.format(format, "fourth block identical: ") + reference[3].equals(provided[3]) + "\n");
+            status(cmd, "\n");
+
+        }
 
         serializeResult(new ValidationResult(code, spectra, origin, msType, seperator, valid, splash), stream, cmd);
 

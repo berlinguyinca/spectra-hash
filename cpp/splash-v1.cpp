@@ -226,6 +226,6 @@ int main(int argc, char** argv) {
 		}
 
 		// Print the spectrum id with the calculated splash id
-		cout << id << "," << splashIt(spectrum, '1') << endl;
+		cout << id << "," << splashIt(spectrum, '1') << "," << spectrum_string << endl;
 	}
 }

@@ -18,12 +18,6 @@ public interface Spectrum {
     public List<Ion> getIons();
 
     /**
-     * meta data of a spectra
-     * @return
-     */
-    public Map<String,Object> getMetaData();
-
-    /**
      * convmerts the spectrum to a relative spectra
      * @return
      * @param scale
@@ -34,7 +28,7 @@ public interface Spectrum {
      *
      * @return
      */
-    public String getOrigin();
+    String getOrigin();
 
     /**
      * what kind of a spectra do we have

@@ -11,19 +11,14 @@ public class SpectrumImpl implements Spectrum {
 
     private String origin;
     private List<Ion> ions;
-    private Map<String, Object> metaData;
     private SpectraType type;
 
-    public SpectrumImpl(List<Ion> ions, Map<String, Object> metaData, String origin, SpectraType type) {
+    public SpectrumImpl(List<Ion> ions,  String origin, SpectraType type) {
         this.ions = ions;
         this.origin = origin;
         this.type = type;
-        this.metaData = metaData;
     }
 
-    public SpectrumImpl(List<Ion> ions, String origin, SpectraType type) {
-        this(ions, new HashMap<String, Object>(), origin, type);
-    }
 
     protected SpectrumImpl(){
 
@@ -58,13 +53,6 @@ public class SpectrumImpl implements Spectrum {
         this.ions = ions;
     }
 
-    public Map<String, Object> getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(Map<String, Object> metaData) {
-        this.metaData = metaData;
-    }
 
     public Spectrum toRelative(int scale) {
         double max = 0;
@@ -79,7 +67,7 @@ public class SpectrumImpl implements Spectrum {
         for (Ion ion : getIons()) {
             ions.add(new Ion(ion.getMass(), ion.getIntensity() / max * scale));
         }
-        return new SpectrumImpl(ions, getMetaData(), getOrigin(), getType());
+        return new SpectrumImpl(ions, getOrigin(), getType());
     }
 
 }

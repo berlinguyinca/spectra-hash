@@ -462,8 +462,12 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case FOURTH:
+
+                        double d = Double.parseDouble(e.getRawValue());
+                        long l = (long)d;
+
                         assertTrue(
-                                e.getRawValue().length() <= 10
+                                String.valueOf(l).length() <= 10
                         );
                         results.add(true);
                 }

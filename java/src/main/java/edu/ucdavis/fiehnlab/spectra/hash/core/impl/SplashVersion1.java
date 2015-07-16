@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IonComperator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThanIntensityComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
@@ -116,12 +117,7 @@ public final class SplashVersion1 implements Splash {
 
         StringBuilder buffer = new StringBuilder();
 
-        //sort by mass
-        Collections.sort(ions, new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o1.getMass().compareTo(o2.getMass());
-            }
-        });
+        Collections.sort(ions, new MassThanIntensityComperator());
 
 
         //build the first string
@@ -210,7 +206,7 @@ public final class SplashVersion1 implements Splash {
         //first block
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
-        
+
         //second block
         buffer.append(encodeTop10Ions(spectrum).substring(0, maxCharactertop10IonBlockTruncation));
         buffer.append("-");
@@ -256,9 +252,15 @@ public final class SplashVersion1 implements Splash {
             if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
 
-        String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", (long)hashSum);
+        //truncated number
+        long total = (long) hashSum;
 
-        this.notifyListener(new SplashingEvent(sum, String.format("%d", (long)hashSum), SplashBlock.FOURTH, spectrum));
+        //had to be changed, do to the fact that we encountered rounding issues in the C/Cpp implementation
+        //String sum = String.format("%0" + calculatedSumMaxDigitPadding + ".0f", hashSum);
+        String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", total);
+
+        this.notifyListener(new SplashingEvent(sum, String.valueOf(hashSum), SplashBlock.FOURTH, spectrum));
+
 
         return sum;
     }

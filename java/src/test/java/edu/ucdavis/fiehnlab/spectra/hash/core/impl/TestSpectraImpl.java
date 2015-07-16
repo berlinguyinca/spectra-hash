@@ -21,7 +21,7 @@ public class TestSpectraImpl extends SpectrumImpl {
     }
 
     public TestSpectraImpl(Spectrum s, String hash) {
-        super((ArrayList<Ion>) s.getIons(), s.getMetaData(), s.getOrigin(), s.getType());
+        super((ArrayList<Ion>) s.getIons(), s.getOrigin(), s.getType());
         this.hash = hash;
     }
 

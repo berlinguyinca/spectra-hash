@@ -1,7 +1,10 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.validation.controller;
 
+import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.SplashFactory;
+import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
+import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil;
 import edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize.Result;
@@ -18,12 +21,17 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
- * a controller todo the actual validation for us
+ * a small util to print out validation and processing information, while doing splashing in comparrison of different api's
  */
 @Controller
 public class ValidationController implements CommandLineRunner {
 
     private Logger logger = Logger.getLogger("validation");
+
+    /**
+     * utilized format for the output of strings
+     */
+    private String format = "%1$30s";
 
     /**
      * parses our input and processes the data
@@ -119,14 +127,14 @@ public class ValidationController implements CommandLineRunner {
 
             //only show statistics, if we save the output in a file
             if (!cmd.hasOption("output")) {
-                System.out.println("finished processing, processing took: " + (System.currentTimeMillis() - time) / 1000 / 60 + " min.");
+                System.out.println("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.");
                 System.out.println("processed " + hashes + " spectra");
-                System.out.println("average time including io to splash a spectra is " + (double) (System.currentTimeMillis() - time) / (double) hashes + " ms");
+                System.out.println("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
 
             } else {
-                logger.info("finished processing, processing took: " + (System.currentTimeMillis() - time) / 1000 + " seconds");
+                logger.info("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " seconds");
                 logger.info("processed " + hashes + " spectra");
-                logger.info("average time including io to splash a spectra is " + (double) (System.currentTimeMillis() - time) / (double) hashes + " ms");
+                logger.info("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
 
             }
         } catch (Exception e) {
@@ -225,7 +233,7 @@ public class ValidationController implements CommandLineRunner {
                             counterValid++;
                         }
                         if (counter % interval == 0) {
-                            status(cmd, "splashes valid: " + (double) counterValid / (double) counter * 100 + "%, ");
+                            status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, ");
                         }
 
                     } else {
@@ -237,10 +245,13 @@ public class ValidationController implements CommandLineRunner {
                     }
 
                     if ((counter % interval) == 0) {
-                        status(cmd, "processed " + counter + " spectra, " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
+                        status(cmd, "processed " + counter + " spectra, " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) counter) + " ms average time to splash a spectra\n");
                     }
                 } catch (Exception e) {
-                    if (cmd.hasOption("ignoreErrors")) {
+                    if (cmd.hasOption("ignoreErrorsSuppressed")) {
+
+                        //nothign to see here
+                    } else if (cmd.hasOption("ignoreErrors")) {
                         status(cmd, "encountered error, ignoring it!\n");
                         status(cmd, "error was: " + e.getMessage() + "\n");
                         status(cmd, "line was: " + line + "\n");
@@ -279,7 +290,7 @@ public class ValidationController implements CommandLineRunner {
     private void splashIt(String spectra, String origin, SpectraType msType, PrintStream stream, String seperator, CommandLine cmd) {
 
 
-        String code = SplashUtil.splash(spectra, msType);
+        String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
 
         serializeResult(new Result(code, spectra, origin, msType, seperator), stream, cmd);
@@ -301,14 +312,20 @@ public class ValidationController implements CommandLineRunner {
 
         String code = SplashUtil.splash(spectra, msType);
 
-
         boolean valid = (splash.equals(code));
 
-        if (!valid) {
+        if (cmd.hasOption("debug") && !valid) {
+
+            status(cmd, String.format(format, "reference validation result") + "\n");
+
+            //splash it again, this time with a listener
+            code = SplashUtil.splash(spectra, msType, new Listener(cmd));
+
+            status(cmd, String.format(format, "valid: ") + valid + "\n");
+
             String[] reference = code.split("-");
             String[] provided = splash.split("-");
 
-            String format = "%1$30s";
             status(cmd, String.format(format, "reference: ") + code + "\n");
             status(cmd, String.format(format, "provided: ") + splash + "\n");
             status(cmd, String.format(format, "origin: ") + origin + "\n");
@@ -319,7 +336,6 @@ public class ValidationController implements CommandLineRunner {
             status(cmd, String.format(format, "third block identical: ") + reference[2].equals(provided[2]) + "\n");
             status(cmd, String.format(format, "fourth block identical: ") + reference[3].equals(provided[3]) + "\n");
             status(cmd, "\n");
-
         }
 
         serializeResult(new ValidationResult(code, spectra, origin, msType, seperator, valid, splash), stream, cmd);
@@ -356,8 +372,10 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("s", "spectra", true, "which column contains the spectra");
         options.addOption("o", "origin", true, "which column contains the origin information");
 
-        options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
-        options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin', careful it can be slow!");
+        //options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
+        //options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin', careful it can be slow!");
+        options.addOption("X", "debug", false, "displays additional debug information, cut to 50 char for strings");
+        options.addOption("XX", "debugExact", false, "displays additional debug information, complete printout");
 
 
         options.addOption("c", "create", false, "computes a validation file with the default splash implementation, instead of validation the file");
@@ -366,10 +384,45 @@ public class ValidationController implements CommandLineRunner {
 
         options.addOption("T", "separator", true, "what is the separator between columns");
         options.addOption("O", "output", false, "output will be system out, instead of a file");
-        options.addOption("X", "ignoreErrors", false, "errors in spectra, will be ignored");
+        options.addOption("I", "ignoreErrors", false, "errors in spectra, will be ignored, but displayed");
+        options.addOption("IS", "ignoreErrorsSuppressed", false, "errors in spectra, will be ignored and not shown");
 
 
         return options;
     }
 
+
+    /**
+     * a simple listener for debug purposes
+     */
+    class Listener implements SplashListener {
+
+        public Listener(CommandLine cmd) {
+            this.cmd = cmd;
+        }
+
+        private CommandLine cmd;
+
+        /**
+         * in case we have
+         *
+         * @param e
+         */
+        public void eventReceived(SplashingEvent e) {
+
+            if (cmd.hasOption("debugExact")) {
+                status(cmd, String.format(format, e.getBlock() + " raw : ") + e.getRawValue() + "\n");
+                status(cmd, String.format(format, e.getBlock() + " processed : ") + e.getProcessedValue() + "\n");
+            } else if (cmd.hasOption("debug")) {
+                status(cmd, String.format(format, e.getBlock() + " raw : ") + e.getRawValue().substring(0, Math.min(e.getRawValue().length(), 90)) + "\n");
+                status(cmd, String.format(format, e.getBlock() + " processed : ") + e.getProcessedValue().substring(0, Math.min(e.getProcessedValue().length(), 90)) + "\n");
+            }
+        }
+
+        public void complete(Spectrum spectrum, String splash) {
+            if (cmd.hasOption("debugExact") | cmd.hasOption("debug")) {
+                status(cmd, "\n\n");
+            }
+        }
+    }
 }

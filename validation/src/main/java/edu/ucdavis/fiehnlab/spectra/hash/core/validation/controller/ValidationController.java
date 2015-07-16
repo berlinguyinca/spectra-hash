@@ -1,23 +1,17 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.validation.controller;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
-import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
-import edu.ucdavis.fiehnlab.spectra.hash.core.SplashFactory;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil;
-import edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize.Result;
-import edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize.ValidationResult;
+import edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize.*;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Scanner;
 
 /**
@@ -26,12 +20,45 @@ import java.util.Scanner;
 @Controller
 public class ValidationController implements CommandLineRunner {
 
-    private Logger logger = Logger.getLogger("validation");
+    private static Logger logger = Logger.getLogger("validation");
 
     /**
-     * utilized format for the output of strings
+     * utilized FORMAT for the output of strings
      */
-    private String format = "%1$30s";
+    public static String FORMAT = "%1$40s";
+
+    private Serializer serializer;
+
+
+    /**
+     * provides us with a serializer, based on the command line options
+     *
+     * @param cmd
+     * @return
+     */
+    protected Serializer createSerialzier(CommandLine cmd, PrintStream out) throws Exception {
+
+        //exspected datatype for serialization
+        Class<? extends Result> type;
+        if (cmd.hasOption("create")) {
+            type = Result.class;
+        } else {
+            type = ValidationResult.class;
+        }
+
+        //we only want to write duplicates out
+        if (cmd.hasOption("duplicates")) {
+            return new FindDuplicatesSerializer(cmd, out, type);
+        }
+        //we want to sort the result
+        else if (cmd.hasOption("sort")) {
+            return new SortSerializer(cmd, out, type);
+        }
+        //we don't care about the order and just serialize it
+        else {
+            return new Serializer(cmd, out);
+        }
+    }
 
     /**
      * parses our input and processes the data
@@ -82,16 +109,16 @@ public class ValidationController implements CommandLineRunner {
                 columnOrigin = Integer.parseInt(cmd.getOptionValue("origin"));
             }
 
-            PrintStream stream = null;
 
             if (cmd.hasOption("output")) {
-                stream = System.out;
+                serializer = createSerialzier(cmd, System.out);
             } else {
                 try {
                     File file = new File(cmd.getArgs()[1]);
 
                     logger.info("writing result to: " + file);
-                    stream = new PrintStream(new FileOutputStream(file));
+                    serializer = createSerialzier(cmd, new PrintStream(new FileOutputStream(file)));
+
                 } catch (IndexOutOfBoundsException e) {
                     throw new ParseException("please provide a filename for the output file");
                 }
@@ -123,20 +150,14 @@ public class ValidationController implements CommandLineRunner {
 
 
             long time = System.currentTimeMillis();
-            int hashes = processFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, stream, msType);
+            int hashes = processFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, serializer, msType);
 
             //only show statistics, if we save the output in a file
-            if (!cmd.hasOption("output")) {
-                System.out.println("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.");
-                System.out.println("processed " + hashes + " spectra");
-                System.out.println("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
+            status(cmd, "finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.\n");
+            status(cmd, "processed " + hashes + " spectra\n");
+            status(cmd, "average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms\n");
 
-            } else {
-                logger.info("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " seconds");
-                logger.info("processed " + hashes + " spectra");
-                logger.info("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
 
-            }
         } catch (Exception e) {
             System.out.println("\nwe encountered an error: " + e.getMessage() + "\n");
             HelpFormatter formatter = new HelpFormatter();
@@ -161,7 +182,7 @@ public class ValidationController implements CommandLineRunner {
      * @param msType
      * @throws FileNotFoundException
      */
-    private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, PrintStream stream, SpectraType msType) throws Exception {
+    private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, Serializer stream, SpectraType msType) throws Exception {
 
 
         if (cmd.hasOption("create")) {
@@ -187,6 +208,9 @@ public class ValidationController implements CommandLineRunner {
         int counter = 0;
         int counterValid = 0;
         int interval = 10000;
+
+        stream.init();
+
         while (scanner.hasNextLine()) {
 
             counter++;
@@ -227,7 +251,7 @@ public class ValidationController implements CommandLineRunner {
                             throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
                         }
 
-                        boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd);
+                        boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
 
                         if (valid) {
                             counterValid++;
@@ -241,7 +265,7 @@ public class ValidationController implements CommandLineRunner {
                         if (counter % interval == 0) {
                             status(cmd, "splashing, ");
                         }
-                        splashIt(spectra, origin, msType, stream, seperator, cmd);
+                        splashIt(spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
                     }
 
                     if ((counter % interval) == 0) {
@@ -262,14 +286,19 @@ public class ValidationController implements CommandLineRunner {
             }
         }
 
-        stream.flush();
         stream.close();
 
         return counter;
 
     }
 
-    private void status(CommandLine cmd, String message) {
+    /**
+     * provides us with simple status messages and use for debuggingt
+     *
+     * @param cmd
+     * @param message
+     */
+    public static void status(CommandLine cmd, String message) {
         if (!cmd.hasOption("output")) {
             System.out.print(message);
         } else {
@@ -287,8 +316,7 @@ public class ValidationController implements CommandLineRunner {
      * @param seperator
      * @param cmd
      */
-    private void splashIt(String spectra, String origin, SpectraType msType, PrintStream stream, String seperator, CommandLine cmd) {
-
+    private void splashIt(String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
 
         String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
@@ -308,33 +336,32 @@ public class ValidationController implements CommandLineRunner {
      * @param seperator
      * @param cmd
      */
-    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, PrintStream stream, String seperator, CommandLine cmd) {
-
+    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
         String code = SplashUtil.splash(spectra, msType);
 
         boolean valid = (splash.equals(code));
 
         if (cmd.hasOption("debug") && !valid) {
 
-            status(cmd, String.format(format, "reference validation result") + "\n");
+            status(cmd, "reference validation result" + "\n");
 
             //splash it again, this time with a listener
             code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
-            status(cmd, String.format(format, "valid: ") + valid + "\n");
+            status(cmd, String.format(FORMAT, "valid: ") + valid + "\n");
 
             String[] reference = code.split("-");
             String[] provided = splash.split("-");
 
-            status(cmd, String.format(format, "reference: ") + code + "\n");
-            status(cmd, String.format(format, "provided: ") + splash + "\n");
-            status(cmd, String.format(format, "origin: ") + origin + "\n");
+            status(cmd, String.format(FORMAT, "reference: ") + code + "\n");
+            status(cmd, String.format(FORMAT, "provided: ") + splash + "\n");
+            status(cmd, String.format(FORMAT, "origin: ") + origin + "\n");
 
 
-            status(cmd, String.format(format, "first block identical: ") + reference[0].equals(provided[0]) + "\n");
-            status(cmd, String.format(format, "second block identical: ") + reference[1].equals(provided[1]) + "\n");
-            status(cmd, String.format(format, "third block identical: ") + reference[2].equals(provided[2]) + "\n");
-            status(cmd, String.format(format, "fourth block identical: ") + reference[3].equals(provided[3]) + "\n");
+            status(cmd, String.format(FORMAT, "first block identical: ") + reference[0].equals(provided[0]) + "\n");
+            status(cmd, String.format(FORMAT, "second block identical: ") + reference[1].equals(provided[1]) + "\n");
+            status(cmd, String.format(FORMAT, "third block identical: ") + reference[2].equals(provided[2]) + "\n");
+            status(cmd, String.format(FORMAT, "fourth block identical: ") + reference[3].equals(provided[3]) + "\n");
             status(cmd, "\n");
         }
 
@@ -350,13 +377,8 @@ public class ValidationController implements CommandLineRunner {
      * @param stream
      * @param cmd
      */
-    private void serializeResult(Result result, PrintStream stream, CommandLine cmd) {
-
-        if (cmd.hasOption("duplicates")) {
-
-        } else {
-            stream.println(result.toString());
-        }
+    private void serializeResult(Result result, Serializer stream, CommandLine cmd) throws Exception {
+        serializer.serialize(result);
     }
 
     /**
@@ -372,8 +394,8 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("s", "spectra", true, "which column contains the spectra");
         options.addOption("o", "origin", true, "which column contains the origin information");
 
-        //options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
-        //options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin', careful it can be slow!");
+        options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
+        options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin' or 'spectra', careful it can be slow!");
         options.addOption("X", "debug", false, "displays additional debug information, cut to 50 char for strings");
         options.addOption("XX", "debugExact", false, "displays additional debug information, complete printout");
 
@@ -411,11 +433,11 @@ public class ValidationController implements CommandLineRunner {
         public void eventReceived(SplashingEvent e) {
 
             if (cmd.hasOption("debugExact")) {
-                status(cmd, String.format(format, e.getBlock() + " raw : ") + e.getRawValue() + "\n");
-                status(cmd, String.format(format, e.getBlock() + " processed : ") + e.getProcessedValue() + "\n");
+                status(cmd, String.format(FORMAT, e.getBlock() + " raw : ") + e.getRawValue() + "\n");
+                status(cmd, String.format(FORMAT, e.getBlock() + " processed : ") + e.getProcessedValue() + "\n");
             } else if (cmd.hasOption("debug")) {
-                status(cmd, String.format(format, e.getBlock() + " raw : ") + e.getRawValue().substring(0, Math.min(e.getRawValue().length(), 90)) + "\n");
-                status(cmd, String.format(format, e.getBlock() + " processed : ") + e.getProcessedValue().substring(0, Math.min(e.getProcessedValue().length(), 90)) + "\n");
+                status(cmd, String.format(FORMAT, e.getBlock() + " raw : ") + e.getRawValue().substring(0, Math.min(e.getRawValue().length(), 90)) + "\n");
+                status(cmd, String.format(FORMAT, e.getBlock() + " processed : ") + e.getProcessedValue().substring(0, Math.min(e.getProcessedValue().length(), 90)) + "\n");
             }
         }
 

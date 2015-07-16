@@ -45,6 +45,7 @@ public abstract class AbstractSpectraHashImplTester {
         final ExternalMergeSort.Serializer<TestSpectraImpl> serializer = new KryoSerializer<TestSpectraImpl>(TestSpectraImpl.class);
 
         final SpectrumReader reader = new SpectrumReader();
+
         reader.readSpectrum(new InputStreamReader(getClass().getResourceAsStream(inputFile)), new SpectraHandler() {
 
             public void begin() throws IOException {

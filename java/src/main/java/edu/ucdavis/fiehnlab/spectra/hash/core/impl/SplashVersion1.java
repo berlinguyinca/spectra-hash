@@ -258,9 +258,9 @@ public final class SplashVersion1 implements Splash {
             if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
 
-        String sum = String.format("%0" + calculatedSumMaxDigitPadding + ".0f", hashSum);
+        String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", (long)hashSum);
 
-        this.notifyListener(new SplashingEvent(sum, String.format("%.0f", hashSum), SplashBlock.FOURTH, spectrum));
+        this.notifyListener(new SplashingEvent(sum, String.format("%d", (long)hashSum), SplashBlock.FOURTH, spectrum));
 
         return sum;
     }

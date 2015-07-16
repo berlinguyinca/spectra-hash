@@ -100,9 +100,9 @@ ion:intensity ion:intensity
 
 you can also use the same tool, to easily splash a file of spectra, using the reference algorithm. To only report duplicates, sort the output, etc.
 
-## building
+# building
 
-### Java/Scala
+## Java/Scala
 
 ```
 mvn clean install
@@ -110,18 +110,18 @@ mvn clean install
 
 will build your project, run all the tests and you can find the build jar files, in the target directories of the project.
 
-### Python
+## Python
 
 TODO
 
-### C++
+## C++
 
 TODO
 
-### C#
+## C#
 
 TODO
 
-##Contributing
+#Contributing
 
 if you like to contribute to this project, please feel free to contact me.

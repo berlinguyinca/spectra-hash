@@ -47,9 +47,10 @@ TODO
 
 ## C# api:
 
-To generate a splash you need to add a reference to the Splash.dll to your project, add the following 'using' statement:
-
-```using NSSplash;```
+To generate a splash you need to add a reference to the Splash.dll to your project then add the following 'using' statement:
+```
+using NSSplash;
+```
 
 To get the hash for a given spectrum you can call:
 ```

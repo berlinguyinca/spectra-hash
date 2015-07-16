@@ -9,13 +9,14 @@ import java.io.PrintStream;
 /**
  * a serializer to find duplicates
  */
-public class FindDuplicatesSerializer extends SortSerializer{
+public class FindDuplicatesSerializer extends SortSerializer {
 
     Result last = null;
 
     boolean wroteLast = false;
 
     long duplicatesFound = 0;
+
     @Override
     public void init() throws Exception {
         super.init();
@@ -26,12 +27,11 @@ public class FindDuplicatesSerializer extends SortSerializer{
 
     @Override
     protected void serializeSortedData(Result sortedData) {
-        if(last == null){
+        if (last == null) {
             last = sortedData;
-        }
-        else{
-            if(sortedData.equals(last)){
-                if(!wroteLast){
+        } else {
+            if (sortedData.equals(last)) {
+                if (!wroteLast) {
                     super.serializeSortedData(last);
                     wroteLast = true;
                 }
@@ -44,6 +44,7 @@ public class FindDuplicatesSerializer extends SortSerializer{
                 super.serializeSortedData(sortedData);
             }
         }
+
     }
 
     @Override

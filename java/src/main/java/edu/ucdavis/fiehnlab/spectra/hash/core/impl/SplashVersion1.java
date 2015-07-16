@@ -117,16 +117,7 @@ public final class SplashVersion1 implements Splash {
 
         StringBuilder buffer = new StringBuilder();
 
-        //sort by mass
-        <<<<<<<HEAD
         Collections.sort(ions, new MassThanIntensityComperator());
-        =======
-        Collections.sort(ions, new Comparator<Ion>() {
-            public int compare(Ion o1, Ion o2) {
-                return o1.getMass().compareTo(o2.getMass());
-            }
-        });
-        >>>>>>>0d aa6f8424be055655fa8ce97c9c94d656fb7f39
 
 
         //build the first string

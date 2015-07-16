@@ -21,7 +21,7 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
- * a controller todo the actual validation for us
+ * a small util to print out validation and processing information, while doing splashing in comparrison of different api's
  */
 @Controller
 public class ValidationController implements CommandLineRunner {
@@ -127,14 +127,14 @@ public class ValidationController implements CommandLineRunner {
 
             //only show statistics, if we save the output in a file
             if (!cmd.hasOption("output")) {
-                System.out.println("finished processing, processing took: " + (System.currentTimeMillis() - time) / 1000 / 60 + " min.");
+                System.out.println("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.");
                 System.out.println("processed " + hashes + " spectra");
-                System.out.println("average time including io to splash a spectra is " + (double) (System.currentTimeMillis() - time) / (double) hashes + " ms");
+                System.out.println("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
 
             } else {
-                logger.info("finished processing, processing took: " + (System.currentTimeMillis() - time) / 1000 + " seconds");
+                logger.info("finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " seconds");
                 logger.info("processed " + hashes + " spectra");
-                logger.info("average time including io to splash a spectra is " + (double) (System.currentTimeMillis() - time) / (double) hashes + " ms");
+                logger.info("average time including io to splash a spectra is " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) hashes) + " ms");
 
             }
         } catch (Exception e) {
@@ -233,7 +233,7 @@ public class ValidationController implements CommandLineRunner {
                             counterValid++;
                         }
                         if (counter % interval == 0) {
-                            status(cmd, "splashes valid: " + (double) counterValid / (double) counter * 100 + "%, ");
+                            status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, ");
                         }
 
                     } else {
@@ -245,7 +245,7 @@ public class ValidationController implements CommandLineRunner {
                     }
 
                     if ((counter % interval) == 0) {
-                        status(cmd, "processed " + counter + " spectra, " + (double) (System.currentTimeMillis() - time) / (double) counter + " ms average time to splash a spectra\n");
+                        status(cmd, "processed " + counter + " spectra, " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) counter) + " ms average time to splash a spectra\n");
                     }
                 } catch (Exception e) {
                     if (cmd.hasOption("ignoreErrorsSuppressed")) {

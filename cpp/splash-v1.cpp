@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <ctime>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -40,20 +41,20 @@ const int SPECTRUM_SUM_MAX_IONS = 100;
 
 
 string sha256(const string s) {
-    unsigned char digest[SHA256_DIGEST_LENGTH];
+	unsigned char digest[SHA256_DIGEST_LENGTH];
 
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, s.c_str(), s.size());
-    SHA256_Final(digest, &sha256);
+	SHA256_CTX sha256;
+	SHA256_Init(&sha256);
+	SHA256_Update(&sha256, s.c_str(), s.size());
+	SHA256_Final(digest, &sha256);
 
-    stringstream ss;
+	stringstream ss;
 
-    for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-        ss << hex << setw(2) << setfill('0') << (int)digest[i];
+	for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+		ss << hex << setw(2) << setfill('0') << (int)digest[i];
 	}
 
-    return ss.str();
+	return ss.str();
 }
 
 
@@ -174,10 +175,17 @@ string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
 int main(int argc, char** argv) {
 	int i = 0;
 	string input;
+	
+	// Log times
+	clock_t start = clock();
+	double processingTime;
+	
 
 	while(getline(cin, input)) {
+		++i;
+		
 		if(DEBUG) {
-			cout << "Spectrum #" << ++i << endl;
+			cerr << "Spectrum #" << i << endl;
 		}
 
 		// Handle input of the form [id],[spectrum string]
@@ -208,6 +216,13 @@ int main(int argc, char** argv) {
 		// Normalize spectrum
 		for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
 			(*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
+		}
+		
+		// Provide output for large files
+		if(i % 10000 == 0) {
+			cerr << "processed " << i << " spectra, " << setprecision(2) << fixed
+				 <<(std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i
+				 << " ms average time to splash a spectrum." << endl;
 		}
 
 		// Print the spectrum id with the calculated splash id

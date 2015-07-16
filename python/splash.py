@@ -67,4 +67,4 @@ if __name__ == '__main__':
 		spectrum = [(mz, intensity / max_intensity * RELATIVE_INTENSITY_SCALE) for mz, intensity in spectrum]
 
 		# Print the spectrum id with the calculated splash id
-		print('%s,%s' % (spectrum_id, splash_it(spectrum, '1')))
+		print('%s,%s,%s' % (spectrum_id, splash_it(spectrum, '1'), spectrum_string))

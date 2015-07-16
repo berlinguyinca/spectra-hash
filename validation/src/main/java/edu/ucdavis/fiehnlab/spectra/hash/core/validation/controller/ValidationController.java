@@ -76,7 +76,11 @@ public class ValidationController implements CommandLineRunner {
 
 
             CommandLine cmd = parser.parse(options, strings, true);
+
+            displayUtilizedOptions(cmd);
+
             String seperator = ",";
+
 
             if (cmd.hasOption("separator")) {
                 seperator = cmd.getOptionValue("separator");
@@ -170,6 +174,37 @@ public class ValidationController implements CommandLineRunner {
 
     }
 
+    protected void displayUtilizedOptions(CommandLine cmd) {
+        String formatOption = "%1$5s";
+        String formatOptionValue = "%1$-20s";
+        String formatOptionDesc = "%1$-90s";
+
+
+        status(cmd, "utilized options\n\n");
+
+        for (Option o : cmd.getOptions()) {
+
+            if (cmd.hasOption(o.getOpt())) {
+
+                if (o.getValue() != null) {
+                    status(cmd, String.format(formatOption, o.getOpt() + ":") + String.format(formatOptionValue, o.getValue()) + String.format(formatOptionDesc, o.getDescription()) + "\n");
+                } else {
+                    status(cmd, String.format(formatOption, o.getOpt() + ":") + String.format(formatOptionValue,"") + String.format(formatOptionDesc, o.getDescription()) + "\n");
+                }
+            }
+        }
+
+        status(cmd, "\n");
+        status(cmd, "provided arguments\n\n");
+
+        for (String o : cmd.getArgList()) {
+            status(cmd, String.format(formatOption, "") + String.format(formatOptionValue,"") + String.format(formatOptionDesc, o) + "\n");
+
+        }
+
+        status(cmd, "\n");
+    }
+
     /**
      * process the actual file for us
      *
@@ -183,7 +218,6 @@ public class ValidationController implements CommandLineRunner {
      * @throws FileNotFoundException
      */
     private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, Serializer stream, SpectraType msType) throws Exception {
-
 
         if (cmd.hasOption("create")) {
             status(cmd, "splashing your data...\n");
@@ -318,7 +352,7 @@ public class ValidationController implements CommandLineRunner {
      */
     private void splashIt(String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
 
-        String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
+        String code = SplashUtil.splash(spectra, msType);
 
 
         serializeResult(new Result(code, spectra, origin, msType, seperator), stream, cmd);

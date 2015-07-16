@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IonComperator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThanIntensityComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;

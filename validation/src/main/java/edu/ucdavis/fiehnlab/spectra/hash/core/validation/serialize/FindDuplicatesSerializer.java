@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize;
 import edu.ucdavis.fiehnlab.spectra.hash.core.validation.controller.ValidationController;
 import org.apache.commons.cli.CommandLine;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 /**
@@ -14,11 +15,13 @@ public class FindDuplicatesSerializer extends SortSerializer{
 
     boolean wroteLast = false;
 
+    long duplicatesFound = 0;
     @Override
     public void init() throws Exception {
         super.init();
         last = null;
         wroteLast = false;
+        duplicatesFound = 0;
     }
 
     @Override
@@ -32,6 +35,8 @@ public class FindDuplicatesSerializer extends SortSerializer{
                     super.serializeSortedData(last);
                     wroteLast = true;
                 }
+
+                duplicatesFound++;
                 ValidationController.status(getCmd(), String.format(ValidationController.FORMAT, "duplicated splash: ") + sortedData.getSplash() + "\n");
                 ValidationController.status(getCmd(), String.format(ValidationController.FORMAT, "duplicated origin: ") + sortedData.getOrigin() + "\n");
 
@@ -39,6 +44,12 @@ public class FindDuplicatesSerializer extends SortSerializer{
                 super.serializeSortedData(sortedData);
             }
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        ValidationController.status(getCmd(), "duplicates found: " + duplicatesFound + "\n");
     }
 
     public FindDuplicatesSerializer(CommandLine cmd, PrintStream stream, Class<? extends Result> type) throws Exception {

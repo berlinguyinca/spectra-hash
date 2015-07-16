@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public final class SplashVersion1 implements Splash {
 
     /**
-     * how to scale the spectra
+     * how to scale the spectrum
      */
     public static final int scalingOfRelativeIntensity = 1000;
 
@@ -36,10 +36,10 @@ public final class SplashVersion1 implements Splash {
     private static final int maxCharactertop10IonBlockTruncation = 10;
 
     /**
-     * how many character should be in the spectra block. Basically this reduces the SHA256 code down
+     * how many character should be in the spectrum block. Basically this reduces the SHA256 code down
      * to a fixed length of N characater
      */
-    private static final int maxCharactersForSpectraBlockTruncation = 20;
+    private static final int maxCharactersForSpectrumBlockTruncation = 20;
 
     /**
      * max fixedPrecissionOfMassesAndIntensities
@@ -105,12 +105,12 @@ public final class SplashVersion1 implements Splash {
     }
 
     /**
-     * encodes the actual spectra
+     * encodes the actual spectrum
      *
      * @param spectrum
      * @return
      */
-    protected String encodeSpectra(Spectrum spectrum) {
+    protected String encodeSpectrum(Spectrum spectrum) {
 
         List<Ion> ions = spectrum.getIons();
 
@@ -209,16 +209,14 @@ public final class SplashVersion1 implements Splash {
 
         //first block
         buffer.append(buildFirstBlock(spectrum));
-
         buffer.append("-");
+        
         //second block
-
         buffer.append(encodeTop10Ions(spectrum).substring(0, maxCharactertop10IonBlockTruncation));
         buffer.append("-");
 
         //third block
-
-        buffer.append(encodeSpectra(spectrum).substring(0, maxCharactersForSpectraBlockTruncation));
+        buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
         buffer.append("-");
 
         //forth block

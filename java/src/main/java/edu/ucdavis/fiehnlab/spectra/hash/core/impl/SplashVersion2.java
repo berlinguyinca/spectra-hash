@@ -10,11 +10,12 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashBlock;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.lang.Math;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.math.BigInteger;
 
 /**
  * the reference implementation of the Spectral Hash Key
@@ -47,6 +48,11 @@ public final class SplashVersion2 implements Splash {
      * max fixedPrecissionOfMassesAndIntensities
      */
     private static final int fixedPrecissionOfMassesAndIntensities = 6;
+
+    /**
+     * factor to scale floating point values
+     */
+    private static final long PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMassesAndIntensities);
 
     /**
      * max amount of padding for the sum
@@ -103,7 +109,7 @@ public final class SplashVersion2 implements Splash {
      * @return
      */
     String formatNumber(double value) {
-        return String.format("%d", (long)(value * 1000000));
+        return String.format("%d", (long)(value * PRECISION_FACTOR));
     }
 
     /**
@@ -248,13 +254,13 @@ public final class SplashVersion2 implements Splash {
         Collections.sort(ions, new IonComperator());
 
         for (Ion ion : ions) {
-            hashSum = hashSum.add(BigInteger.valueOf((long)(ion.getMass() * 1000000) * (long)(ion.getIntensity() * 1000000)));
+            hashSum = hashSum.add(BigInteger.valueOf((long)(ion.getMass() * PRECISION_FACTOR)).multiply(BigInteger.valueOf((long)(ion.getIntensity() * PRECISION_FACTOR))));
 
             ionCount++;
             if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
         
-        hashSum = hashSum.divide(BigInteger.valueOf(1000000)).divide(BigInteger.valueOf(1000000));
+        hashSum = hashSum.divide(BigInteger.valueOf(PRECISION_FACTOR)).divide(BigInteger.valueOf(PRECISION_FACTOR));
 
         String sum = String.format("%" + calculatedSumMaxDigitPadding + "s", hashSum.toString()).replace(' ', '0');
 

@@ -118,7 +118,7 @@ public final class SplashVersion1 implements Splash {
         StringBuilder buffer = new StringBuilder();
 
         //sort by mass
-        Collections.sort(ions,new MassThanIntensityComperator());
+        Collections.sort(ions, new MassThanIntensityComperator());
 
 
         //build the first string
@@ -256,13 +256,14 @@ public final class SplashVersion1 implements Splash {
         }
 
 
-        int total =(int)hashSum;
+        //truncated number
+        long total = (long) hashSum;
 
         //had to be changed, do to the fact that we encountered rounding issues in the C/Cpp implementation
         //String sum = String.format("%0" + calculatedSumMaxDigitPadding + ".0f", hashSum);
         String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", total);
 
-        this.notifyListener(new SplashingEvent(sum, String.format("%d", total), SplashBlock.FOURTH, spectrum));
+        this.notifyListener(new SplashingEvent(sum, String.valueOf(hashSum), SplashBlock.FOURTH, spectrum));
 
         return sum;
     }

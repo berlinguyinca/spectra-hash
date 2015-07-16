@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion1;
-import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion2;
 
 
 /**
@@ -10,7 +9,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion2;
 public class SplashFactory {
 
     public static Splash create() {
-        return new SplashVersion2();
+        return createVersion1Splash();
     }
 
     /**
@@ -22,12 +21,4 @@ public class SplashFactory {
         return new SplashVersion1();
     }
 
-    /**
-     * the second official splash release
-     *
-     * @return
-     */
-    public static Splash createVersion2Splash() {
-        return new SplashVersion2();
-    }
 }

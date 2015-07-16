@@ -25,6 +25,22 @@ Alternatively, you can also utilize the following code, to directly splash a spe
     String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
 
+We are also providing an easy way, to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplasListener to your Splash instance or alternativly using the util like this
+
+```
+    String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS,new SplashListener(){
+            @Override
+            public void eventReceived(SplashingEvent e) {
+            }
+
+            @Override
+            public void complete(Spectrum spectrum, String splash) {
+                
+            }
+        });
+
+```
+
 ## scala api:
 
 TODO

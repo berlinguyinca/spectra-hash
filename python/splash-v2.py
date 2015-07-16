@@ -31,20 +31,20 @@ def build_first_block(spectrum, spectrum_type):
 
 def encode_top_ions(spectrum, spectrum_type):
 	spectrum = sorted(spectrum, key = lambda x: (-x[1], x[0]))[: MAX_TOP_IONS]
-	s = ION_SEPARATOR.join(('%0.'+ str(PRECISION) +'f') % mz for mz, _ in spectrum)
+	s = ION_SEPARATOR.join(str(mz) for mz, _ in spectrum)
 	
 	return hashlib.sha256(s).hexdigest()[: MAX_HASH_CHARACTERS_TOP_IONS]
 
 def encode_spectrum(spectrum, spectrum_type):
 	spectrum = sorted(spectrum, key = lambda x: (x[0], -x[1]))
-	s = ION_SEPARATOR.join(ION_PAIR_SEPARATOR.join(map(lambda s: ('%0.'+ str(PRECISION) +'f') % s, x)) for x in spectrum)
+	s = ION_SEPARATOR.join(ION_PAIR_SEPARATOR.join(map(str, x)) for x in spectrum)
 	
 	return hashlib.sha256(s).hexdigest()[: MAX_HASH_CHARATERS_ENCODED_SPECTRUM]
 	
 
 def calculate_sum(spectrum, spectrum_type):
 	spectrum = sorted(spectrum, key = lambda x: (-x[1], x[0]))[: SPECTRUM_SUM_MAX_IONS]
-	return str(int(sum(mz * intensity for mz, intensity in spectrum))).zfill(MAX_HASH_CHARACTERS_TOP_IONS)
+	return str(sum(mz * intensity for mz, intensity in spectrum) / 10**12).zfill(MAX_HASH_CHARACTERS_TOP_IONS)
 
 
 def splash_it(spectrum, spectrum_type):
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
 		# Normalize spectrum
 		max_intensity = max(intensity for _, intensity in spectrum)
-		spectrum = [(mz, intensity / max_intensity * RELATIVE_INTENSITY_SCALE) for mz, intensity in spectrum]
+		spectrum = [(int(mz * 1000000), int(intensity / max_intensity * RELATIVE_INTENSITY_SCALE * 1000000)) for mz, intensity in spectrum]
 
 		# Print the spectrum id with the calculated splash id
-		print('%s,%s' % (spectrum_id, splash_it(spectrum, '1')))
+		print('%s,%s,%s' % (spectrum_id, splash_it(spectrum, '1'), spectrum_string))

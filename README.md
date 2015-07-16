@@ -69,7 +69,7 @@ The specified flags in the example mean:
 * s = which column is your spectra
 * t = what is your spectra type
 * T = what is your seperator, ',' in this case
-* X = continue in case of errors
+* X = debug messages
 
 The input and output files are specified as arguments.
 
@@ -82,15 +82,29 @@ The format for a spectra must be:
 ion:intensity ion:intensity
 ```
 
-you can also use the same tool, to easily splash a file of spectra, using the reference algorithm.
+you can also use the same tool, to easily splash a file of spectra, using the reference algorithm. To only report duplicates, sort the output, etc.
 
 ## building
+
+### Java/Scala
 
 ```
 mvn clean install
 ```
 
 will build your project, run all the tests and you can find the build jar files, in the target directories of the project.
+
+### Python
+
+TODO
+
+### C++
+
+TODO
+
+### C#
+
+TODO
 
 ##Contributing
 

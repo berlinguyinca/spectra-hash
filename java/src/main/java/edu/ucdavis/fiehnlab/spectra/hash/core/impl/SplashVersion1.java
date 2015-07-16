@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public final class SplashVersion1 implements Splash {
 
     /**
-     * how to scale the spectra
+     * how to scale the spectrum
      */
     public static final int scalingOfRelativeIntensity = 1000;
 
@@ -37,10 +37,10 @@ public final class SplashVersion1 implements Splash {
     private static final int maxCharactertop10IonBlockTruncation = 10;
 
     /**
-     * how many character should be in the spectra block. Basically this reduces the SHA256 code down
+     * how many character should be in the spectrum block. Basically this reduces the SHA256 code down
      * to a fixed length of N characater
      */
-    private static final int maxCharactersForSpectraBlockTruncation = 20;
+    private static final int maxCharactersForSpectrumBlockTruncation = 20;
 
     /**
      * max fixedPrecissionOfMassesAndIntensities
@@ -106,19 +106,27 @@ public final class SplashVersion1 implements Splash {
     }
 
     /**
-     * encodes the actual spectra
+     * encodes the actual spectrum
      *
      * @param spectrum
      * @return
      */
-    protected String encodeSpectra(Spectrum spectrum) {
+    protected String encodeSpectrum(Spectrum spectrum) {
 
         List<Ion> ions = spectrum.getIons();
 
         StringBuilder buffer = new StringBuilder();
 
         //sort by mass
+        <<<<<<<HEAD
         Collections.sort(ions, new MassThanIntensityComperator());
+        =======
+        Collections.sort(ions, new Comparator<Ion>() {
+            public int compare(Ion o1, Ion o2) {
+                return o1.getMass().compareTo(o2.getMass());
+            }
+        });
+        >>>>>>>0d aa6f8424be055655fa8ce97c9c94d656fb7f39
 
 
         //build the first string
@@ -206,16 +214,14 @@ public final class SplashVersion1 implements Splash {
 
         //first block
         buffer.append(buildFirstBlock(spectrum));
-
         buffer.append("-");
-        //second block
 
+        //second block
         buffer.append(encodeTop10Ions(spectrum).substring(0, maxCharactertop10IonBlockTruncation));
         buffer.append("-");
 
         //third block
-
-        buffer.append(encodeSpectra(spectrum).substring(0, maxCharactersForSpectraBlockTruncation));
+        buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
         buffer.append("-");
 
         //forth block
@@ -255,7 +261,6 @@ public final class SplashVersion1 implements Splash {
             if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
 
-
         //truncated number
         long total = (long) hashSum;
 
@@ -264,6 +269,7 @@ public final class SplashVersion1 implements Splash {
         String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", total);
 
         this.notifyListener(new SplashingEvent(sum, String.valueOf(hashSum), SplashBlock.FOURTH, spectrum));
+
 
         return sum;
     }

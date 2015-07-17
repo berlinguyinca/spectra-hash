@@ -1,5 +1,6 @@
-# spectra-hash
-The splash
+# The splash
+
+a spectral hash code
 
 this library is the current reference implementation for the splash. Splash stands for the spectra hash code and is an unique identifier independent of aquisition or processing. It basically tries to ensure that you can easily tell if two spectra are identical, similar or very different. Based on several criteria.
 

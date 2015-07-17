@@ -12,19 +12,16 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: wohlgemuth
- * Date: 7/16/15
- * Time: 12:37 PM
+ * Sorts all the generated results, utilizing an external sort algorithm
  */
 public class SortSerializer extends Serializer {
 
     private final Class<? extends Result> type;
     private ExternalMergeSort.Serializer<Result> serializer;
 
-    OutputStream temp;
+    private OutputStream temp;
 
-    File tempFile;
+    private File tempFile;
 
     public SortSerializer(CommandLine cmd, PrintStream stream, Class<? extends Result> type) throws Exception {
         super(cmd, stream);
@@ -46,15 +43,7 @@ public class SortSerializer extends Serializer {
         temp.flush();
         temp.close();
 
-        ExternalMergeSort<Result> sort = ExternalMergeSort.newSorter(serializer, new Comparator<Result>() {
-            public int compare(Result o1, Result o2) {
-                return o1.getSplash().compareTo(o2.getSplash());
-            }
-        }).withChunkSize(1000)
-                .withMaxOpenFiles(10)
-                .withCleanup(true)
-                .withDistinct(false)
-                .build();
+        ExternalMergeSort<Result> sort = generateSorter();
 
         List<File> sortedChunks;
         InputStream input = new FileInputStream(tempFile);
@@ -79,6 +68,51 @@ public class SortSerializer extends Serializer {
 
     }
 
+    /**
+     * generates and configures our external sorter
+     *
+     * @return
+     * @throws FileNotFoundException
+     */
+    protected ExternalMergeSort<Result> generateSorter() throws FileNotFoundException {
+        if (getCmd().hasOption("sortDirectory")) {
+
+            File file = new File(getCmd().getOptionValue("sortDirectory"));
+
+            if (file.exists() && file.isDirectory()) {
+
+
+                return ExternalMergeSort.newSorter(serializer, new Comparator<Result>() {
+                    public int compare(Result o1, Result o2) {
+                        return o1.getSplash().compareTo(o2.getSplash());
+                    }
+                }).withChunkSize(1000)
+                        .withMaxOpenFiles(10)
+                        .withCleanup(true)
+                        .withDistinct(false)
+                        .withTempDirectory(file)
+                        .build();
+
+            } else {
+                throw new FileNotFoundException("sorry your given file doesn't exist or is not a directory: " + file + " please specify a valid -SD option");
+            }
+        } else {
+            return ExternalMergeSort.newSorter(serializer, new Comparator<Result>() {
+                public int compare(Result o1, Result o2) {
+                    return o1.getSplash().compareTo(o2.getSplash());
+                }
+            }).withChunkSize(1000)
+                    .withMaxOpenFiles(10)
+                    .withCleanup(true)
+                    .withDistinct(false)
+                    .build();
+        }
+    }
+
+    /**
+     * does the actual serialization of a single data set
+     * @param sortedData
+     */
     protected void serializeSortedData(Result sortedData) {
         getStream().println(sortedData);
     }

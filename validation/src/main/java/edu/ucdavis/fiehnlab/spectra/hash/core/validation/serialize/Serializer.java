@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
- * writes out objects
+ * writes out objects to the given stream
  */
 public class Serializer {
 
@@ -45,7 +45,7 @@ public class Serializer {
      * @param result
      */
     public void serialize(Result result) throws Exception {
-        stream.print(result);
+        stream.println(result);
     }
 
     /**

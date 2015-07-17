@@ -11,11 +11,11 @@ import java.io.PrintStream;
  */
 public class FindDuplicatesSerializer extends SortSerializer {
 
-    Result last = null;
+    private Result last = null;
 
-    boolean wroteLast = false;
+    private boolean wroteLast = false;
 
-    long duplicatesFound = 0;
+    private long duplicatesFound = 0;
 
     @Override
     public void init() throws Exception {

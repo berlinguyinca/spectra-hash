@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests all asspects of the Splash Version 1 and ensures that the generated keys, meets the exspectations. It also ensures
+ * Tests all asspects of the Splash Version 2 and ensures that the generated keys, meets the exspectations. It also ensures
  * that there are no duplicated found in a limited data set, from different sources.
  * <p/>
  * DataSets for Sources are based on:
@@ -183,7 +183,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case SECOND:
-                        assertEquals(e.getRawValue(), "100.000000");
+                        assertEquals(e.getRawValue(), "100000000");
                         results.add(true);
                 }
             }
@@ -218,7 +218,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case SECOND:
-                        assertEquals("99.000000 100.000000", e.getRawValue());
+                        assertEquals("99000000 100000000", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -253,7 +253,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case SECOND:
-                        assertEquals("99.000000 100.000000", e.getRawValue());
+                        assertEquals("99000000 100000000", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -287,7 +287,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case SECOND:
-                        assertEquals("102.000000 101.000000 100.000000", e.getRawValue());
+                        assertEquals("102000000 101000000 100000000", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -322,7 +322,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case THIRD:
-                        assertEquals("99.000000:1000.000000 100.000000:1000.000000", e.getRawValue());
+                        assertEquals("99000000:1000000000 100000000:1000000000", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -357,7 +357,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case THIRD:
-                        assertEquals("99.000000:1000.000000 100.000000:1000.000000", e.getRawValue());
+                        assertEquals("99000000:1000000000 100000000:1000000000", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -392,7 +392,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case THIRD:
-                        assertEquals("99.000000:250.000000 100.000000:500.000000 125.000000:1000.000000 130.000000:0.000000", e.getRawValue());
+                        assertEquals("99000000:250000000 100000000:500000000 125000000:1000000000 130000000:0", e.getRawValue());
                         results.add(true);
                 }
             }
@@ -462,12 +462,8 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case FOURTH:
-
-                        double d = Double.parseDouble(e.getRawValue());
-                        long l = (long)d;
-
                         assertTrue(
-                                String.valueOf(l).length() <= 10
+                                e.getRawValue().length() <= 10
                         );
                         results.add(true);
                 }
@@ -646,11 +642,11 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
                 switch (e.getBlock()) {
                     case THIRD:
-                        assertEquals("100.000000:1000.000000 101.000000:0.000000 102.000000:0.000000", e.getRawValue());
+                        assertEquals("100000000:1000000000 101000000:0 102000000:0", e.getRawValue());
                         results.add(true);
                         break;
                     case SECOND:
-                        assertEquals("100.000000 101.000000 102.000000", e.getRawValue());
+                        assertEquals("100000000 101000000 102000000", e.getRawValue());
                         results.add(true);
                         break;
 

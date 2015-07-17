@@ -10,6 +10,8 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashBlock;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.lang.Math;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,6 +48,11 @@ public final class SplashVersion1 implements Splash {
      * max fixedPrecissionOfMassesAndIntensities
      */
     private static final int fixedPrecissionOfMassesAndIntensities = 6;
+
+    /**
+     * factor to scale floating point values
+     */
+    private static final long PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMassesAndIntensities);
 
     /**
      * max amount of padding for the sum
@@ -102,7 +109,7 @@ public final class SplashVersion1 implements Splash {
      * @return
      */
     String formatNumber(double value) {
-        return String.format("%." + fixedPrecissionOfMassesAndIntensities + "f", value);
+        return String.format("%d", (long)(value * PRECISION_FACTOR));
     }
 
     /**
@@ -117,6 +124,7 @@ public final class SplashVersion1 implements Splash {
 
         StringBuilder buffer = new StringBuilder();
 
+        //sort by mass
         Collections.sort(ions, new MassThanIntensityComperator());
 
 
@@ -206,7 +214,7 @@ public final class SplashVersion1 implements Splash {
         //first block
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
-
+        
         //second block
         buffer.append(encodeTop10Ions(spectrum).substring(0, maxCharactertop10IonBlockTruncation));
         buffer.append("-");
@@ -238,7 +246,7 @@ public final class SplashVersion1 implements Splash {
     protected String calculateSum(Spectrum spectrum) {
         int ionCount = 0;
 
-        double hashSum = 0.0;
+        BigInteger hashSum = BigInteger.ZERO;
 
         List<Ion> ions = spectrum.getIons();
 
@@ -246,21 +254,17 @@ public final class SplashVersion1 implements Splash {
         Collections.sort(ions, new IonComperator());
 
         for (Ion ion : ions) {
-            hashSum += ion.getMass() * ion.getIntensity();
+            hashSum = hashSum.add(BigInteger.valueOf((long)(ion.getMass() * PRECISION_FACTOR)).multiply(BigInteger.valueOf((long)(ion.getIntensity() * PRECISION_FACTOR))));
 
             ionCount++;
             if (ionCount > calculatedSumMaxIonsCount - 1) break;
         }
+        
+        hashSum = hashSum.divide(BigInteger.valueOf(PRECISION_FACTOR)).divide(BigInteger.valueOf(PRECISION_FACTOR));
 
-        //truncated number
-        long total = (long) hashSum;
+        String sum = String.format("%" + calculatedSumMaxDigitPadding + "s", hashSum.toString()).replace(' ', '0');
 
-        //had to be changed, do to the fact that we encountered rounding issues in the C/Cpp implementation
-        //String sum = String.format("%0" + calculatedSumMaxDigitPadding + ".0f", hashSum);
-        String sum = String.format("%0" + calculatedSumMaxDigitPadding + "d", total);
-
-        this.notifyListener(new SplashingEvent(sum, String.valueOf(hashSum), SplashBlock.FOURTH, spectrum));
-
+        this.notifyListener(new SplashingEvent(sum, String.format("%" + calculatedSumMaxDigitPadding + "s", hashSum.toString()), SplashBlock.FOURTH, spectrum));
 
         return sum;
     }

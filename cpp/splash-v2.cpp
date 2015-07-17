@@ -9,15 +9,21 @@
 #include <utility>
 #include <vector>
 
+#include<gmp.h>
 #include <openssl/sha.h>
 
 using namespace std;
 
 
+// Version
+const char SPLASH_VERSION = '0';
+
+// Debug mode
 const bool DEBUG = false;
 
 // Precision of floating point operations and representations
 const double PRECISION = 6;
+const long long PRECISION_FACTOR = static_cast<long long>(pow(10, PRECISION));
 const double EPS = 1.0e-6;
 
 // Value to scale relative spectra
@@ -91,7 +97,7 @@ bool ionPairIntensityComparator(const pair<double, double> a, const pair<double,
 
 string buildFirstBlock(vector<pair<double, double> > &spectrum, char spectrum_type) {
 	stringstream ss;
-	ss << "splash" << spectrum_type << '0';
+	ss << "splash" << spectrum_type << SPLASH_VERSION;
 	return ss.str();
 }
 
@@ -102,7 +108,7 @@ string encodeTopIons(vector<pair<double, double> > &spectrum, char spectrum_type
 	stringstream ss;
 
 	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << setprecision(6) << fixed << (*it).first;
+		ss << static_cast<long long>((*it).first * PRECISION_FACTOR);
 
 		if(++i == MAX_TOP_IONS || i == spectrum.size()) {
 			break;
@@ -125,7 +131,8 @@ string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_typ
 	stringstream ss;
 
 	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << setprecision(6) << fixed << (*it).first << ION_PAIR_SEPARATOR << (*it).second;
+		ss << static_cast<long long>((*it).first * PRECISION_FACTOR) << ION_PAIR_SEPARATOR
+		   << static_cast<long long>((*it).second * PRECISION_FACTOR);
 
 		if(++i < spectrum.size()) {
 			ss << ION_SEPARATOR;
@@ -143,14 +150,20 @@ string calculateSum(vector<pair<double, double> > &spectrum, char spectrum_type)
 	sort(spectrum.begin(), spectrum.end(), ionPairIntensityComparator);
 
 	int i = 0;
-	double spectrumSum = 0.0;
-	stringstream ss;
+	mpz_t spectrumSum, temp, intensity;
+	mpz_init_set_ui(spectrumSum, 0);
 	
 	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end() && ++i <= SPECTRUM_SUM_MAX_IONS; ++it) {
-		spectrumSum += (*it).first * (*it).second;
+		mpz_init_set_ui(temp, static_cast<unsigned long long>((*it).first * PRECISION_FACTOR));
+		mpz_mul_ui(temp, temp, static_cast<unsigned long long>((*it).second * PRECISION_FACTOR));
+		mpz_add(spectrumSum, spectrumSum, temp);
 	}
 	
-	ss << setfill('0') << setw(SPECTRUM_SUM_PADDING) << static_cast<long>(spectrumSum);
+	mpz_ui_pow_ui(temp, PRECISION_FACTOR, 2);
+	mpz_fdiv_q(spectrumSum, spectrumSum, temp);
+	
+	stringstream ss;
+	ss << setfill('0') << setw(SPECTRUM_SUM_PADDING) << mpz_get_ui(spectrumSum);
 
 	if(DEBUG) {
 		cerr << "Spectrum Sum: " << setprecision(PRECISION) << fixed << spectrumSum << " -> " << ss.str() << endl;

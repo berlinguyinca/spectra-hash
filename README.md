@@ -83,7 +83,7 @@ to run this tool please build the distribution and afterwards run
 
 this will present you with the usage for this tool. 
 
-### Validation example
+### validation example
 
 An example to validate a file against the reference implementation and saving the output to a file would be
 

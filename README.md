@@ -54,6 +54,7 @@ using NSSplash;
 
 To get the hash for a given spectrum you can call:
 ```
+Splash splasher = new Splash();
 string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.02395773287:2.0 11.234568:.10", SpectrumType.MS));
 ```
 

@@ -1,5 +1,5 @@
 ﻿//
-//  MSSpectrum.cs
+//  Ion.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>

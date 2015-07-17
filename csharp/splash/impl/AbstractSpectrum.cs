@@ -1,5 +1,5 @@
 ﻿//
-//  MSSpectrum.cs
+//  AbstractSpectrum.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>

@@ -1,5 +1,5 @@
 ﻿//
-//  MSSpectrum.cs
+//  Splash.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>

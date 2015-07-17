@@ -1,5 +1,5 @@
 ﻿//
-//  MSSpectrum.cs
+//  SplashRunner.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>

@@ -3,18 +3,17 @@
 namespace NSSplash {
 	public class StatisticBuilder {
 		long count = 0;
-		long sumTime = 0;
+		double sumTime = 0;
 
-		public StatisticBuilder() {
-		}
+		public StatisticBuilder() {}
 
-		public void addTime(long time) {
+		public void addTime(double time) {
 			sumTime += time;
 			count++;
 		}
 
 		public string getTimeData() {
-			return String.Format("It took {0}s to hash {1} spectra. Average: {2}s", sumTime/1000, count, sumTime/(1000*count));
+			return String.Format("It took {0:F4}ms to hash {1} spectra including IO. Average: {2:F4}ms", sumTime, count, sumTime/count);
 		}
 	}
 }

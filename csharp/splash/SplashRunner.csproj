@@ -9,30 +9,32 @@
     <AssemblyName>SplashRunner</AssemblyName>
     <StartupObject>NSSplash.SplashRunner</StartupObject>
     <CodePage>65001</CodePage>
-    <UseMSBuildEngine>False</UseMSBuildEngine>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Commandlineparameters>small.csv</Commandlineparameters>
     <ConsolePause>false</ConsolePause>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Externalconsole>true</Externalconsole>
+    <Commandlineparameters>complete.cleaned.csv</Commandlineparameters>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterExecute" command="java -jar ${SolutionDir}/../validation/target/validation-1.0-SNAPSHOT.jar -k 2 -o 1 -s 3 -t ms -T, -X complete.cleaned-csharp.csv output.csv" workingdir="${TargetDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
-    <Commandlineparameters>../Debug/complete.cleaned.csv</Commandlineparameters>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,4 +51,13 @@
       <Name>Splash</Name>
     </ProjectReference>
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <StandardHeader Text="&#xA; ${FileName}&#xA; &#xA; Author:&#xA;      ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA; Copyright (c) ${Year} ${CopyrightHolder}&#xA;&#xA; This library is free software; you can redistribute it and/or modify&#xA; it under the terms of the GNU Lesser General Public License as&#xA; published by the Free Software Foundation; either version 2.1 of the&#xA; License, or (at your option) any later version.&#xA;&#xA; This library is distributed in the hope that it will be useful, but&#xA; WITHOUT ANY WARRANTY; without even the implied warranty of&#xA; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA; Lesser General Public License for more details.&#xA;&#xA; You should have received a copy of the GNU Lesser General Public&#xA; License along with this library; if not, write to the Free Software&#xA; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA" IncludeInNewFiles="True" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

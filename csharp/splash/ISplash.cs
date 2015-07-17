@@ -2,7 +2,7 @@
 
 namespace NSSplash {
 	interface ISplash {
-		string splashIt(Spectrum spectrum);
+		string splashIt(ISpectrum spectrum);
 	}
 }
 

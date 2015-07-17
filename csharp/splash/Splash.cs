@@ -1,9 +1,31 @@
-﻿using System;
+﻿//
+//  Splash.cs
+//
+//  Author:
+//       Diego Pedrosa <dpedrosa@ucdavis.edu>
+//
+//  Copyright (c) 2015 Diego Pedrosa
+//
+//  This library is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as
+//  published by the Free Software Foundation; either version 2.1 of the
+//  License, or (at your option) any later version.
+//
+//  This library is distributed in the hope that it will be useful, but
+//  WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
 using System.Numerics;
+using NSSplash.impl;
 
 namespace NSSplash {
 	public class Splash : ISplash {
@@ -12,7 +34,7 @@ namespace NSSplash {
 		private const int FACTOR = 1000000;
 
 
-		public string splashIt(Spectrum spectrum) {
+		public string splashIt(ISpectrum spectrum) {
 
 			// check spectrum var
 			if (spectrum == null) {
@@ -22,7 +44,7 @@ namespace NSSplash {
 			StringBuilder hash = new StringBuilder();
 
 			//creating first block 'splash<type><version>'
-			hash.Append(getFirstBlock(spectrum.Type));
+			hash.Append(getFirstBlock(spectrum.getSpectrumType()));
 			hash.Append('-');
 
 			//creating second block 'top 10 peak hash' (SHA256)
@@ -44,8 +66,8 @@ namespace NSSplash {
 			return(PREFIX + (int)specType + VERSION);
 		}
 
-		private string getTop10Hash(Spectrum spec) {
-			List<Ion> ions = spec.getIonsByIntensity();
+		private string getTop10Hash(ISpectrum spec) {
+			List<Ion> ions = spec.getSortedIonsByIntensity();
 
 			if(ions.Count > 10) {
 				ions.RemoveRange(10, ions.Count - 10);
@@ -77,8 +99,8 @@ namespace NSSplash {
 
 
 		//calculate the hash for the whole spectrum
-		private string getSpectrumBlock(Spectrum spec) {
-			List<Ion> ions = spec.getIonsByMZ();
+		private string getSpectrumBlock(ISpectrum spec) {
+			List<Ion> ions = spec.getSortedIonsByMZ();
 
 			StringBuilder strIons = new StringBuilder();
 			foreach(Ion i in ions) {
@@ -104,9 +126,9 @@ namespace NSSplash {
 		}
 
 		//calculate Sum(mz*intensity) for top 100 ions (sorted by intensity desc)
-		private string getSumBlock(Spectrum spec) {
+		private string getSumBlock(ISpectrum spec) {
 			BigInteger bisum = 0;
-			List<Ion> ions = spec.getIonsByIntensity();
+			List<Ion> ions = spec.getSortedIonsByIntensity();
 
 			if(ions.Count > 100) {
 				ions.RemoveRange(100, ions.Count - 100);

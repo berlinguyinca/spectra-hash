@@ -81,7 +81,11 @@ to run this tool please build the distribution and afterwards run
  java -jar validation-VERSION.jar
 ```
 
-this will present you with the usage for this tool. An example to validate a file against the reference implementation and saving the output to a file would be
+this will present you with the usage for this tool. 
+
+### validation example
+
+An example to validate a file against the reference implementation and saving the output to a file would be
 
 ```
 java -jar validation/target/validation-1.0-SNAPSHOT.jar -k 2  -o 1 -s 3 -t ms -T, -X input.csv output.csv

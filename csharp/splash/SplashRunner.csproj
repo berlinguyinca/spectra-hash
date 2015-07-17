@@ -22,10 +22,10 @@
     <ConsolePause>false</ConsolePause>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Externalconsole>true</Externalconsole>
-    <Commandlineparameters>complete-10k.csv</Commandlineparameters>
+    <Commandlineparameters>small.csv</Commandlineparameters>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterExecute" command="java -jar ${SolutionDir}/../validation/target/validation-1.0-SNAPSHOT.jar -k 2 -o 1 -s 3 -t ms -T, -X complete-10k-csharp.csv output.csv" workingdir="${TargetDir}" externalConsole="True" />
+        <Command type="AfterExecute" command="java -jar ${SolutionDir}/../validation/target/validation-1.0-SNAPSHOT.jar -k 2 -o 1 -s 3 -t ms -T, -X small-csharp.csv output.csv" workingdir="${TargetDir}" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -35,6 +35,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterExecute" command="java -jar ${SolutionDir}/../validation/target/validation-1.0-SNAPSHOT.jar -k 2 -o 1 -s 3 -t ms -T, -X small-csharp.csv output.csv" workingdir="${TargetDir}" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+    <Externalconsole>true</Externalconsole>
+    <Commandlineparameters>../Debig/small.csv</Commandlineparameters>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

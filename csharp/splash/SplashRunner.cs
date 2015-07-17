@@ -35,19 +35,28 @@ namespace NSSplash {
 		public static void Main(string[] args) {
 			SplashRunner app = new SplashRunner();
 
-			app.process(args);
+			string error = "\nPlease provide a filename (<name>.csv) with spectra to hash.\nFile should contain a list of coma separated values in the form 'identifier,spectrum' each on a separate line.\n";
+
+			if(args.Length > 0) {
+				if(args[0].EndsWith(".csv") && (new FileInfo(args[0])).Exists) {
+					app.hashFile(args[0]);
+				} else {
+					string fname = String.Format("{0}.csv", args[0]);
+					FileInfo fin = new FileInfo(fname);
+
+					if(fin.Exists) {
+						app.hashFile(fname);
+					} else {
+						Console.WriteLine(error);
+					}
+				}
+			} else {
+				Console.WriteLine(error);
+			}
 		}
 
 		public SplashRunner() {
 			splasher = new Splash();
-		}
-
-		public void process(string[] args) {
-			if(!String.IsNullOrEmpty(args[0])) {
-				this.hashFile(args[0]);
-			} else {
-				throw new ArgumentException("I need a file to process. Please run SplashRunner.exe <filename>");
-			}
 		}
 
 		public void hashFile(string filename) {
@@ -75,9 +84,10 @@ namespace NSSplash {
 						DateTime psTime = DateTime.Now;
 						string hash = splasher.splashIt(new MSSpectrum(input[1]));
 						DateTime peTime = DateTime.Now;
+						TimeSpan lap = new TimeSpan();
 
 						if(count % UPDATE_INTERVAL == 0) {
-							TimeSpan lap = DateTime.Now.Subtract(sTime);
+							lap = DateTime.Now.Subtract(sTime);
 							Console.WriteLine("Elapsed {2:F2}s, average {3:F2}ms, this item: {4:F2}ms - {0} [{1}]", input[0], count, lap.TotalSeconds, lap.TotalMilliseconds/(count+1), peTime.Subtract(psTime).TotalMilliseconds);
 						}
 
@@ -86,7 +96,7 @@ namespace NSSplash {
 						result.Clear();
 
 						eTime = DateTime.Now;
-						stats.addTime(peTime.Subtract(psTime).TotalMilliseconds);
+						stats.addTime(lap.TotalMilliseconds);
 						count++;
 					}
 

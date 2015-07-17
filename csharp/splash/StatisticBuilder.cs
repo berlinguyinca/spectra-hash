@@ -13,7 +13,7 @@ namespace NSSplash {
 		}
 
 		public string getTimeData() {
-			return String.Format("It took {0:F4}ms to hash {1} spectra including IO. Average: {2:F4}ms", sumTime, count, sumTime/count);
+			return String.Format("It took {0:F2}s to hash {1} spectra including IO. Average: {2:F2}ms", sumTime/1000, count, sumTime/count);
 		}
 	}
 }

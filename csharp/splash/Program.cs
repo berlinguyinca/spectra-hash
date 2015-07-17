@@ -29,7 +29,7 @@ using System.Text;
 namespace NSSplash {
 	class SplashRunner {
 //		private static int LIMIT = 10000;
-		private static int UPDATE_INTERVAL = 1000;
+		private static int UPDATE_INTERVAL = 10000;
 		Splash splasher;
 
 		public static void Main(string[] args) {
@@ -78,7 +78,7 @@ namespace NSSplash {
 
 						if(count % UPDATE_INTERVAL == 0) {
 							TimeSpan lap = DateTime.Now.Subtract(sTime);
-							Console.WriteLine("{0} [{1}] - Elapsed {2:F3}s, average {3:F3}ms, this item: {4:F3}ms", input[0], count, lap.TotalSeconds, lap.TotalMilliseconds/(count+1), peTime.Subtract(psTime).TotalMilliseconds);
+							Console.WriteLine("Elapsed {2:F2}s, average {3:F2}ms, this item: {4:F2}ms - {0} [{1}]", input[0], count, lap.TotalSeconds, lap.TotalMilliseconds/(count+1), peTime.Subtract(psTime).TotalMilliseconds);
 						}
 
 						result.Append(input[0]).Append(",").Append(hash).Append(",").Append(input[1]);

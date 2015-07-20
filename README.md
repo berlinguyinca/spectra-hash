@@ -63,6 +63,10 @@ string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.023
 
 TODO
 
+## R api:
+
+
+
 ## Python api:
 
 TODO

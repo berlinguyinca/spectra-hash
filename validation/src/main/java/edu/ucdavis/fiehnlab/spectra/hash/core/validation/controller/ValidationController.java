@@ -284,80 +284,97 @@ public class ValidationController implements CommandLineRunner {
         int counterValid = 0;
         int interval = 10000;
 
+        int errorCounter = 0;
 
-        while (scanner.hasNextLine()) {
+        try {
+            while (scanner.hasNextLine()) {
 
-            counter++;
-            String line = scanner.nextLine();
+                counter++;
+                String line = scanner.nextLine();
 
-            if (!line.isEmpty()) {
-
-                try {
-                    String[] columns = line.split(seperator);
-
-
-                    String spectra = null;
+                if (!line.isEmpty()) {
 
                     try {
-                        spectra = columns[columnSpectra - 1];
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        throw new ParseException("sorry, we did not find a spectra, did you specify the right column?");
-                    }
+                        String[] columns = line.split(seperator);
 
-                    String origin = "unknown";
 
-                    if (columnOrigin != -1) {
-                        try {
-                            origin = columns[columnOrigin - 1];
-                        } catch (ArrayIndexOutOfBoundsException e) {
-                            throw new ParseException("sorry, we did not find an origin, did you specify the right column?");
+                        if (cmd.hasOption("debugExtraFine")) {
+                            status(cmd, "read line " + counter + "\n");
+                            for (int i = 0; i < columns.length; i++) {
+                                status(cmd, "column " + (i + 1) + " contains: " + columns[i].substring(0, Math.min(columns[i].length(), 50)) + "\n");
+                            }
+                            status(cmd, "\n");
                         }
-
-                    }
-
-
-                    if (!cmd.hasOption("create")) {
-                        String splash = null;
+                        String spectra = null;
 
                         try {
-                            splash = columns[columnSplash - 1];
+                            spectra = columns[columnSpectra - 1];
                         } catch (ArrayIndexOutOfBoundsException e) {
-                            throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
+                            throw new ParseException("sorry, we did not find a spectra, did you specify the right column?");
                         }
 
-                        boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
+                        String origin = "unknown";
 
-                        if (valid) {
-                            counterValid++;
+                        if (columnOrigin != -1) {
+                            try {
+                                origin = columns[columnOrigin - 1];
+                            } catch (ArrayIndexOutOfBoundsException e) {
+
+                                throw new ParseException("sorry, we did not find an origin, did you specify the right column?");
+                            }
+
                         }
-                        if (counter % interval == 0) {
-                            status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, " + (counter - counterValid) + " invalid");
+
+
+                        if (!cmd.hasOption("create")) {
+                            String splash = null;
+
+                            try {
+                                splash = columns[columnSplash - 1];
+                            } catch (ArrayIndexOutOfBoundsException e) {
+                                throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
+                            }
+
+                            boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
+
+                            if (valid) {
+                                counterValid++;
+                            }
+                            if (counter % interval == 0) {
+                                status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, " + (counter - counterValid) + " invalid");
+                            }
+
+                        } else {
+
+                            if (counter % interval == 0) {
+                                status(cmd, "splashing, ");
+                            }
+                            splashIt(spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
                         }
 
-                    } else {
+                        if ((counter % interval) == 0) {
+                            status(cmd, "processed " + counter + " spectra, " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) counter) + " ms average time to splash a spectra\n");
+                            status(cmd, "errors discovered in file: " + String.format("%.2f", ((double) errorCounter / (double) counter * 100)) + "%\n");
 
-                        if (counter % interval == 0) {
-                            status(cmd, "splashing, ");
                         }
-                        splashIt(spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
-                    }
+                    } catch (Exception e) {
+                        errorCounter++;
+                        if (cmd.hasOption("ignoreErrorsSuppressed")) {
 
-                    if ((counter % interval) == 0) {
-                        status(cmd, "processed " + counter + " spectra, " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / (double) counter) + " ms average time to splash a spectra\n");
-                    }
-                } catch (Exception e) {
-                    if (cmd.hasOption("ignoreErrorsSuppressed")) {
-
-                        //nothign to see here
-                    } else if (cmd.hasOption("ignoreErrors")) {
-                        status(cmd, "encountered error, ignoring it!\n");
-                        status(cmd, "error was: " + e.getMessage() + "\n");
-                        status(cmd, "line was: " + line + "\n");
-                    } else {
-                        throw e;
+                            //nothign to see here
+                        } else if (cmd.hasOption("ignoreErrors")) {
+                            status(cmd, "encountered error, ignoring it!\n");
+                            status(cmd, "error was: " + e.getMessage() + "\n");
+                            status(cmd, "line was: " + line + "\n");
+                        } else {
+                            throw e;
+                        }
                     }
                 }
             }
+        } finally {
+            status(cmd, "errors discovered in file: " + errorCounter + "\n");
+
         }
 
         stream.close();
@@ -469,9 +486,12 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("o", "origin", true, "which column contains the origin information");
 
         options.addOption("D", "duplicates", false, "only output discovered duplicates, careful it can be slow!");
-        options.addOption("S", "sort", true, "sorts the output by given column. Columns can be 'splash' or 'origin' or 'spectra', careful it can be slow!");
+        options.addOption("S", "sort", false, "sorts the output by given column. Columns can be 'splash' or 'origin' or 'spectra', careful it can be slow!");
+        options.addOption("SD", "sortDirectory", true, "specify which directory should be used for temporary data, during sorting or duplicate searches");
+
         options.addOption("X", "debug", false, "displays additional debug information, cut to 50 char for strings");
         options.addOption("XX", "debugExact", false, "displays additional debug information, complete printout");
+        options.addOption("XXX", "debugExtraFine", false, "displays even more debug information");
 
         options.addOption("c", "create", false, "computes a validation file with the default splash implementation, instead of validation the file");
         options.addOption("v", "validate", false, "validates a provided validation file, if not specified this is the default option");
@@ -508,7 +528,7 @@ public class ValidationController implements CommandLineRunner {
          */
         public void eventReceived(SplashingEvent e) {
 
-            if (cmd.hasOption("debugExact")) {
+            if (cmd.hasOption("debugExact") || cmd.hasOption("debugExtraFine")) {
                 status(cmd, String.format(FORMAT, e.getBlock() + " raw : ") + e.getRawValue() + "\n");
                 status(cmd, String.format(FORMAT, e.getBlock() + " processed : ") + e.getProcessedValue() + "\n");
             } else if (cmd.hasOption("debug")) {

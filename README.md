@@ -1,5 +1,6 @@
-# spectra-hash
-The splash
+# The splash
+
+a spectral hash code
 
 this library is the current reference implementation for the splash. Splash stands for the spectra hash code and is an unique identifier independent of aquisition or processing. It basically tries to ensure that you can easily tell if two spectra are identical, similar or very different. Based on several criteria.
 
@@ -54,6 +55,7 @@ using NSSplash;
 
 To get the hash for a given spectrum you can call:
 ```
+Splash splasher = new Splash();
 string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.02395773287:2.0 11.234568:.10", SpectrumType.MS));
 ```
 
@@ -84,7 +86,11 @@ to run this tool please build the distribution and afterwards run
  java -jar validation-VERSION.jar
 ```
 
-this will present you with the usage for this tool. An example to validate a file against the reference implementation and saving the output to a file would be
+this will present you with the usage for this tool. 
+
+### validation example
+
+An example to validate a file against the reference implementation and saving the output to a file would be
 
 ```
 java -jar validation/target/validation-1.0-SNAPSHOT.jar -k 2  -o 1 -s 3 -t ms -T, -X input.csv output.csv

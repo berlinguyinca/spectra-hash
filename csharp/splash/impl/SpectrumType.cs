@@ -1,5 +1,5 @@
 ﻿//
-//  StatisticBuilder.cs
+//  SpectrumType.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>
@@ -21,21 +21,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
 
-namespace NSSplash {
-	public class StatisticBuilder {
-		long count = 0;
-		double sumTime = 0;
-
-		public StatisticBuilder() {}
-
-		public void addTime(double time) {
-			sumTime += time;
-			count++;
-		}
-
-		public string getTimeData() {
-			return String.Format("It took {0:F2}s to hash {1} spectra including IO. Average: {2:F2}ms", sumTime/1000, count, sumTime/count);
-		}
+namespace NSSplash.impl {
+	public enum SpectrumType : int {
+		MS = 1,
+		NMR = 2,
+		UV = 3,
+		IR = 4,
+		RAMAN = 5
 	}
 }
 

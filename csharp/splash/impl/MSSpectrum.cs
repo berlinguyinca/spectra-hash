@@ -1,5 +1,5 @@
 ﻿//
-//  StatisticBuilder.cs
+//  MSSpectrum.cs
 //
 //  Author:
 //       Diego Pedrosa <dpedrosa@ucdavis.edu>
@@ -20,21 +20,12 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 using System;
+using NSSplash;
 
-namespace NSSplash {
-	public class StatisticBuilder {
-		long count = 0;
-		double sumTime = 0;
-
-		public StatisticBuilder() {}
-
-		public void addTime(double time) {
-			sumTime += time;
-			count++;
-		}
-
-		public string getTimeData() {
-			return String.Format("It took {0:F2}s to hash {1} spectra including IO. Average: {2:F2}ms", sumTime/1000, count, sumTime/count);
+namespace NSSplash.impl {
+	public class MSSpectrum : AbstractSpectrum {
+		public MSSpectrum(string spectrum) : base(spectrum) {
+			this.Type = SpectrumType.MS;
 		}
 	}
 }

@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.File;
@@ -20,16 +21,14 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests all asspects of the Splash Version 2 and ensures that the generated keys, meets the exspectations. It also ensures
- * that there are no duplicated found in a limited data set, from different sources.
- * <p/>
- * DataSets for Sources are based on:
- * <p/>
- * partial massbank
- * partial binbase
- * partial binbase annotations
+ * Created with IntelliJ IDEA.
+ * User: wohlgemuth
+ * Date: 7/20/15
+ * Time: 10:34 AM
  */
-public class SplashVersion1Test extends AbstractSpectraHashImplTester {
+public class SplashHistVersion1Test extends AbstractSpectraHashImplTester
+{
+
 
     public static final String MONA_TESTDATA_1 = "/mona/spectra-hash-test-spectra.txt";
     public static final String MONA_TESTDATA_2 = "/mona/spectra-hash-min-spectra.txt";
@@ -50,7 +49,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     @Test
     public void testSorterGeneratingDuplicates() throws IOException {
         String file = "duplicates" + this.getHashImpl().toString();
-        TestResult result = runTest(file, "/tenIdenticalSpectra", SpectraType.MS, true);
+        TestResult result = runTest(file+this.getHashImpl().toString(), "/tenIdenticalSpectra", SpectraType.MS, true);
 
         int counter = 0;
 
@@ -65,10 +64,6 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         scanner.close();
     }
 
-    @Override
-    SplashVersion1 getHashImpl() {
-        return new SplashVersion1();
-    }
 
     @Test
     public void testBinBaseAllBinSpectraHash() throws IOException {
@@ -407,146 +402,6 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         assertTrue(results.size() == 1);
     }
 
-    @Test
-    public void testFourthBlockGenerationSumCalculation3Ions() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(99.0, 25), new Ion(100.0, 50), new Ion(125, 100)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-                        assertEquals("0000199750", e.getProcessedValue());
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-    /**
-     * tests for overflow conditions, needed to calculate how many digits we actually need to support
-     * assuming we have no mz over 5000.
-     */
-    @Test
-    public void testFourthBlockGenerationSumCalculationOverflow() {
-
-        Splash splash = getHashImpl();
-
-        List<Ion> ionList = new ArrayList<Ion>();
-
-        for (double i = 1; i < 500000; i++) {
-            ionList.add(new Ion(i / 100, 100 * i + 0.01 * i));
-        }
-        Spectrum spectrum = new SpectrumImpl(ionList, SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-                        assertTrue(
-                                e.getRawValue().length() <= 10
-                        );
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-    /**
-     * tests if we only use the 100 ions for the sum calculations
-     * as we are supposed too, instead of all the ions
-     */
-    @Test
-    public void testFourthBlockGenerationSumLimitToTop100Ions() {
-
-        Splash splash = getHashImpl();
-
-        final List<Ion> ionsSpectrumWith200Ions = new ArrayList<Ion>();
-        final List<Ion> ionsSpectrumWith100Ions = new ArrayList<Ion>();
-
-
-        //first 100 ions are the largest
-        for (int i = 0; i < 100; i++) {
-            ionsSpectrumWith100Ions.add(new Ion(i, 100));
-            ionsSpectrumWith200Ions.add(new Ion(i, 100));
-
-        }
-
-        //second ions are lower, they should not really be part of the calculation
-        for (int i = 0; i < 100; i++) {
-            ionsSpectrumWith200Ions.add(new Ion(100 + i, 10));
-        }
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(final SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-
-                        Splash splash1 = getHashImpl();
-                        splash1.addListener(new SplashListener() {
-                            public void eventReceived(SplashingEvent e2) {
-
-                                switch (e2.getBlock()) {
-                                    case FOURTH:
-
-                                        assertEquals(e2.getProcessedValue(), e.getProcessedValue());
-                                        results.add(true);
-                                }
-                            }
-
-                            public void complete(Spectrum spectrum, String splash) {
-
-                            }
-                        });
-
-                        final Spectrum spectrumWith100Ions = new SpectrumImpl(ionsSpectrumWith100Ions, SpectraType.MS);
-                        splash1.splashIt(spectrumWith100Ions);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        final Spectrum spectrumWith200Ions = new SpectrumImpl(ionsSpectrumWith200Ions, SpectraType.MS);
-        splash.splashIt(spectrumWith200Ions);
-
-        assertTrue(results.size() == 1);
-    }
-
-
     /**
      * tests if we only use the 100 ions for the sum calculations
      * as we are supposed too, instead of all the ions
@@ -692,4 +547,22 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         }
     }
 
+
+    @Test
+    public void testCalculate4thBlock() throws Exception {
+
+        SplashHistVersion1 splash = getHashImpl();
+
+        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(50, 50),new Ion(150, 100),new Ion(250, 25)), SpectraType.MS);
+
+        String block = splash.calculate4thBlock(spectrum);
+
+        assertEquals("4920000000",block);
+
+    }
+
+    @Override
+    SplashHistVersion1 getHashImpl() {
+        return new SplashHistVersion1();
+    }
 }

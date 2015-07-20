@@ -13,14 +13,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.lang.Math;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * the reference implementation of the Spectral Hash Key
  */
-public final class SplashVersion1 implements Splash {
+public class SplashVersion1 implements Splash {
 
     /**
      * how to scale the spectrum
@@ -224,7 +223,7 @@ public final class SplashVersion1 implements Splash {
         buffer.append("-");
 
         //forth block
-        buffer.append(calculateSum(spectrum));
+        buffer.append(calculate4thBlock(spectrum));
 
         return buffer.toString();
     }
@@ -243,7 +242,7 @@ public final class SplashVersion1 implements Splash {
      * @param spectrum
      * @return
      */
-    protected String calculateSum(Spectrum spectrum) {
+    protected String calculate4thBlock(Spectrum spectrum) {
         int ionCount = 0;
 
         BigInteger hashSum = BigInteger.ZERO;

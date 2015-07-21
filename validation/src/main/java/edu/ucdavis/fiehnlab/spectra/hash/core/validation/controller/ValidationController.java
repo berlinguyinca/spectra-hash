@@ -504,6 +504,8 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("O", "output", false, "output will be system out, instead of a file");
         options.addOption("I", "ignoreErrors", false, "errors in spectra, will be ignored, but displayed");
         options.addOption("IS", "ignoreErrorsSuppressed", false, "errors in spectra, will be ignored and not shown");
+        options.addOption("L", "longFormat", false, "utilizes the long serialization format");
+
 
 
         return options;

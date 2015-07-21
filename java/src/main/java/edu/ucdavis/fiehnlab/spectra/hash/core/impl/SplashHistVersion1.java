@@ -78,6 +78,6 @@ public class SplashHistVersion1 extends SplashVersion1 {
             }
         }
 
-        return result.toString();
+        return result.toString() + "-" + super.calculate4thBlock(spectrum);
     }
 }

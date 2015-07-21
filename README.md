@@ -1,5 +1,6 @@
-# spectra-hash
-The splash
+# The splash
+
+a spectral hash code
 
 this library is the current reference implementation for the splash. Splash stands for the spectra hash code and is an unique identifier independent of aquisition or processing. It basically tries to ensure that you can easily tell if two spectra are identical, similar or very different. Based on several criteria.
 
@@ -58,9 +59,13 @@ Splash splasher = new Splash();
 string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.02395773287:2.0 11.234568:.10", SpectrumType.MS));
 ```
 
-## C api:
+## C++ api:
 
 TODO
+
+## R api:
+
+
 
 ## Python api:
 

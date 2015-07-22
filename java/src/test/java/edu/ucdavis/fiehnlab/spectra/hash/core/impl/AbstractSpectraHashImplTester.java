@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 /**
  * general testing strategy for splash implementations
  */
-public abstract class AbstractSpectraHashImplTester {
+public abstract class AbstractSpectraHashImplTester{
 
     /**
      * get our impl to test
@@ -99,7 +99,6 @@ public abstract class AbstractSpectraHashImplTester {
         }).withChunkSize(1000)
                 .withMaxOpenFiles(10)
                 .withCleanup(true)
-                .withTempDirectory(new File("target"))
                 .withDistinct(false)
                 .build();
 

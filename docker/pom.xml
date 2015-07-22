@@ -4,18 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>splash</artifactId>
-        <groupId>fiehnlab.ucdavis.edu</groupId>
+        <groupId>edu.ucdavis.fiehnlab</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+    <groupId>edu.ucdavis.fiehnlab.splash</groupId>
     <artifactId>docker</artifactId>
 
     <dependencies>
         <dependency>
             <artifactId>web</artifactId>
-            <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+            <groupId>edu.ucdavis.fiehnlab.splash</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
@@ -60,7 +60,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>
-                                        splash.fiehnlab.ucdavis.edu
+                                        edu.ucdavis.fiehnlab.splash
                                     </groupId>
                                     <artifactId>web</artifactId>
                                     <type>jar</type>

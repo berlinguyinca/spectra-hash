@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.impl;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
-import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IonComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IonMZComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,7 +15,7 @@ import java.util.*;
  * Date: 7/20/15
  * Time: 10:14 AM
  */
-public class SplashHistVersion1 extends SplashVersion1 {
+public class SplashHistVersion2 extends SplashVersion1 {
 
     /**
      * calculates a histogram and returns it
@@ -52,7 +54,10 @@ public class SplashHistVersion1 extends SplashVersion1 {
                         binnedIons.put(i, 0.0);
                     }
 
-                    double value = ion.getIntensity() + binnedIons.get(i);
+                    /**
+                     * multiply mass * intensity to and than add it
+                     */
+                    double value = ion.getIntensity()*ion.getMass() + binnedIons.get(i);
 
                     if (value > max) {
                         max = value;

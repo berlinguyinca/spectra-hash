@@ -5,7 +5,6 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil;
-import edu.ucdavis.fiehnlab.spectra.hash.core.validation.generate.SpectraGenerator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.validation.serialize.*;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
@@ -28,8 +27,6 @@ public class ValidationController implements CommandLineRunner {
      */
     public static String FORMAT = "%1$40s";
 
-    private Serializer serializer;
-
 
     /**
      * provides us with a serializer, based on the command line options
@@ -37,7 +34,7 @@ public class ValidationController implements CommandLineRunner {
      * @param cmd
      * @return
      */
-    protected Serializer createSerialzier(CommandLine cmd) throws Exception {
+    protected Serializer createSerialzier(CommandLine cmd, File input) throws Exception {
 
         //get our output stream
         PrintStream out = null;
@@ -47,12 +44,14 @@ public class ValidationController implements CommandLineRunner {
             try {
                 File file = null;
 
-                if (cmd.hasOption("generate")) {
-                    file = new File(cmd.getArgs()[0]);
-                } else {
-                    file = new File(cmd.getArgs()[1]);
+
+                file = new File(cmd.getArgs()[1]);
+
+                if (file.isDirectory()) {
+                    file = new File(file, "splashed_" + input.getName());
                 }
-                logger.info("writing result to: " + file);
+
+                status(cmd, "storing result at: " + file + "\n");
                 out = new PrintStream(new FileOutputStream(file));
 
             } catch (IndexOutOfBoundsException e) {
@@ -163,19 +162,11 @@ public class ValidationController implements CommandLineRunner {
             long time = System.currentTimeMillis();
 
 
-            serializer = createSerialzier(cmd);
-            serializer.init();
-
-
             int hashes = 0;
 
 
-            if (cmd.hasOption("generate")) {
-                int count = Integer.parseInt(cmd.getOptionValue("generate"));
-                hashes = generateHashes(cmd, seperator, msType, serializer, count);
-            } else {
-                hashes = processFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType, serializer);
-            }
+            hashes = processFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType);
+
             //only show statistics, if we save the output in a file
             status(cmd, "finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.\n");
             status(cmd, "processed " + hashes + " spectra\n");
@@ -192,23 +183,6 @@ public class ValidationController implements CommandLineRunner {
             e.printStackTrace(System.out);
         }
 
-    }
-
-    /**
-     * generates spectra for us
-     *
-     * @param cmd
-     * @param seperator
-     * @param msType
-     * @param serializer
-     * @return
-     */
-    private int generateHashes(CommandLine cmd, String seperator, SpectraType msType, Serializer serializer, int count) throws Exception {
-        status(cmd, "generating your splashes...\n");
-
-        int counter = new SpectraGenerator().generate(msType, count, seperator, cmd, serializer);
-
-        return counter;
     }
 
     /**
@@ -258,7 +232,7 @@ public class ValidationController implements CommandLineRunner {
      * @param msType
      * @throws FileNotFoundException
      */
-    private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType, Serializer stream) throws Exception {
+    private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType) throws Exception {
 
         if (cmd.hasOption("create")) {
             status(cmd, "splashing your data...\n");
@@ -277,7 +251,33 @@ public class ValidationController implements CommandLineRunner {
             e.printStackTrace();
             throw new ParseException("please provide an input file, as first argument");
         }
+
+        if (inputFile.isDirectory()) {
+
+
+            int counter = 0;
+            for (File file : inputFile.listFiles()) {
+
+                Serializer serializer = createSerialzier(cmd, file);
+                serializer.init();
+                counter += splashFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType, serializer, file);
+            }
+
+            return counter;
+        } else {
+
+            Serializer serializer = createSerialzier(cmd, inputFile);
+            serializer.init();
+
+            return splashFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType, serializer, inputFile);
+        }
+
+    }
+
+    private int splashFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType, Serializer stream, File inputFile) throws Exception {
         Scanner scanner = new Scanner(inputFile);
+
+        status(cmd, "current file: " + inputFile + "\n");
 
         long time = System.currentTimeMillis();
         int counter = 0;
@@ -380,7 +380,6 @@ public class ValidationController implements CommandLineRunner {
         stream.close();
 
         return counter;
-
     }
 
     /**
@@ -469,7 +468,7 @@ public class ValidationController implements CommandLineRunner {
      * @param cmd
      */
     private void serializeResult(Result result, Serializer stream, CommandLine cmd) throws Exception {
-        serializer.serialize(result);
+        stream.serialize(result);
     }
 
     /**
@@ -495,7 +494,6 @@ public class ValidationController implements CommandLineRunner {
 
         options.addOption("c", "create", false, "computes a validation file with the default splash implementation, instead of validation the file");
         options.addOption("v", "validate", false, "validates a provided validation file, if not specified this is the default option");
-        options.addOption("g", "generate", true, "generates a validations file for [value] spectra. Can be used to simulate clashes");
 
         options.addOption("t", "type", true, "what kind of spectra type is it, options is MS | IR | UV | NMR | RAMAN");
 
@@ -505,7 +503,6 @@ public class ValidationController implements CommandLineRunner {
         options.addOption("I", "ignoreErrors", false, "errors in spectra, will be ignored, but displayed");
         options.addOption("IS", "ignoreErrorsSuppressed", false, "errors in spectra, will be ignored and not shown");
         options.addOption("L", "longFormat", false, "utilizes the long serialization format");
-
 
 
         return options;

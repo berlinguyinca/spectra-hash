@@ -34,7 +34,7 @@ namespace NSSplash {
 		private const int FACTOR = 1000000;
 
 
-		public string splashIt(ISpectrum spectrum) {
+		public string splashIt(ISpectrum spectrum, string sim = "sum") {
 
 			// check spectrum var
 			if (spectrum == null) {
@@ -55,8 +55,27 @@ namespace NSSplash {
 			hash.Append(getSpectrumBlock(spectrum));
 			hash.Append('-');
 
-			//create version block
-			hash.Append(getSumBlock(spectrum));
+			//create similarity block
+			string fourth = string.Empty;
+			switch (sim) {
+				case "hist":
+					fourth = getHistoBlock(spectrum);
+					break;
+				case "whist":
+					fourth = getHistoBlock(spectrum, true);
+					break;
+				case "esblock":
+					fourth = getESBlock(spectrum);
+					break;
+				case "wesblock":
+					fourth = getESBlock(spectrum, true);
+					break;
+				default:
+					fourth = getSumBlock(spectrum);
+					break;
+			}
+
+			hash.Append(fourth);
 
 			return hash.ToString();
 
@@ -143,6 +162,77 @@ namespace NSSplash {
 //			Console.WriteLine(String.Format("Sum: {0}", sum));
 
 			return String.Format("{0:D10}", (long)sum);
+		}
+
+		// calculates a histogram of the spectrum. If weighted, it sums the mz * intensities for the peaks in each bin
+		private string getHistoBlock(ISpectrum spec, bool weighted = false) {
+			string histogram = string.Empty;
+			int[] data = {0,0,0,0,0,0,0,0,0,0};
+
+			int index = 0;
+			spec.getSortedIonsByMZ().ForEach( ion => {
+				if(ion.MZ <= 100.0) {
+					index = 0;
+				} else if(ion.MZ <= 150.0) {
+					index = 1;
+				} else if(ion.MZ <= 200.0) {
+					index = 2;
+				} else if(ion.MZ <= 250.0) {
+					index = 3;
+				} else if(ion.MZ <= 300.0) {
+					index = 4;
+				} else if(ion.MZ <= 400.0) {
+					index = 5;
+				} else if(ion.MZ <= 500.0) {
+					index = 6;
+				} else if(ion.MZ <= 600.0) {
+					index = 7;
+				} else if(ion.MZ <= 700.0) {
+					index = 8;
+				} else {
+					index = 9;
+				}
+
+				if(weighted) {
+					data[index] += (int)(ion.Intensity * ion.MZ);
+				} else {
+					data[index] += (int)ion.Intensity;
+				}
+			});
+
+			Console.WriteLine("size: {0}", data.Length );
+
+			int max = data.Max();
+			foreach(int bin in data) {
+				int newbin = (int)Math.Ceiling((double)(bin * 9 / max));
+				histogram = string.Concat(histogram, newbin.ToString());
+			}
+
+			return histogram;
+		}
+
+		private string getESBlock(ISpectrum spec, bool weighted = false) {
+			string block = string.Empty;
+			int[] data = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+			spec.getSortedIonsByMZ().ForEach(ion => {
+				int full = (int)ion.MZ;
+				int i = full % 10;
+
+				if(weighted) {
+					data[i] += (int)(ion.Intensity * ion.MZ);
+				} else {
+					data[i] += (int)ion.Intensity;
+				}
+			});
+
+			int max = data.Max();
+			foreach(int bin in data) {
+				int newbin = (int)Math.Ceiling((double)(bin  * 9/ max));
+				block = string.Concat(block, newbin.ToString());
+			}
+
+			return block;
 		}
 
 		private string formatNumber(double number) {

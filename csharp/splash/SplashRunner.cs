@@ -25,6 +25,7 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace NSSplash {
 	class SplashRunner {
@@ -33,6 +34,7 @@ namespace NSSplash {
 		Splash splasher;
 
 		public static void Main(string[] args) {
+
 			SplashRunner app = new SplashRunner();
 
 			string error = "\nPlease provide a filename (<name>.csv) with spectra to hash.\nFile should contain a list of coma separated values in the form 'identifier,spectrum' each on a separate line.\n";
@@ -67,6 +69,7 @@ namespace NSSplash {
 			FileInfo file = new FileInfo(String.Format("{0}-csharp.csv", filename.Substring(0,filename.LastIndexOf('.'))));
 			if(file.Exists) {
 				file.Delete();
+				Console.WriteLine("deleted old file...");
 			}
 
 			sTime = DateTime.Now;
@@ -74,15 +77,20 @@ namespace NSSplash {
 			using (StreamReader sr = File.OpenText(filename)) {
 				string s = String.Empty;
 
-
 				using(StreamWriter fout = new StreamWriter(File.OpenWrite(file.Name))) {
 					StringBuilder result = new StringBuilder();
 					fout.AutoFlush = true;
 
 					while ((s = sr.ReadLine()) != null)	{
 						string[] input = s.Split(',');
+						if(input.Length < 2) {
+							Array.Resize<string>(ref input, 2);
+							input[1] = input[0];
+							input[0] = "unknoun";
+						}
+
 						DateTime psTime = DateTime.Now;
-						string hash = splasher.splashIt(new MSSpectrum(input[1]));
+						string hash = splasher.splashIt(new MSSpectrum(input[1]), "wesblock");
 						DateTime peTime = DateTime.Now;
 						TimeSpan lap = new TimeSpan();
 

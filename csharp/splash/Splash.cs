@@ -34,7 +34,7 @@ namespace NSSplash {
 		private const int FACTOR = 1000000;
 
 
-		public string splashIt(ISpectrum spectrum, string sim = "sum") {
+		public string splashIt(ISpectrum spectrum, string sim) {
 
 			// check spectrum var
 			if (spectrum == null) {

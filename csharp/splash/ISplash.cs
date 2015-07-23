@@ -23,7 +23,7 @@ using System;
 
 namespace NSSplash {
 	interface ISplash {
-		string splashIt(ISpectrum spectrum);
+		string splashIt(ISpectrum spectrum, string sim);
 	}
 }
 

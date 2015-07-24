@@ -33,7 +33,6 @@ public class SplashHistVersion2 extends SplashVersion1 {
         //how many bins we want
         int bins = 10;
         //size of our bins
-        int binSize = 1000/bins;
 
         //how to scale
         int scale = 9;
@@ -46,32 +45,29 @@ public class SplashHistVersion2 extends SplashVersion1 {
         //bin our ions
         for (Ion ion : ionList) {
 
-            for (int i = 1; i <= bins; i++) {
+            int index = getBin(ion);
 
-                if (ion.getMass() > i * binSize - binSize - 1 && ion.getMass() < i * binSize) {
-
-                    if (!binnedIons.containsKey(i)) {
-                        binnedIons.put(i, 0.0);
-                    }
-
-                    /**
-                     * multiply mass * intensity to and than add it
-                     */
-                    double value = ion.getIntensity()*ion.getMass() + binnedIons.get(i);
-
-                    if (value > max) {
-                        max = value;
-                    }
-                    binnedIons.put(i, value);
-                }
+            if (!binnedIons.containsKey(index)) {
+                binnedIons.put(index, 0.0);
             }
+
+            /**
+             * multiply mass * intensity to and than add it
+             */
+            double value = ((ion.getIntensity()) * (ion.getMass()) + binnedIons.get(index));
+
+            if (value > max) {
+                max = value;
+            }
+            binnedIons.put(index, value);
         }
+
 
         //normalize them
 
         StringBuffer result = new StringBuffer();
 
-        for (int i = 1; i <= bins; i++) {
+        for (int i = 0; i < 10; i++) {
             if (binnedIons.containsKey(i)) {
                 double value = binnedIons.get(i);
 
@@ -84,5 +80,36 @@ public class SplashHistVersion2 extends SplashVersion1 {
         }
 
         return result.toString();
+    }
+
+    /**
+     * finds the right bin for this ion
+     * @param ion
+     * @return
+     */
+    private int getBin(Ion ion) {
+        int index = 0;
+        if (ion.getMass() > 0 && ion.getMass() <= 100) {
+            index = 0;
+        } else if (ion.getMass() > 100 && ion.getMass() <= 200) {
+            index = 1;
+        } else if (ion.getMass() > 200 && ion.getMass() < 300) {
+            index = 2;
+        } else if (ion.getMass() > 300 && ion.getMass() <= 400) {
+            index = 3;
+        } else if (ion.getMass() > 400 && ion.getMass() <= 500) {
+            index = 4;
+        } else if (ion.getMass() > 500 && ion.getMass() <= 600) {
+            index = 5;
+        } else if (ion.getMass() > 600 && ion.getMass() <= 700) {
+            index = 6;
+        } else if (ion.getMass() > 700 && ion.getMass() <= 800) {
+            index = 7;
+        } else if (ion.getMass() > 800 && ion.getMass() <= 900) {
+            index = 8;
+        } else if (ion.getMass() > 900) {
+            index = 9;
+        }
+        return index;
     }
 }

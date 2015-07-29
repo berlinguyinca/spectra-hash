@@ -19,7 +19,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>splash.fiehnlab.ucdavis.edu</groupId>
+            <groupId>edu.ucdavis.fiehnlab.splash</groupId>
             <artifactId>java</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

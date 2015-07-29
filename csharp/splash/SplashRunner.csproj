@@ -50,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatisticBuilder.cs" />
     <Compile Include="SplashRunner.cs" />
+    <Compile Include="Mono.Options\Options.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -67,4 +68,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

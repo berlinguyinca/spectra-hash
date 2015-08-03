@@ -6,7 +6,6 @@ class LibrarySuite extends FlatSpec with Matchers {
   "The splash library wrapper" should "emulate the Java usage" in {
     import jp.riken.mirt.splash._
     import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
-    import jp.riken.mirt.splash.JavaConversions._
     
     val factory = SplashFactory.create
     val spectrum = v1.SpectrumImpl(Seq(Ion(100.0, 50)), SpectraType.MS)

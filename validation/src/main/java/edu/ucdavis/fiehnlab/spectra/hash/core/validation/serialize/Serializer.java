@@ -44,8 +44,24 @@ public class Serializer {
      *
      * @param result
      */
-    public void serialize(Result result) throws Exception {
-        stream.println(result);
+    public void serialize(Result result) throws IOException {
+        if (cmd.hasOption("longFormat")) {
+            stream.print(result);
+            stream.print(result.getSeparator());
+
+            String blocks[] = result.getSplash().split("-");
+            for (int i = 0; i < blocks.length; i++) {
+                stream.print(blocks[i]);
+
+                if (i < blocks.length - 1) {
+                    stream.print(result.getSeparator());
+                }
+            }
+            stream.println();
+
+        } else {
+            stream.println(result);
+        }
     }
 
     /**

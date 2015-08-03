@@ -26,7 +26,7 @@ public class FindDuplicatesSerializer extends SortSerializer {
     }
 
     @Override
-    protected void serializeSortedData(Result sortedData) {
+    protected void serializeSortedData(Result sortedData) throws IOException{
         if (last == null) {
             last = sortedData;
         } else {

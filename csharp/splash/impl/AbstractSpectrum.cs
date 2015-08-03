@@ -47,6 +47,7 @@ namespace NSSplash.impl {
 
 			ions = new List<Ion>();
 			Array splitData = data.Split (' ');
+
 			foreach(string ion in splitData) {
 				//get m/z
 				double mz = Double.Parse(String.Format("{0:F6}", ion.Split(':')[0]));

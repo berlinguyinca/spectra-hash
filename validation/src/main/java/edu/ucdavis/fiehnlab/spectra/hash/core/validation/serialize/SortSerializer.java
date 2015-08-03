@@ -113,8 +113,8 @@ public class SortSerializer extends Serializer {
      * does the actual serialization of a single data set
      * @param sortedData
      */
-    protected void serializeSortedData(Result sortedData) {
-        getStream().println(sortedData);
+    protected void serializeSortedData(Result sortedData) throws IOException {
+        super.serialize(sortedData);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SortSerializer extends Serializer {
     }
 
     @Override
-    public void serialize(Result result) throws Exception {
+    public void serialize(Result result) throws IOException {
         serializer.writeValues(Arrays.asList(result).iterator(), temp);
     }
 }

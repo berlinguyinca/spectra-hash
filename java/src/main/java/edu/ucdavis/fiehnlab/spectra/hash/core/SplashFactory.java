@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core;
 
 import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashHistVersion1;
 import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashHistVersion2;
+import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashHistVersion3;
 import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion1;
 
 
@@ -11,7 +12,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion1;
 public class SplashFactory {
 
     public static Splash create() {
-        return new SplashHistVersion1();
+        return new SplashHistVersion3();
     }
 
     /**

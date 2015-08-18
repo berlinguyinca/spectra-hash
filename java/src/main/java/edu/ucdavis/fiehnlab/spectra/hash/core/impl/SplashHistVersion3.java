@@ -19,10 +19,18 @@ public class SplashHistVersion3 extends SplashVersion1 {
 	int FINAL_SCALE_FACTOR = 99;
 
     /**
-     * calculates a histogram and returns it
+     * Calculates a spectral histogram using the following steps:
+     *   1. Bin spectrum into a histogram based on BIN_SIZE, extending the
+     *      histogram size as needed to accommodate large m/z values
+     *   2. Normalize the histogram, scaling to INITIAL_SCALE_FACTOR
+     *   3. Wrap the histogram by summing normalized intensities to reduce
+     *      the histogram to BINS bins
+     *   4. Normalize the reduced histogram, scaling to FINAL_SCALE_FACTOR
+     *   5. Convert/truncate each intensity value to a 2-digit integer value,
+     *      concatenated into the final string histogram representation
      *
      * @param spectrum
-     * @return
+     * @return histogram
      */
     @Override
     protected String calculate4thBlock(Spectrum spectrum) {

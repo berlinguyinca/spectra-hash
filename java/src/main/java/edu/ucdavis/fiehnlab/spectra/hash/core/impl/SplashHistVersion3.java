@@ -34,7 +34,7 @@ public class SplashHistVersion3 extends SplashVersion1 {
      */
     @Override
     protected String calculate4thBlock(Spectrum spectrum) {
-        List<Double> binnedIons = new ArrayList<Double>(BINS);
+        List<Double> binnedIons = new ArrayList<Double>();
 
         // Max intensity value
         double maxIntensity = 0;
@@ -62,18 +62,24 @@ public class SplashHistVersion3 extends SplashVersion1 {
 	    }
 
 	    // Wrap the histogram
-	    maxIntensity = 0;
-
 	    for (int i = BINS; i < binnedIons.size(); i++) {
 		    double value = binnedIons.get(i % BINS) + binnedIons.get(i);
 		    binnedIons.set(i % BINS, value);
-
-		    if (value > maxIntensity) {
-			    maxIntensity = value;
-		    }
 	    }
 
 	    // Renormalize the histogram
+	    maxIntensity = 0;
+
+	    for (int i = 0; i < BINS; i++) {
+		    if (i < binnedIons.size()) {
+			    if (binnedIons.get(i) > maxIntensity) {
+				    maxIntensity = binnedIons.get(i);
+			    }
+		    } else {
+			    binnedIons.add(0.0);
+		    }
+	    }
+
 	    for (int i = 0; i < BINS; i++) {
 		    binnedIons.set(i, FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
 	    }

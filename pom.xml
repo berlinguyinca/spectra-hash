@@ -13,6 +13,7 @@
         <module>web</module>
         <module>docker</module>
         <module>validation</module>
-	    <module>specgen</module>
+        <module>specgen</module>
+        <module>scala</module>
     </modules>
 </project>

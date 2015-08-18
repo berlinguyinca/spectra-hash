@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.impl.SplashVersion1;
 public class SplashFactory {
 
     public static Splash create() {
-        return new SplashHistVersion2();
+        return new SplashHistVersion1();
     }
 
     /**

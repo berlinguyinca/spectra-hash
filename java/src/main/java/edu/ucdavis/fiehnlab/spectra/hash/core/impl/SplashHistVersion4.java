@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SplashHistVersion4 extends SplashVersion1 {
 	int BINS = 10;
-	int BIN_SIZE = 25;
+	int BIN_SIZE = 100;
 	int INITIAL_SCALE_FACTOR = 9;
 	int FINAL_SCALE_FACTOR = 9;
 

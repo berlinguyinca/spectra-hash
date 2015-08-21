@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include<gmp.h>
+#include <gmp.h>
 #include <openssl/sha.h>
 
 using namespace std;

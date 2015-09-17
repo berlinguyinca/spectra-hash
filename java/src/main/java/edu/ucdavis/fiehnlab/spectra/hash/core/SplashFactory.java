@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.impl.*;
 public class SplashFactory {
 
     public static Splash create() {
-        return new SplashHistVersion4();
+        return createVersion1Splash();
     }
 
     /**

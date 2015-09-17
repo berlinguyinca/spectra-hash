@@ -6,6 +6,5 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.listener;
 public enum SplashBlock {
     FIRST,
     SECOND,
-    THIRD,
-    FOURTH
+    THIRD
 }

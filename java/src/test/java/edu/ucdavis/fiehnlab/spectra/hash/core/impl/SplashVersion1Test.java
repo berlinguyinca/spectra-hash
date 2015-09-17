@@ -39,7 +39,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     /**
      * how is our splash id supposed to look
      */
-    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{10}-[a-z0-9]{20}-[0-9]{10}";
+    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{20}-[0-9]{10}";
 
 
     /**

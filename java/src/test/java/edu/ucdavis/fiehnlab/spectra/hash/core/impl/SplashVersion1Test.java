@@ -339,4 +339,72 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         }
     }
 
+
+    /**
+     * ensure that histogram wrapping works correctly
+     */
+    @Test
+    public void testSplashHistogramWrapping() {
+
+        Splash splash = getHashImpl();
+
+        Spectrum[] spectra = new Spectrum[]{
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20),
+                        new Ion(1050, 100),
+                        new Ion(1150, 20)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20),
+                        new Ion(1050, 100),
+                        new Ion(1150, 20),
+                        new Ion(2050, 100),
+                        new Ion(2150, 20)
+                ), SpectraType.MS)
+        };
+
+        for (Spectrum spectrum : spectra) {
+            String hash = splash.splashIt(spectrum);
+            String histogram = hash.split("-")[2];
+
+            assert (histogram).equals("9100000000");
+        }
+    }
+
+
+    /**
+     * ensure that ions on the bin boundaries are binned separately
+     */
+    @Test
+    public void testSplashHistogramBinBoundaries() {
+
+        Splash splash = getHashImpl();
+
+        Spectrum[] spectra = new Spectrum[]{
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(99.9995, 100),
+                        new Ion(100.0001, 100)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(1099.9995, 100),
+                        new Ion(1100.0001, 100)
+                ), SpectraType.MS)
+        };
+
+        for (Spectrum spectrum : spectra) {
+            String hash = splash.splashIt(spectrum);
+            String histogram = hash.split("-")[2];
+
+            assert (histogram).equals("9900000000");
+        }
+    }
 }

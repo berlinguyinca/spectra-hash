@@ -35,18 +35,20 @@ getBlock3Hist <- function(peaks) {
     ## Initialise output
     wrappedhist <- integer(BINS)
 
-    binindex <- as.integer(peaks[,1] / BIN_SIZE)
+    binindex <- as.integer(peaks[,1] / BIN_SIZE) 
 
     summedintensities <- tapply(peaks[,2], binindex, sum)
-    normalizedintensities <- as.integer(summedintensities/max(summedintensities)*FINAL_SCALE_FACTOR)
-    wrappedhist[unique(binindex) %% BINS +1 ] <- normalizedintensities
+    wrappedbinindex <- unique(binindex) %% BINS 
+    wrappedintensities <- tapply(summedintensities, wrappedbinindex, sum)
+    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*FINAL_SCALE_FACTOR)
+    
+    wrappedhist[sort(unique(wrappedbinindex))+1] <- normalisedintensities
 
     paste(wrappedhist, collapse="")
-        
-    ## [1] "splash10-520aa3bfa1c7eaf858b2-0900000000"
-    ## [2] "splash10-839a62705ea8708960e4-7955000000"
-    ## [3] "splash10-3fda45ff22bc6d93aba9-0009009004"
-    ## [4] "splash10-368a0f45d2d0aaa01d0e-1951000200"
+
+
+    ## nominalmz-5-1  
+    ## "0009041010 != 0007092030" 
   
 }
 
@@ -122,7 +124,7 @@ if (any(truefullhist!=ourfullhist)) {
 
 if (FALSE) {
 
-    peaks <- peaks[["max-intensities-5"]]
+    peaks <- peaks[["nominalmz-5-1"]]
     
 
 }

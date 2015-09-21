@@ -39,4 +39,5 @@ public class SplashUtil {
 
         return s.splashIt(SpectraUtil.convertStringToSpectrum(spectra, type));
     }
+
 }

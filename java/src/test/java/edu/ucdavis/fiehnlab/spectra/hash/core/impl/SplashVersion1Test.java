@@ -39,7 +39,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     /**
      * how is our splash id supposed to look
      */
-    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{10}-[a-z0-9]{20}-[0-9]{10}";
+    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{20}-[0-9]{10}";
 
 
     /**
@@ -164,144 +164,6 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         assertTrue(results.size() == 1);
     }
 
-    /**
-     * test for block of 1 mass, to ensure we format the digits precise enough
-     */
-    @Test
-    public void testSecondBlockGenerationOneMass() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100.0, 50)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case SECOND:
-                        assertEquals(e.getRawValue(), "100000000");
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-
-    /**
-     * tests for a block of 2 masses, with same intensity to ensure that the sorting is correct
-     */
-    @Test
-    public void testSecondBlockGenerationTwoMassesSmallerSecondLargerFirst() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100.0, 50), new Ion(99.0, 50)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case SECOND:
-                        assertEquals("99000000 100000000", e.getRawValue());
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-
-    /**
-     * tests for a block of 2 masses, with same intensity to ensure that the sorting is correct
-     */
-    @Test
-    public void testSecondBlockGenerationTwoMassesLargerSecondSmallerFirst() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(99.0, 50), new Ion(100.0, 50)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case SECOND:
-                        assertEquals("99000000 100000000", e.getRawValue());
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-    /**
-     * tests for a block of 2 masses, with same intensity to ensure that the sorting is correct
-     */
-    @Test
-    public void testSecondBlockGenerationThreeMassesThreeDifferentIntensities() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(100, 1), new Ion(101,2), new Ion(102,3)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case SECOND:
-                        assertEquals("102000000 101000000 100000000", e.getRawValue());
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-                System.out.println("generated splash: " + splash);
-            }
-        });
-
-        String splashHash = splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
 
     /**
      * test if the generation of the string for block 3 is complete and as expected
@@ -321,7 +183,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             public void eventReceived(SplashingEvent e) {
 
                 switch (e.getBlock()) {
-                    case THIRD:
+                    case SECOND:
                         assertEquals("99000000:1000000000 100000000:1000000000", e.getRawValue());
                         results.add(true);
                 }
@@ -356,7 +218,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             public void eventReceived(SplashingEvent e) {
 
                 switch (e.getBlock()) {
-                    case THIRD:
+                    case SECOND:
                         assertEquals("99000000:1000000000 100000000:1000000000", e.getRawValue());
                         results.add(true);
                 }
@@ -391,7 +253,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             public void eventReceived(SplashingEvent e) {
 
                 switch (e.getBlock()) {
-                    case THIRD:
+                    case SECOND:
                         assertEquals("99000000:250000000 100000000:500000000 125000000:1000000000 130000000:0", e.getRawValue());
                         results.add(true);
                 }
@@ -406,217 +268,6 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
         assertTrue(results.size() == 1);
     }
-
-    @Test
-    public void testFourthBlockGenerationSumCalculation3Ions() {
-
-        Splash splash = getHashImpl();
-
-
-        Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(99.0, 25), new Ion(100.0, 50), new Ion(125, 100)), SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-                        assertEquals("0000199750", e.getProcessedValue());
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-    /**
-     * tests for overflow conditions, needed to calculate how many digits we actually need to support
-     * assuming we have no mz over 5000.
-     */
-    @Test
-    public void testFourthBlockGenerationSumCalculationOverflow() {
-
-        Splash splash = getHashImpl();
-
-        List<Ion> ionList = new ArrayList<Ion>();
-
-        for (double i = 1; i < 500000; i++) {
-            ionList.add(new Ion(i / 100, 100 * i + 0.01 * i));
-        }
-        Spectrum spectrum = new SpectrumImpl(ionList, SpectraType.MS);
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-                        assertTrue(
-                                e.getRawValue().length() <= 10
-                        );
-                        results.add(true);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        splash.splashIt(spectrum);
-
-        assertTrue(results.size() == 1);
-    }
-
-    /**
-     * tests if we only use the 100 ions for the sum calculations
-     * as we are supposed too, instead of all the ions
-     */
-    @Test
-    public void testFourthBlockGenerationSumLimitToTop100Ions() {
-
-        Splash splash = getHashImpl();
-
-        final List<Ion> ionsSpectrumWith200Ions = new ArrayList<Ion>();
-        final List<Ion> ionsSpectrumWith100Ions = new ArrayList<Ion>();
-
-
-        //first 100 ions are the largest
-        for (int i = 0; i < 100; i++) {
-            ionsSpectrumWith100Ions.add(new Ion(i, 100));
-            ionsSpectrumWith200Ions.add(new Ion(i, 100));
-
-        }
-
-        //second ions are lower, they should not really be part of the calculation
-        for (int i = 0; i < 100; i++) {
-            ionsSpectrumWith200Ions.add(new Ion(100 + i, 10));
-        }
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(final SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case FOURTH:
-
-                        Splash splash1 = getHashImpl();
-                        splash1.addListener(new SplashListener() {
-                            public void eventReceived(SplashingEvent e2) {
-
-                                switch (e2.getBlock()) {
-                                    case FOURTH:
-
-                                        assertEquals(e2.getProcessedValue(), e.getProcessedValue());
-                                        results.add(true);
-                                }
-                            }
-
-                            public void complete(Spectrum spectrum, String splash) {
-
-                            }
-                        });
-
-                        final Spectrum spectrumWith100Ions = new SpectrumImpl(ionsSpectrumWith100Ions, SpectraType.MS);
-                        splash1.splashIt(spectrumWith100Ions);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        final Spectrum spectrumWith200Ions = new SpectrumImpl(ionsSpectrumWith200Ions, SpectraType.MS);
-        splash.splashIt(spectrumWith200Ions);
-
-        assertTrue(results.size() == 1);
-    }
-
-
-    /**
-     * tests if we only use the 100 ions for the sum calculations
-     * as we are supposed too, instead of all the ions
-     */
-    @Test
-    public void testSecondBlockGenerationBeingLimitedToTop10Ions() {
-
-        Splash splash = getHashImpl();
-
-        final List<Ion> ionsSpectrumWith10Ions = new ArrayList<Ion>();
-        final List<Ion> ionsSpectrumWith12Ions = new ArrayList<Ion>();
-
-
-        //first 100 ions are the largest
-        for (int i = 0; i < 10; i++) {
-            ionsSpectrumWith12Ions.add(new Ion(i, 100));
-            ionsSpectrumWith10Ions.add(new Ion(i, 100));
-
-        }
-
-        //second ions are lower, they should not really be part of the calculation
-        for (int i = 0; i < 2; i++) {
-            ionsSpectrumWith10Ions.add(new Ion(100 + i, 10));
-        }
-
-
-        final Collection<Boolean> results = new ArrayList<Boolean>();
-
-        splash.addListener(new SplashListener() {
-            public void eventReceived(final SplashingEvent e) {
-
-                switch (e.getBlock()) {
-                    case SECOND:
-
-                        Splash splash1 = getHashImpl();
-                        splash1.addListener(new SplashListener() {
-                            public void eventReceived(SplashingEvent e2) {
-
-                                switch (e2.getBlock()) {
-                                    case SECOND:
-
-                                        assertEquals(e2.getRawValue(), e.getRawValue());
-                                        assertEquals(e2.getProcessedValue(), e.getProcessedValue());
-
-                                        results.add(true);
-
-                                }
-                            }
-
-                            public void complete(Spectrum spectrum, String splash) {
-
-                            }
-                        });
-
-                        final Spectrum spectrumWith12Ions = new SpectrumImpl(ionsSpectrumWith12Ions, SpectraType.MS);
-                        splash1.splashIt(spectrumWith12Ions);
-                }
-            }
-
-            public void complete(Spectrum spectrum, String splash) {
-
-            }
-        });
-
-        final Spectrum spectrumWith10Ions = new SpectrumImpl(ionsSpectrumWith10Ions, SpectraType.MS);
-        splash.splashIt(spectrumWith10Ions);
-
-        assertTrue(results.size() == 1);
-    }
-
 
     /**
      * tests if we keep very very small values as well as 0 values in our spectra. This is in regard to us keeping only digitis and so causing smaller values to disapeer and be represented as 0
@@ -641,12 +292,8 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             public void eventReceived(SplashingEvent e) {
 
                 switch (e.getBlock()) {
-                    case THIRD:
-                        assertEquals("100000000:1000000000 101000000:0 102000000:0", e.getRawValue());
-                        results.add(true);
-                        break;
                     case SECOND:
-                        assertEquals("100000000 101000000 102000000", e.getRawValue());
+                        assertEquals("100000000:1000000000 101000000:0 102000000:0", e.getRawValue());
                         results.add(true);
                         break;
 
@@ -661,7 +308,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
 
         splash.splashIt(spectrum);
 
-        assertTrue(results.size() == 2);
+        assertTrue(results.size() == 1);
     }
 
     /**
@@ -692,4 +339,72 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         }
     }
 
+
+    /**
+     * ensure that histogram wrapping works correctly
+     */
+    @Test
+    public void testSplashHistogramWrapping() {
+
+        Splash splash = getHashImpl();
+
+        Spectrum[] spectra = new Spectrum[]{
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20),
+                        new Ion(1050, 100),
+                        new Ion(1150, 20)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(50, 100),
+                        new Ion(150, 20),
+                        new Ion(1050, 100),
+                        new Ion(1150, 20),
+                        new Ion(2050, 100),
+                        new Ion(2150, 20)
+                ), SpectraType.MS)
+        };
+
+        for (Spectrum spectrum : spectra) {
+            String hash = splash.splashIt(spectrum);
+            String histogram = hash.split("-")[2];
+
+            assert (histogram).equals("9100000000");
+        }
+    }
+
+
+    /**
+     * ensure that ions on the bin boundaries are binned separately
+     */
+    @Test
+    public void testSplashHistogramBinBoundaries() {
+
+        Splash splash = getHashImpl();
+
+        Spectrum[] spectra = new Spectrum[]{
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(99.9995, 100),
+                        new Ion(100.0001, 100)
+                ), SpectraType.MS),
+
+                new SpectrumImpl(Arrays.asList(
+                        new Ion(1099.9995, 100),
+                        new Ion(1100.0001, 100)
+                ), SpectraType.MS)
+        };
+
+        for (Spectrum spectrum : spectra) {
+            String hash = splash.splashIt(spectrum);
+            String histogram = hash.split("-")[2];
+
+            assert (histogram).equals("9900000000");
+        }
+    }
 }

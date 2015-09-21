@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import java.lang.Math;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -20,6 +21,12 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * the reference implementation of the Spectral Hash Key
  */
 public class SplashVersion1 implements Splash {
+    int BINS = 10;
+    int BIN_SIZE = 100;
+    int INITIAL_SCALE_FACTOR = 9;
+    int FINAL_SCALE_FACTOR = 9;
+
+
 
     /**
      * how to scale the spectrum
@@ -30,12 +37,6 @@ public class SplashVersion1 implements Splash {
      * how should ions in the string representation be separeted
      */
     private static final String ION_SEPERATOR = " ";
-
-    /**
-     * how many character should be in the top ion block. Basically this reduces the SHA256 code down
-     * to a fixed length of N characater
-     */
-    private static final int maxCharactertop10IonBlockTruncation = 10;
 
     /**
      * how many character should be in the spectrum block. Basically this reduces the SHA256 code down
@@ -143,40 +144,6 @@ public class SplashVersion1 implements Splash {
         //notify observers in case they want to know about progress of the hashing
         String block = buffer.toString();
         String hash = DigestUtils.sha256Hex(block);
-        this.notifyListener(new SplashingEvent(hash, block, SplashBlock.THIRD, spectrum));
-        return hash;
-    }
-
-    /**
-     * encodes the top ten ions
-     *
-     * @param spectrum
-     * @return
-     */
-    protected String encodeTop10Ions(Spectrum spectrum) {
-        StringBuilder buffer = new StringBuilder();
-        List<Ion> ions = spectrum.getIons();
-
-        //sort by intensity max to min, secondary will be larger mass to smaller mass for identical intensities
-        Collections.sort(ions, new IonComperator());
-
-        //build the second string
-        for (int i = 0; i < ions.size(); i++) {
-            buffer.append(formatNumber(ions.get(i).getMass()));
-
-            if (i == 10 - 1) {
-                //we only want top 10 ions
-                break;
-            }
-
-            if (i < ions.size() - 1) {
-                buffer.append(ION_SEPERATOR);
-            }
-
-        }
-
-        String block = buffer.toString();
-        String hash = DigestUtils.sha256Hex(block);
         this.notifyListener(new SplashingEvent(hash, block, SplashBlock.SECOND, spectrum));
         return hash;
     }
@@ -213,17 +180,13 @@ public class SplashVersion1 implements Splash {
         //first block
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
-        
-        //second block
-        buffer.append(encodeTop10Ions(spectrum).substring(0, maxCharactertop10IonBlockTruncation));
-        buffer.append("-");
 
         //third block
         buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
         buffer.append("-");
 
         //forth block
-        buffer.append(calculate4thBlock(spectrum));
+        buffer.append(calculateHistogramBlock(spectrum));
 
         return buffer.toString();
     }
@@ -236,43 +199,81 @@ public class SplashVersion1 implements Splash {
         return splash;
     }
 
-    /**
-     * calculates a total sum, with no digits, padded by 10 digits
-     *
-     * @param spectrum
-     * @return
-     */
-    protected String calculate4thBlock(Spectrum spectrum) {
-        int ionCount = 0;
-
-        BigInteger hashSum = BigInteger.ZERO;
-
-        List<Ion> ions = spectrum.getIons();
-
-        //sort by intensity max to min
-        Collections.sort(ions, new IonComperator());
-
-        for (Ion ion : ions) {
-            hashSum = hashSum.add(BigInteger.valueOf((long)(ion.getMass() * PRECISION_FACTOR)).multiply(BigInteger.valueOf((long)(ion.getIntensity() * PRECISION_FACTOR))));
-
-            ionCount++;
-            if (ionCount > calculatedSumMaxIonsCount - 1) break;
-        }
-        
-        hashSum = hashSum.divide(BigInteger.valueOf(PRECISION_FACTOR)).divide(BigInteger.valueOf(PRECISION_FACTOR));
-
-        String sum = String.format("%" + calculatedSumMaxDigitPadding + "s", hashSum.toString()).replace(' ', '0');
-
-        this.notifyListener(new SplashingEvent(sum, String.format("%" + calculatedSumMaxDigitPadding + "s", hashSum.toString()), SplashBlock.FOURTH, spectrum));
-
-        return sum;
-    }
-
 
     /**
      * @return
      */
     protected char getVersion() {
         return '0';
+    }
+
+    /**
+     * Calculates a spectral histogram using the following steps:
+     *   1. Bin spectrum into a histogram based on BIN_SIZE, extending the
+     *      histogram size as needed to accommodate large m/z values
+     *   2. Normalize the histogram, scaling to INITIAL_SCALE_FACTOR
+     *   3. Wrap the histogram by summing normalized intensities to reduce
+     *      the histogram to BINS bins
+     *   4. Normalize the reduced histogram, scaling to FINAL_SCALE_FACTOR
+     *   5. Convert/truncate each intensity value to a 2-digit integer value,
+     *      concatenated into the final string histogram representation
+     *
+     * @param spectrum
+     * @return histogram
+     */
+    protected String calculateHistogramBlock(Spectrum spectrum) {
+        List<Double> binnedIons = new ArrayList<Double>();
+
+        // Max intensity value
+        double maxIntensity = 0;
+
+        // Bin ions
+        for (Ion ion : spectrum.getIons()) {
+            int index = (int)(ion.getMass() / BIN_SIZE);
+
+            // Add bins as needed
+            while (binnedIons.size() <= index) {
+                binnedIons.add(0.0);
+            }
+
+            double value = binnedIons.get(index) + ion.getIntensity();
+            binnedIons.set(index, value);
+
+            if (value > maxIntensity) {
+                maxIntensity = value;
+            }
+        }
+
+        // Wrap the histogram
+        for (int i = BINS; i < binnedIons.size(); i++) {
+            double value = binnedIons.get(i % BINS) + binnedIons.get(i);
+            binnedIons.set(i % BINS, value);
+        }
+
+        // Normalize the histogram
+        maxIntensity = 0;
+
+        for (int i = 0; i < BINS; i++) {
+            if (i < binnedIons.size()) {
+                if (binnedIons.get(i) > maxIntensity) {
+                    maxIntensity = binnedIons.get(i);
+                }
+            } else {
+                binnedIons.add(0.0);
+            }
+        }
+
+        for (int i = 0; i < BINS; i++) {
+            binnedIons.set(i, FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
+        }
+
+        // Build histogram string
+        StringBuffer result = new StringBuffer();
+
+        for (int i = 0; i < BINS; i++) {
+            result.append(binnedIons.get(i).intValue());
+        }
+
+        return result.toString();
     }
 }

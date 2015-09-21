@@ -35,11 +35,11 @@ getBlock3Hist <- function(peaks) {
     ## Initialise output
     wrappedhist <- integer(BINS)
 
-    binindex <- as.integer(peaks[,1] / BIN_SIZE) +1 
+    binindex <- as.integer(peaks[,1] / BIN_SIZE)
 
     summedintensities <- tapply(peaks[,2], binindex, sum)
     normalizedintensities <- as.integer(summedintensities/max(summedintensities)*FINAL_SCALE_FACTOR)
-    wrappedhist[unique(binindex) %% BINS] <- normalizedintensities
+    wrappedhist[unique(binindex) %% BINS +1 ] <- normalizedintensities
 
     paste(wrappedhist, collapse="")
         
@@ -122,7 +122,7 @@ if (any(truefullhist!=ourfullhist)) {
 
 if (FALSE) {
 
-    peaks <- peaks[[1]]
+    peaks <- peaks[["max-intensities-5"]]
     
 
 }

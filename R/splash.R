@@ -1,17 +1,16 @@
 library(digest) # for digest
 
+
+## Some constants, taken from SplashVersion1.java
+BINS <- 10;
+BIN_SIZE <- 100;
+FINAL_SCALE_FACTOR <- 9;
+
 decimalavoidance <- function(x) {
     format(floor (x * 1000000), scientific=FALSE)
 }
 
-getBlock2topN <- function(peaks, n=10) {
-    o <- order(peaks[,2], decreasing=TRUE)
-    peakString <- paste(decimalavoidance(peaks[o[1:max(1,length(o))],1]), collapse=" ")
-
-    block2 <- substr(digest(peakString, algo="sha256", serialize=FALSE), 1, 10)        
-}
-
-getBlock3full <- function(peaks,
+getBlock2Full <- function(peaks,
                           RELATIVE_INTENSITY_SCALE=1000.0,
                           MAX_HASH_CHARATERS_ENCODED_SPECTRUM=20) {
     max_intensity = max(peaks[,2])
@@ -26,18 +25,38 @@ getBlock3full <- function(peaks,
                               FUN=function(x) {paste(c(decimalavoidance(x[1]),
                                                        decimalavoidance(x[2])),
                                   collapse=":")}), collapse=" ")
-    # cat("Prehash: ", peakString, sep="", file="/tmp/prehash-R") ## Debugging of spectrum-string
-    block3 <- substr(digest(peakString, algo="sha256", serialize=FALSE),
+    ## cat("Prehash: ", peakString, sep="", file="/tmp/prehash-R") ## Debugging of spectrum-string
+    block2 <- substr(digest(peakString, algo="sha256", serialize=FALSE),
                      1, MAX_HASH_CHARATERS_ENCODED_SPECTRUM)    
 }
-    
+
+getBlock3Hist <- function(peaks) {
+
+    ## Initialise output
+    wrappedhist <- integer(BINS)
+
+    binindex <- as.integer(peaks[,1] / BIN_SIZE) +1 
+
+    summedintensities <- tapply(peaks[,2], binindex, sum)
+    normalizedintensities <- as.integer(summedintensities/max(summedintensities)*FINAL_SCALE_FACTOR)
+    wrappedhist[unique(binindex) %% BINS] <- normalizedintensities
+
+    paste(wrappedhist, collapse="")
+        
+    ## [1] "splash10-520aa3bfa1c7eaf858b2-0900000000"
+    ## [2] "splash10-839a62705ea8708960e4-7955000000"
+    ## [3] "splash10-3fda45ff22bc6d93aba9-0009009004"
+    ## [4] "splash10-368a0f45d2d0aaa01d0e-1951000200"
+  
+}
+
 getSplash <- function(peaks) {
 
-#    block2 <- getBlock2topN(peaks, 10)
-    block3 <- getBlock3full(peaks)
+    block2 <- getBlock2Full(peaks)
+    block3 <- getBlock3Hist(peaks)
 
     splash <- paste("splash10",
-                    #block2,
+                    block2,
                     block3,
                     sep="-")
 
@@ -51,6 +70,7 @@ getSplash <- function(peaks) {
 
 filedata <- read.csv("../base-dataset/spectra/test-set-not-splashed-v1.csv",
                      header=FALSE, stringsAsFactors=FALSE)
+
 spectra <- filedata[,2]
 names(spectra) <- filedata[,1]
 
@@ -66,12 +86,46 @@ results <- sapply(peaks, function(p) getSplash(p))
 refdata <- read.csv("../base-dataset/spectra/test-set-with-splash-v1.csv",
                      header=FALSE, stringsAsFactors=FALSE)
 
-truefullhash <- sapply(strsplit((refdata[,"V1"]), "-"), function(x) x[3])
+##
+## "test" hashes
+##
+
+truefullhash <- sapply(strsplit((refdata[,"V1"]), "-"), function(x) x[2])
 ourfullhash <- sapply(strsplit((results), "-"), function(x) x[2])
 
-## "test"
-any(truefullhash!=ourfullhash)
+if (any(truefullhash!=ourfullhash)) {
+    names(spectra)[truefullhash!=ourfullhash]
+} else {
+    cat("Hashes passed test\n")
+}
 
+
+##
+## "Test" histogram 
+##
+
+truefullhist <- sapply(strsplit((refdata[,"V1"]), "-"), function(x) x[3])
+ourfullhist <- sapply(strsplit((results), "-"), function(x) x[3])
+
+if (any(truefullhist!=ourfullhist)) {
+    cat("Mismatches for:\n")
+    mismatches <- truefullhist!=ourfullhist
+    output <- paste(truefullhist[mismatches], ourfullhist[mismatches], sep=" != ")
+    names(output) <- names(spectra)[mismatches]
+    output
+} else {
+    cat("Histograms passed test")
+}
+
+
+## Only snippets below this point
+
+if (FALSE) {
+
+    peaks <- peaks[[1]]
+    
+
+}
 
 
 

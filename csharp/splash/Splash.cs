@@ -32,13 +32,18 @@ namespace NSSplash {
 		private const string PREFIX = "splash";
 		private const int VERSION = 0;
 		private const int FACTOR = 1000000;
+		private int BINS = 10;
+		private int BIN_SIZE = 100;
+		private int INITIAL_SCALE_FACTOR = 9;
+		private int FINAL_SCALE_FACTOR = 9;
 
 
-		public string splashIt(ISpectrum spectrum, string sim) {
+		//public string splashIt(ISpectrum spectrum, string sim) {
+		public string splashIt(ISpectrum spectrum) {
 
 			// check spectrum var
 			if (spectrum == null) {
-				throw new ArgumentNullException ("The spectrum can't be null");
+				throw new ArgumentNullException("The spectrum can't be null");
 			}
 
 			StringBuilder hash = new StringBuilder();
@@ -47,192 +52,99 @@ namespace NSSplash {
 			hash.Append(getFirstBlock(spectrum.getSpectrumType()));
 			hash.Append('-');
 
-			//creating second block 'top 10 peak hash' (SHA256)
-			hash.Append(getTop10Hash(spectrum));
-			hash.Append('-');
-
-			//create the 3rd block
+			//create the spetrum block
 			hash.Append(getSpectrumBlock(spectrum));
 			hash.Append('-');
 
-			//create similarity block
-			string fourth = string.Empty;
-			switch (sim) {
-				case "hist":
-					fourth = getHistoBlock(spectrum);
-					break;
-				case "whist":
-					fourth = getHistoBlock(spectrum, true);
-					break;
-				case "esblock":
-					fourth = getESBlock(spectrum);
-					break;
-				case "wesblock":
-					fourth = getESBlock(spectrum, true);
-					break;
-				default:
-					fourth = getSumBlock(spectrum);
-					break;
-			}
-
-			hash.Append(fourth);
+			//create histogram block
+			string histogram = getHistoBlock(spectrum);
+			hash.Append(histogram);
 
 			return hash.ToString();
 
 		}
 
 		private string getFirstBlock(SpectrumType specType) {
-			return(PREFIX + (int)specType + VERSION);
+			return (PREFIX + (int)specType + VERSION);
 		}
-
-		private string getTop10Hash(ISpectrum spec) {
-			List<Ion> ions = spec.getSortedIonsByIntensity();
-
-			if(ions.Count > 10) {
-				ions.RemoveRange(10, ions.Count - 10);
-			}
-
-			StringBuilder strIons = new StringBuilder();
-			foreach(Ion i in ions) {
-				strIons.Append(formatNumber(i.MZ));
-				strIons.Append(" ");
-			}
-
-
-			//string to hash
-			strIons.Remove(strIons.Length -1, 1);
-
-			byte[] message = Encoding.UTF8.GetBytes(strIons.ToString());
-
-			SHA256Managed hashString = new SHA256Managed();
-
-			hashString.ComputeHash(message);
-
-			string hash = BitConverter.ToString(hashString.Hash).Replace("-","").ToLower();
-			hash = hash.Replace("-","").Substring(0,10);
-
-//			Console.WriteLine("2nd block raw: {0}\n2rd block pro: {1}", strIons, hash);
-
-			return hash;
-		}
-
 
 		//calculate the hash for the whole spectrum
 		private string getSpectrumBlock(ISpectrum spec) {
 			List<Ion> ions = spec.getSortedIonsByMZ();
 
 			StringBuilder strIons = new StringBuilder();
-			foreach(Ion i in ions) {
+			foreach (Ion i in ions) {
 				strIons.Append(String.Format("{0}:{1}", formatNumber(i.MZ), formatNumber(i.Intensity)));
 				strIons.Append(" ");
 			}
 
 			//string to hash
-			strIons.Remove(strIons.Length -1, 1);
+			strIons.Remove(strIons.Length - 1, 1);
 
 			byte[] message = Encoding.UTF8.GetBytes(strIons.ToString());
 
 			SHA256Managed hashString = new SHA256Managed();
-
 			hashString.ComputeHash(message);
 
 			string hash = BitConverter.ToString(hashString.Hash);
-			hash = hash.Replace("-","").Substring(0,20).ToLower();
+			hash = hash.Replace("-", "").Substring(0, 20).ToLower();
 
-//			Console.WriteLine("3nd block raw: {0}\n3rd block pro: {1}", strIons, hash);
+			//			Console.WriteLine("3nd block raw: {0}\n3rd block pro: {1}", strIons, hash);
 
 			return hash;
 		}
 
-		//calculate Sum(mz*intensity) for top 100 ions (sorted by intensity desc)
-		private string getSumBlock(ISpectrum spec) {
-			BigInteger bisum = 0;
-			List<Ion> ions = spec.getSortedIonsByIntensity();
-
-			if(ions.Count > 100) {
-				ions.RemoveRange(100, ions.Count - 100);
-			}
-
-			foreach(Ion i in ions) {
-				bisum = BigInteger.Add(bisum, BigInteger.Multiply(new BigInteger(i.MZ * FACTOR), new BigInteger(i.Intensity * FACTOR)));
-			}
-
-			long sum = (long)BigInteger.Divide(bisum, new BigInteger(1000000000000));
-
-//			Console.WriteLine(String.Format("Sum: {0}", sum));
-
-			return String.Format("{0:D10}", (long)sum);
-		}
-
 		// calculates a histogram of the spectrum. If weighted, it sums the mz * intensities for the peaks in each bin
-		private string getHistoBlock(ISpectrum spec, bool weighted = false) {
-			string histogram = string.Empty;
-			int[] data = {0,0,0,0,0,0,0,0,0,0};
+		private string getHistoBlock(ISpectrum spec) {
+			List<double> binnedIons = new List<double>();
+			double maxIntensity = 0;
 
-			int index = 0;
-			spec.getSortedIonsByMZ().ForEach( ion => {
-				if(ion.MZ <= 100.0) {
-					index = 0;
-				} else if(ion.MZ <= 150.0) {
-					index = 1;
-				} else if(ion.MZ <= 200.0) {
-					index = 2;
-				} else if(ion.MZ <= 250.0) {
-					index = 3;
-				} else if(ion.MZ <= 300.0) {
-					index = 4;
-				} else if(ion.MZ <= 400.0) {
-					index = 5;
-				} else if(ion.MZ <= 500.0) {
-					index = 6;
-				} else if(ion.MZ <= 600.0) {
-					index = 7;
-				} else if(ion.MZ <= 700.0) {
-					index = 8;
-				} else {
-					index = 9;
+			// initioalize and populate bins
+			foreach (Ion i in spec.getSortedIonsByMZ()) {
+				int index = (int)(i.MZ / BIN_SIZE);
+
+				while (binnedIons.Count <= index) {
+					binnedIons.Add(0.0);
 				}
 
-				if(weighted) {
-					data[index] += (int)(ion.Intensity * ion.MZ);
-				} else {
-					data[index] += (int)ion.Intensity;
+				double value = binnedIons[index] + i.Intensity;
+				binnedIons[index] = value;
+
+				if (value > maxIntensity) {
+					maxIntensity = value;
 				}
-			});
 
-			Console.WriteLine("size: {0}", data.Length );
-
-			int max = data.Max();
-			foreach(int bin in data) {
-				int newbin = (int)Math.Ceiling((double)(bin * 9 / max));
-				histogram = string.Concat(histogram, newbin.ToString());
 			}
 
-			return histogram;
-		}
-
-		private string getESBlock(ISpectrum spec, bool weighted = false) {
-			string block = string.Empty;
-			int[] data = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-			spec.getSortedIonsByMZ().ForEach(ion => {
-				int full = (int)ion.MZ;
-				int i = full % 10;
-
-				if(weighted) {
-					data[i] += (int)(ion.Intensity * ion.MZ);
-				} else {
-					data[i] += (int)ion.Intensity;
-				}
-			});
-
-			int max = data.Max();
-			foreach(int bin in data) {
-				int newbin = (int)Math.Ceiling((double)(bin  * 9/ max));
-				block = string.Concat(block, newbin.ToString());
+			// Wrap the bins
+			for (int i = BINS; i < binnedIons.Count; i++) {
+				double value = binnedIons[i % BINS] + binnedIons[i];
+				binnedIons[i % BINS] = value;
 			}
 
-			return block;
+			// Normalize
+			maxIntensity = 0;
+			for (int i = 0; i < BINS; i++) {
+				if (i < binnedIons.Count) {
+					if (binnedIons[i] > maxIntensity) {
+						maxIntensity = binnedIons[i];
+					}
+				} else {
+					binnedIons.Add(0.0);
+				}
+			}
+
+			for (int i = 0; i < binnedIons.Count; i++) {
+				binnedIons[i] = FINAL_SCALE_FACTOR * binnedIons[i] / maxIntensity;
+			}
+
+			StringBuilder histogram = new StringBuilder();
+
+			foreach (double bin in binnedIons.GetRange(0, BINS)) {
+				histogram.Append((int)bin);
+			}
+
+			return histogram.ToString();
 		}
 
 		private string formatNumber(double number) {

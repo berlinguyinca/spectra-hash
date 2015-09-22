@@ -41,7 +41,6 @@ namespace NSSplash {
 			string filename = string.Empty;
 			int spec_col = 0;
 			int id_col = 1;
-			string type = "sum";
 
 			var p = new OptionSet () {
 				"Usage: SplashRunner [OPTIONS]+",
@@ -58,10 +57,6 @@ namespace NSSplash {
 					"the zero-based column number of the origin id.\n" + 
 					"this must be an string. Default = 1",
 					(int v) => id_col = v },
-				{ "t|type=", 
-					"the type of similarity block to generate.\n" +
-					"can be one of 'sum', 'hist', 'whist', 'esblock', 'wesblock'.",
-					v => type = v },
 				{ "h|help",  "show this message and exit", 
 					v => show_help = v != null },
 			};
@@ -93,19 +88,19 @@ namespace NSSplash {
 				return;
 			}
 
-			app.hashFile(filename, spec_col, id_col, type);
+			app.hashFile(filename, spec_col, id_col);
 		}
 
 		public SplashRunner() {
 			splasher = new Splash();
 		}
 
-		public void hashFile(string filename, int spec_col, int id_col, string type) {
+		public void hashFile(string filename, int spec_col, int id_col) {
 			StatisticBuilder stats = new StatisticBuilder();
 			DateTime sTime, eTime;
 			int count = 0;
 
-			Console.WriteLine("params: {0}, {1}, {2}, {3}", filename, spec_col, id_col, type);
+			Console.WriteLine("params: {0}, {1}, {2}", filename, spec_col, id_col);
 
 			FileInfo file = new FileInfo(String.Format("{0}-csharp.csv", filename.Substring(0,filename.LastIndexOf('.'))));
 
@@ -140,7 +135,7 @@ namespace NSSplash {
 						}
 
 						DateTime psTime = DateTime.Now;
-						string hash = splasher.splashIt(new MSSpectrum(input[spec_col]), type);
+						string hash = splasher.splashIt(new MSSpectrum(input[spec_col]));
 						DateTime peTime = DateTime.Now;
 						TimeSpan lap = new TimeSpan();
 
@@ -150,6 +145,7 @@ namespace NSSplash {
 						}
 
 						result.Append(input[id_col]).Append(",").Append(hash).Append(",").Append(input[spec_col]);
+						Console.WriteLine(hash);
 						fout.WriteLine(String.Format(result.ToString()));
 						result.Clear();
 

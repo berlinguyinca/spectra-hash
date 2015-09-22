@@ -27,6 +27,7 @@ using System.Linq;
 namespace NSSplash.impl {
 	
 	public abstract class AbstractSpectrum : ISpectrum {
+		private const int MAX_RELATIVE_INTENSITY = 1000;
 		protected SpectrumType type;
 		public SpectrumType Type { 
 			get { return this.type; }
@@ -59,7 +60,7 @@ namespace NSSplash.impl {
 				Ions.Add(newIon);
 			}
 
-			Ions = this.toRelative();
+			Ions = this.toRelative(MAX_RELATIVE_INTENSITY);
 		}
 
 		public override string ToString() {
@@ -119,12 +120,12 @@ namespace NSSplash.impl {
 		}
 
 		// calculate the relative spectrum in the range [0 .. 1000]
-		private List<Ion> toRelative() {
+		private List<Ion> toRelative(int scale) {
 			List<Ion> relativeIons = new List<Ion>();
 			relativeIons.AddRange(Ions);
 
 			double maxInt = relativeIons.Max(ion => ion.Intensity);
-			relativeIons.ForEach(i => i.Intensity = i.Intensity / maxInt * 1000);
+			relativeIons.ForEach(i => i.Intensity = i.Intensity / maxInt * scale);
 
 			return relativeIons;
 		}

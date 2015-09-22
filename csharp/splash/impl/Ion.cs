@@ -26,8 +26,11 @@ namespace NSSplash.impl {
 	public sealed class Ion : IComparable {
 		private double mz = 0.0;
 		private double intensity = 0.0;
+        private const int PRECISION = 6;
 
-		public double MZ { 
+        private string format = String.Format("{{0,5:F{0}}}", PRECISION);
+
+        public double MZ { 
 			get { return mz; } 
 			set { mz = value; } 
 		}
@@ -44,13 +47,14 @@ namespace NSSplash.impl {
 
 		//returning ion in mz:intensity format with 6 decimals
 		public override string ToString() {
-			return (String.Format("{0,5:F6}:{1,5:F6}", mz, intensity));
+            StringBuilder tostring = new StringBuilder();
+			return (tostring.AppendFormat(format, mz).Append(":").AppendFormat(format, intensity).ToString());
 		}
 
 		//returning ion in mz:intensity format with 6 decimals in JSON format
 		public string ToJSON() {
 			StringBuilder json = new StringBuilder();
-			json.Append("{\"mass\": ").AppendFormat("{0,5:F6}",mz).AppendFormat(", \"intensity\":{0,5:F6}", intensity).Append("}");
+			json.Append("{\"mass\": ").AppendFormat(format, mz).Append(", \"intensity\":").AppendFormat(format, intensity).Append("}");
 			return json.ToString();
 		}
 

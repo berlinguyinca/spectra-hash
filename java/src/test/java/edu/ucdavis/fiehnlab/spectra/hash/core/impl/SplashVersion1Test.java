@@ -407,4 +407,5 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             assert (histogram).equals("9900000000");
         }
     }
+
 }

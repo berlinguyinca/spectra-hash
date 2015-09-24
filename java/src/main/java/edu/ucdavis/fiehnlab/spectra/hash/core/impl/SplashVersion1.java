@@ -186,12 +186,12 @@ public class SplashVersion1 implements Splash {
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
 
-        //third block
-        buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
+        //second block
+        buffer.append(calculateHistogramBlock(spectrum));
         buffer.append("-");
 
-        //forth block
-        buffer.append(calculateHistogramBlock(spectrum));
+        //third block
+        buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
 
         return buffer.toString();
     }

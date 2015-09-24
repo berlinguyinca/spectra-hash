@@ -39,7 +39,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     /**
      * how is our splash id supposed to look
      */
-    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{20}-[0-9]{10}";
+    private static final String REGEX = "splash[1-5][0-9a-z]-[a-z0-9]{20}-[0-9A-Z]{10}";
 
 
     /**
@@ -375,7 +375,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             String hash = splash.splashIt(spectrum);
             String histogram = hash.split("-")[2];
 
-            assert (histogram).equals("9100000000");
+            assert (histogram).equals("Z700000000");
         }
     }
 
@@ -404,7 +404,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             String hash = splash.splashIt(spectrum);
             String histogram = hash.split("-")[2];
 
-            assert (histogram).equals("9900000000");
+            assert (histogram).equals("ZZ00000000");
         }
     }
 

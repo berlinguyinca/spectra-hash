@@ -23,8 +23,13 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class SplashVersion1 implements Splash {
     int BINS = 10;
     int BIN_SIZE = 100;
-    int INITIAL_SCALE_FACTOR = 9;
-    int FINAL_SCALE_FACTOR = 9;
+    int FINAL_SCALE_FACTOR = 35;
+
+    char[] INTENSITY_MAP = new char[] {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+            'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    };
 
 
 
@@ -263,6 +268,7 @@ public class SplashVersion1 implements Splash {
             }
         }
 
+
         for (int i = 0; i < BINS; i++) {
             binnedIons.set(i, FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
         }
@@ -271,7 +277,7 @@ public class SplashVersion1 implements Splash {
         StringBuffer result = new StringBuffer();
 
         for (int i = 0; i < BINS; i++) {
-            result.append(binnedIons.get(i).intValue());
+            result.append(INTENSITY_MAP[binnedIons.get(i).intValue()]);
         }
 
         return result.toString();

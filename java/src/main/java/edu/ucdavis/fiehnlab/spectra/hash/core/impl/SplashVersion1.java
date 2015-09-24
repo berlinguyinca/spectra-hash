@@ -21,17 +21,16 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * the reference implementation of the Spectral Hash Key
  */
 public class SplashVersion1 implements Splash {
-    int BINS = 10;
-    int BIN_SIZE = 100;
-    int FINAL_SCALE_FACTOR = 35;
+    private static final int BINS = 10;
+    private static final int BIN_SIZE = 100;
 
-    char[] INTENSITY_MAP = new char[] {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
-            'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    private static final char[] INTENSITY_MAP = new char[] {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
+            'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     };
 
-
+    private static final int FINAL_SCALE_FACTOR = 35;
 
     /**
      * how to scale the spectrum
@@ -58,16 +57,6 @@ public class SplashVersion1 implements Splash {
      * factor to scale floating point values
      */
     private static final long PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMassesAndIntensities);
-
-    /**
-     * max amount of padding for the sum
-     */
-    private static final int calculatedSumMaxDigitPadding = 10;
-
-    /**
-     * max amount of ions
-     */
-    private static final int calculatedSumMaxIonsCount = 100;
 
     /**
      * registered listeneres

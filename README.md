@@ -2,7 +2,7 @@
 
 a spectral hash code
 
-this library is the current reference implementation for the splash. Splash stands for the spectra hash code and is an unique identifier independent of aquisition or processing. It basically tries to ensure that you can easily tell if two spectra are identical, similar or very different. Based on several criteria.
+this library is the current reference implementation for the splash. Splash stands for the spectra hash code and is an unique identifier independent of acquisition or processing. It basically tries to ensure that you can easily tell if two spectra are identical, similar or very different. Based on several criteria.
 
 You can access it as a REST service, at http://splash.fiehnlab.ucdavis.edu
 

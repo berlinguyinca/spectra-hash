@@ -145,7 +145,7 @@ namespace NSSplash {
 						}
 
 						result.Append(input[id_col]).Append(",").Append(hash).Append(",").Append(input[spec_col]);
-						Console.WriteLine(hash);
+						//Console.WriteLine(hash);
 						fout.WriteLine(String.Format(result.ToString()));
 						result.Clear();
 

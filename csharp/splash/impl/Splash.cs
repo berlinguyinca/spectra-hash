@@ -35,8 +35,12 @@ namespace NSSplash {
 		private int BINS = 10;
 		private int BIN_SIZE = 100;
 		private int INITIAL_SCALE_FACTOR = 9;
-		private int FINAL_SCALE_FACTOR = 9;
-
+		private static readonly char[] INTENSITY_MAP = new char[] {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
+			'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+			'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+		};
+		private int FINAL_SCALE_FACTOR = INTENSITY_MAP.Length -1;
 
 		//public string splashIt(ISpectrum spectrum, string sim) {
 		public string splashIt(ISpectrum spectrum) {
@@ -52,13 +56,12 @@ namespace NSSplash {
 			hash.Append(getFirstBlock(spectrum.getSpectrumType()));
 			hash.Append('-');
 
-			//create the spetrum block
-			hash.Append(getSpectrumBlock(spectrum));
+			//create histogram block
+			hash.Append(getHistoBlock(spectrum));
 			hash.Append('-');
 
-			//create histogram block
-			string histogram = getHistoBlock(spectrum);
-			hash.Append(histogram);
+			//create the spetrum block
+			hash.Append(getSpectrumBlock(spectrum));
 
 			return hash.ToString();
 
@@ -99,7 +102,7 @@ namespace NSSplash {
 			List<double> binnedIons = new List<double>();
 			double maxIntensity = 0;
 
-			// initioalize and populate bins
+			// initialize and populate bins
 			foreach (Ion i in spec.getSortedIonsByMZ()) {
 				int index = (int)(i.MZ / BIN_SIZE);
 
@@ -141,7 +144,7 @@ namespace NSSplash {
 			StringBuilder histogram = new StringBuilder();
 
 			foreach (double bin in binnedIons.GetRange(0, BINS)) {
-				histogram.Append((int)bin);
+				histogram.Append(INTENSITY_MAP.ElementAt((int)bin));
 			}
 
 			return histogram.ToString();

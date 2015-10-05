@@ -218,9 +218,6 @@ public class SplashVersion1 implements Splash {
     protected String calculateHistogramBlock(Spectrum spectrum) {
         List<Double> binnedIons = new ArrayList<Double>();
 
-        // Max intensity value
-        double maxIntensity = 0;
-
         // Bin ions
         for (Ion ion : spectrum.getIons()) {
             int index = (int)(ion.getMass() / BIN_SIZE);
@@ -232,10 +229,6 @@ public class SplashVersion1 implements Splash {
 
             double value = binnedIons.get(index) + ion.getIntensity();
             binnedIons.set(index, value);
-
-            if (value > maxIntensity) {
-                maxIntensity = value;
-            }
         }
 
         // Wrap the histogram
@@ -245,7 +238,7 @@ public class SplashVersion1 implements Splash {
         }
 
         // Normalize the histogram
-        maxIntensity = 0;
+        double maxIntensity = 0;
 
         for (int i = 0; i < BINS; i++) {
             if (i < binnedIons.size()) {

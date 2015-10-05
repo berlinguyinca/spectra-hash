@@ -47,50 +47,29 @@ def create_splash(input_file, output_file, separator, spectrum_type, spectrum_co
     print('average time including io to splash a spectra is %.2f ms' % (1000 * (time.time() - start_time) / (i + 1)), file = sys.stderr)
 
 
-def validate_splash(input_file, output_file, separator, spectrum_type, spectrum_col, origin_col, splash_col):
-    return
-
-
 
 if __name__ == '__main__':
     print(SPLASH_BANNER)
 
     # Define arguments
     parser = argparse.ArgumentParser(description = '')
-    parser.add_argument('-c', '--create', action = 'store_true', help = 'computes a splash file with the default splash implementation')
-    parser.add_argument('-v', '--validate', action = 'store_true', help = 'validates a provided validation file')
 
     parser.add_argument('-s', '--spectrum', type = int, help = 'column containing the soectrum sting')
     parser.add_argument('-o', '--origin', type = int, help = 'column containing the origin information')
-    parser.add_argument('-k', '--splash', type = int, help = 'column containing the splash (for validation only)')
 
     parser.add_argument('-t', '--type', choices = ['MS', 'IR', 'UV', 'NMR', 'RAMAN'], default = 'MS', \
         required = True, help = 'spectrum type (default: %(default)s)')
     parser.add_argument('-T', '--separator', default = ',', help = 'separator character between columns (default: %(default)s)')
 
     parser.add_argument('input_file', help = 'input file for processing')
-    parser.add_argument('output_file', help = 'output validation file')
+    parser.add_argument('output_file', help = 'output file')
 
     args = parser.parse_args()
 
 
     # Validate arguments
-    if not args.create and not args.validate:
-        raise argparse.ArgumentTypeError('An option must be selected between create and validate')
-    elif args.create and args.validate:
-        raise argparse.ArgumentTypeError('Cannot both create and validate a file')
-    
-    # Create splashes
-    if args.create:
-        if args.spectrum is None or args.origin is None:
-            raise argparse.ArgumentTypeError('Please specify the origin and spectrum column numbers')
+    if args.spectrum is None or args.origin is None:
+        raise argparse.ArgumentTypeError('Please specify the origin and spectrum column numbers')
 
-        spectrum_type = SpectrumType.get(args.type)
-        create_splash(args.input_file, args.output_file, args.separator, spectrum_type, args.spectrum, args.origin)
-
-    # Validate generated splashes
-    if args.validate:
-        if args.spectrum is None or args.origin is None or args.splash is None:
-            raise argparse.ArgumentTypeError('Please specify the origin, spectrum, and splash column numbers')
-
-        validate_splash(args.input_file, args.output_file, args.separator, args.type, args.spectrum, args.origin, args.splash)
+    spectrum_type = SpectrumType.get(args.type)
+    create_splash(args.input_file, args.output_file, args.separator, spectrum_type, args.spectrum, args.origin)

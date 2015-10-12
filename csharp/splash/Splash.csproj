@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ISplash.cs" />
-    <Compile Include="Splash.cs" />
+    <Compile Include="impl\Splash.cs" />
     <Compile Include="impl\MSSpectrum.cs" />
     <Compile Include="impl\AbstractSpectrum.cs" />
     <Compile Include="impl\Ion.cs" />

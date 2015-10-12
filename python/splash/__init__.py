@@ -1,4 +1,8 @@
-__version__ = '0.0.1'
-__all__ = ['splash']
+# -*- coding: utf-8 -*-
 
-from .splash import *
+__title__ = 'splash'
+__version__ = '0.0.1'
+
+from .splash import SplashVersion1
+from .spectrum import Spectrum
+from .spectrum_type import SpectrumType

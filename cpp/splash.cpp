@@ -9,7 +9,6 @@
 #include <utility>
 #include <vector>
 
-#include <gmp.h>
 #include <openssl/sha.h>
 
 using namespace std;
@@ -36,13 +35,16 @@ const char ION_SEPARATOR = ' ';
 const char ION_PAIR_SEPARATOR = ':';
 const int MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20;
 
-// Top ions block properties
-const int MAX_TOP_IONS = 10;
-const int MAX_HASH_CHARACTERS_TOP_IONS = 10;
+// Histogram properties
+const int BINS = 10;
+const int BIN_SIZE = 100;
 
-// Spectrum sum properties
-const int SPECTRUM_SUM_PADDING = 10;
-const int SPECTRUM_SUM_MAX_IONS = 100;
+const char INTENSITY_MAP[] = {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
+    'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+};
+const int FINAL_SCALE_FACTOR = 35;
 
 
 
@@ -86,6 +88,7 @@ bool ionPairMzComparator(const pair<double, double> a, const pair<double, double
 	}
 }
 
+
 bool ionPairIntensityComparator(const pair<double, double> a, const pair<double, double> b) {
 	if(abs(a.second - b.second) < EPS) {
 		return a.first < b.first;
@@ -95,33 +98,10 @@ bool ionPairIntensityComparator(const pair<double, double> a, const pair<double,
 }
 
 
-string buildFirstBlock(vector<pair<double, double> > &spectrum, char spectrum_type) {
+string buildInitialBlock(vector<pair<double, double> > &spectrum, char spectrum_type) {
 	stringstream ss;
 	ss << "splash" << spectrum_type << SPLASH_VERSION;
 	return ss.str();
-}
-
-string encodeTopIons(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	sort(spectrum.begin(), spectrum.end(), ionPairIntensityComparator);
-
-	int i = 0;
-	stringstream ss;
-
-	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << static_cast<long long>((*it).first * PRECISION_FACTOR);
-
-		if(++i == MAX_TOP_IONS || i == spectrum.size()) {
-			break;
-		} else {
-			ss << ION_SEPARATOR;
-		}
-	}
-
-	if(DEBUG) {
-		cerr << "Top Ions: '" << ss.str() << "'" << endl;
-	}
-
-	return sha256(ss.str()).substr(0, MAX_HASH_CHARACTERS_TOP_IONS);
 }
 
 string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_type) {
@@ -146,40 +126,57 @@ string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_typ
 	return sha256(ss.str()).substr(0, MAX_HASH_CHARATERS_ENCODED_SPECTRUM);
 }
 
-string calculateSum(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	sort(spectrum.begin(), spectrum.end(), ionPairIntensityComparator);
 
-	int i = 0;
-	mpz_t spectrumSum, temp, intensity;
-	mpz_init_set_ui(spectrumSum, 0);
-	
-	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end() && ++i <= SPECTRUM_SUM_MAX_IONS; ++it) {
-		mpz_init_set_ui(temp, static_cast<unsigned long long>((*it).first * PRECISION_FACTOR));
-		mpz_mul_ui(temp, temp, static_cast<unsigned long long>((*it).second * PRECISION_FACTOR));
-		mpz_add(spectrumSum, spectrumSum, temp);
+string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum_type) {
+	vector<double> histogram;
+
+	// Bin ions
+	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+		int idx = static_cast<int>((*it).first / BIN_SIZE);
+
+		while(histogram.size() <= idx) {
+			histogram.push_back(0.0);
+		}
+
+		histogram[idx] += (*it).second;
 	}
-	
-	mpz_ui_pow_ui(temp, PRECISION_FACTOR, 2);
-	mpz_fdiv_q(spectrumSum, spectrumSum, temp);
-	
+
+	// Ensure that the histogram has at least BINS bins
+	while(histogram.size() < BINS) {
+		histogram.push_back(0.0);
+	}
+
+	// Wrap the histogram
+	for(int i = BINS; i < histogram.size(); i++) {
+		histogram[i % BINS] += histogram[i];
+	}
+
+	// Normalize the histogram and convert to base 36
+	double max_intensity = 0;
+
+	for(int i = 0; i < BINS; i++) {
+		if(histogram[i] > max_intensity)
+			max_intensity = histogram[i];
+	}
+
 	stringstream ss;
-	ss << setfill('0') << setw(SPECTRUM_SUM_PADDING) << mpz_get_ui(spectrumSum);
 
-	if(DEBUG) {
-		cerr << "Spectrum Sum: " << setprecision(PRECISION) << fixed << spectrumSum << " -> " << ss.str() << endl;
+	for(int i = 0; i < BINS; i++) {
+		int bin = static_cast<long>(FINAL_SCALE_FACTOR * histogram[i] / max_intensity);
+		ss << INTENSITY_MAP[bin];
 	}
-	
-	return ss.str();
+
+    // Return histogram
+    return ss.str();
 }
 
 
 string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
 	stringstream ss;
 	
-	ss << buildFirstBlock(spectrum, spectrum_type) << '-';
-	ss << encodeTopIons(spectrum, spectrum_type) << '-';
-	ss << encodeSpectrum(spectrum, spectrum_type) << '-';
-	ss << calculateSum(spectrum, spectrum_type);
+	ss << buildInitialBlock(spectrum, spectrum_type) << '-';
+	ss << calculateHistogram(spectrum, spectrum_type) << '-';
+	ss << encodeSpectrum(spectrum, spectrum_type);
 
 	return ss.str();
 }
@@ -217,7 +214,6 @@ int main(int argc, char** argv) {
 			double mz = atof((*it).substr(0, delim_pos).c_str());
 			double intensity = atof((*it).substr(delim_pos + 1).c_str());
 
-
 			if(intensity > maxIntensity)
 				maxIntensity = intensity;
 
@@ -234,11 +230,17 @@ int main(int argc, char** argv) {
 		// Provide output for large files
 		if(i % 10000 == 0) {
 			cerr << "processed " << i << " spectra, " << setprecision(2) << fixed
-				 <<(std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i
+				 << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i
 				 << " ms average time to splash a spectrum." << endl;
 		}
 
 		// Print the spectrum id with the calculated splash id
-		cout << id << "," << splashIt(spectrum, '1') << "," << spectrum_string << endl;
+		cout << splashIt(spectrum, '1') << "," << id << "," << spectrum_string << endl;
 	}
+
+	cerr << "finished processing, processing took: " << setprecision(2) << fixed
+		 << (std::clock() - start) / (double)CLOCKS_PER_SEC << " s" << endl;
+	cerr << "processed " << i << " spectra" << endl;
+	cerr << "average time including io to splash a spectrum is: " << setprecision(2) << fixed
+		 << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i  << " ms" << endl;
 }

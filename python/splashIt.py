@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 from splash import SplashVersion1, Spectrum, SpectrumType
@@ -25,7 +26,9 @@ def create_splash(input_file, output_file, separator, spectrum_type, spectrum_co
     start_time = time.time()
     splasher = SplashVersion1()
 
-    with open(input_file, 'r') as f, open(output_file, 'w') as fout:
+    with open(input_file, 'r') as f, \
+        (open(output_file, 'w') if output_file is not None else sys.stdout) as fout:
+
         for i, line in enumerate(f):
             # Handle input
             line = line.strip().split(separator)
@@ -49,7 +52,7 @@ def create_splash(input_file, output_file, separator, spectrum_type, spectrum_co
 
 
 if __name__ == '__main__':
-    print(SPLASH_BANNER)
+    print(SPLASH_BANNER, file = sys.stderr)
 
     # Define arguments
     parser = argparse.ArgumentParser(description = '')
@@ -62,7 +65,7 @@ if __name__ == '__main__':
     parser.add_argument('-T', '--separator', default = ',', help = 'separator character between columns (default: %(default)s)')
 
     parser.add_argument('input_file', help = 'input file for processing')
-    parser.add_argument('output_file', help = 'output file')
+    parser.add_argument('output_file', nargs = '?', help = 'output file')
 
     args = parser.parse_args()
 

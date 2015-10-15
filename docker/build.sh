@@ -2,7 +2,7 @@
 set -o pipefail
 
 NAME="splash/web"
-IMAGE="gose.fiehnlab.ucdavis.edu:5000/$NAME"
+IMAGE="eros.fiehnlab.ucdavis.edu/$NAME"
 
 cd ../docker
 pwd

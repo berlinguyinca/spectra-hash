@@ -6,7 +6,7 @@ import string
 
 PRECISION = 6;
 PRECISION_FACTOR = 10**PRECISION
-EPS = 1.0e-6;
+EPS = 1.0e-6
 
 # Separator for building spectrum strings
 ION_SEPARATOR = ' '
@@ -14,6 +14,7 @@ ION_SEPARATOR = ' '
 # Full spectrum hash properties
 ION_PAIR_SEPARATOR = ':'
 MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20
+EPS_CORRECTION = 1.0e-7
 
 # Histogram properties
 BINS = 10
@@ -28,10 +29,13 @@ class SplashVersion1():
         # Build initial block to indicate version and spectrum type
         return 'splash%s0' % spectrum.spectrum_type
 
+    def format_number(self, x):
+        return int((x + EPS_CORRECTION) * PRECISION_FACTOR)
+
 
     def encode_spectrum(self, spectrum):
         # Format m/z and intensity 
-        s = [(int(mz * PRECISION_FACTOR), int(intensity * PRECISION_FACTOR)) for mz, intensity in spectrum.spectrum]
+        s = [(self.format_number(mz), self.format_number(intensity)) for mz, intensity in spectrum.spectrum]
 
         # Sort by increasing m/z and then by decreasing intensity
         s.sort(key = lambda x: (x[0], -x[1]))
@@ -61,7 +65,7 @@ class SplashVersion1():
 
         # Normalize the histogram
         max_intensity = max(histogram[:BINS])
-        histogram = [int(FINAL_SCALE_FACTOR * x / max_intensity) for x in histogram[:BINS]]
+        histogram = [int(EPS_CORRECTION + FINAL_SCALE_FACTOR * x / max_intensity) for x in histogram[:BINS]]
 
         # Return histogram string with value substitutions
         return ''.join(map(INTENSITY_MAP.__getitem__, histogram))

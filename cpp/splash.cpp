@@ -34,6 +34,7 @@ const char ION_SEPARATOR = ' ';
 // Full spectrum hash properties
 const char ION_PAIR_SEPARATOR = ':';
 const int MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20;
+const double EPS_CORRECTION = 1.0e-7;
 
 // Histogram properties
 const int BINS = 10;
@@ -111,8 +112,9 @@ string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_typ
 	stringstream ss;
 
 	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << static_cast<long long>((*it).first * PRECISION_FACTOR) << ION_PAIR_SEPARATOR
-		   << static_cast<long long>((*it).second * PRECISION_FACTOR);
+		ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * PRECISION_FACTOR)
+		   << ION_PAIR_SEPARATOR
+		   << static_cast<long long>(((*it).second + EPS_CORRECTION) * PRECISION_FACTOR);
 
 		if(++i < spectrum.size()) {
 			ss << ION_SEPARATOR;
@@ -162,7 +164,7 @@ string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum
 	stringstream ss;
 
 	for(int i = 0; i < BINS; i++) {
-		int bin = static_cast<long>(FINAL_SCALE_FACTOR * histogram[i] / max_intensity);
+		int bin = static_cast<int>(EPS_CORRECTION + histogram[i] / max_intensity * FINAL_SCALE_FACTOR);
 		ss << INTENSITY_MAP[bin];
 	}
 

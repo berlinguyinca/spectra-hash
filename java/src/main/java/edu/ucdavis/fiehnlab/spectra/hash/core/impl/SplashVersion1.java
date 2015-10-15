@@ -59,6 +59,12 @@ public class SplashVersion1 implements Splash {
     private static final long PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMassesAndIntensities);
 
     /**
+     * Correction factor to avoid floating point issues between implementations
+     * and processor architectures
+     */
+    private static final double EPS_CORRECTION = 1.0e-7;
+
+    /**
      * registered listeneres
      */
     private ConcurrentLinkedDeque<SplashListener> listeners = new ConcurrentLinkedDeque<SplashListener>();
@@ -103,7 +109,7 @@ public class SplashVersion1 implements Splash {
      * @return
      */
     String formatNumber(double value) {
-        return String.format("%d", (long)(value * PRECISION_FACTOR));
+        return String.format("%d", (long)((value + EPS_CORRECTION) * PRECISION_FACTOR));
     }
 
     /**
@@ -252,14 +258,15 @@ public class SplashVersion1 implements Splash {
 
 
         for (int i = 0; i < BINS; i++) {
-            binnedIons.set(i, FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
+            binnedIons.set(i, EPS_CORRECTION + FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
         }
 
         // Build histogram string
         StringBuffer result = new StringBuffer();
 
         for (int i = 0; i < BINS; i++) {
-            result.append(INTENSITY_MAP[binnedIons.get(i).intValue()]);
+            int bin = (int)(EPS_CORRECTION + binnedIons.get(i));
+            result.append(INTENSITY_MAP[bin]);
         }
 
         return result.toString();

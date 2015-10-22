@@ -27,8 +27,9 @@ using System.Linq;
 namespace NSSplash.impl {
 	
 	public abstract class AbstractSpectrum : ISpectrum {
-		private const int MAX_RELATIVE_INTENSITY = 1000;
+		private const int MAX_RELATIVE_INTENSITY = 100;
 		protected SpectrumType type;
+
 		public SpectrumType Type { 
 			get { return this.type; }
 			internal set { type = value; }

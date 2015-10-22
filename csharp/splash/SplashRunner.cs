@@ -42,22 +42,22 @@ namespace NSSplash {
 			int spec_col = 0;
 			int id_col = 1;
 
-			var p = new OptionSet () {
+			var p = new OptionSet() {
 				"Usage: SplashRunner [OPTIONS]+",
 				"Calculates splash codes for the specified file.",
 				"",
 				"Options:",
 				{ "f|file=", "the {NAME} of the file containing the spectra to calculate splashes for.",
 					v => filename = v },
-				{ "s|spectrum=", 
-					"the zero-based column number of the spectrum.\n" + 
+				{ "s|spectrum=",
+					"the zero-based column number of the spectrum.\n" +
 					"this must be an integer. Default = 0",
 					(int v) => spec_col = v },
-				{ "i|id=", 
-					"the zero-based column number of the origin id.\n" + 
+				{ "i|id=",
+					"the zero-based column number of the origin id.\n" +
 					"this must be an string. Default = 1",
 					(int v) => id_col = v },
-				{ "h|help",  "show this message and exit", 
+				{ "h|help",  "show this message and exit",
 					v => show_help = v != null },
 			};
 
@@ -141,10 +141,10 @@ namespace NSSplash {
 
 						if(count % UPDATE_INTERVAL == 0) {
 							lap = DateTime.Now.Subtract(sTime);
-							Console.WriteLine("Elapsed {2:F2}s, average {3:F2}ms, this item: {4:F2}ms - {0} [{1}]", input[id_col], count, lap.TotalSeconds, lap.TotalMilliseconds/(count+1), peTime.Subtract(psTime).TotalMilliseconds);
+							Console.WriteLine("Elapsed {2:F5}s, average {3:F5}ms, this item: {4:F5}ms - {0} [{1}]", input[id_col], count, lap.TotalSeconds, lap.TotalMilliseconds/(count+1), peTime.Subtract(psTime).TotalMilliseconds);
 						}
 
-						result.Append(input[id_col]).Append(",").Append(hash).Append(",").Append(input[spec_col]);
+						result.Append(hash).Append(",").Append(input[id_col]).Append(",").Append(input[spec_col]);
 						//Console.WriteLine(hash);
 						fout.WriteLine(String.Format(result.ToString()));
 						result.Clear();

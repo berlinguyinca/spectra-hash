@@ -46,21 +46,21 @@ namespace NSSplash.impl {
 				throw new ArgumentException ("The spectrum data can't be null or empty.");
 			}
 
-			ions = new List<Ion>();
+            ions = new List<Ion>();
 			Array splitData = data.Split (' ');
 
 			foreach(string ion in splitData) {
 				//get m/z
-				double mz = Double.Parse(String.Format("{0:F6}", ion.Split(':')[0]));
-
+				double mz = double.Parse(ion.Split(':')[0]);
 				//get intensity
-				double intensity = Double.Parse(String.Format("{0:F6}", ion.Split(':')[1]));
+				double intensity = double.Parse(ion.Split(':')[1]);
 
 				Ion newIon = new Ion(mz, intensity);
 				Ions.Add(newIon);
 			}
 
 			Ions = this.toRelative(MAX_RELATIVE_INTENSITY);
+
 		}
 
 		public override string ToString() {

@@ -34,7 +34,9 @@ namespace NSSplash {
 		private const int FACTOR = 1000000;
 		private int BINS = 10;
 		private int BIN_SIZE = 100;
-		private int INITIAL_SCALE_FACTOR = 9;
+
+		private const double EPSILON = 1e-7;
+
 		private static readonly char[] INTENSITY_MAP = new char[] {
 			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
 			'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -77,13 +79,12 @@ namespace NSSplash {
 
 			StringBuilder strIons = new StringBuilder();
 			foreach (Ion i in ions) {
-				strIons.Append(String.Format("{0}:{1}", formatNumber(i.MZ), formatNumber(i.Intensity)));
+				strIons.Append(String.Format("{0}:{1}", formatNumber(i.MZ + EPSILON), formatNumber(i.Intensity + EPSILON)));
 				strIons.Append(" ");
 			}
 
 			//string to hash
 			strIons.Remove(strIons.Length - 1, 1);
-
 			byte[] message = Encoding.UTF8.GetBytes(strIons.ToString());
 
 			SHA256Managed hashString = new SHA256Managed();
@@ -144,7 +145,7 @@ namespace NSSplash {
 			StringBuilder histogram = new StringBuilder();
 
 			foreach (double bin in binnedIons.GetRange(0, BINS)) {
-				histogram.Append(INTENSITY_MAP.ElementAt((int)bin));
+				histogram.Append(INTENSITY_MAP.ElementAt((int)(bin + EPSILON)));
 			}
 
 			return histogram.ToString();

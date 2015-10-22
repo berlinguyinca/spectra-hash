@@ -163,8 +163,8 @@ public class SplashVersion1 implements Splash {
 
         //notify observers in case they want to know about progress of the hashing
         String block = buffer.toString();
-        String hash = DigestUtils.sha256Hex(block);
-        this.notifyListener(new SplashingEvent(hash, block, SplashBlock.SECOND, spectrum));
+        String hash = DigestUtils.sha256Hex(block).substring(0, maxCharactersForSpectrumBlockTruncation);
+        this.notifyListener(new SplashingEvent(hash, block, SplashBlock.THIRD, spectrum));
         return hash;
     }
 
@@ -206,7 +206,7 @@ public class SplashVersion1 implements Splash {
         buffer.append("-");
 
         //third block
-        buffer.append(encodeSpectrum(spectrum).substring(0, maxCharactersForSpectrumBlockTruncation));
+        buffer.append(encodeSpectrum(spectrum));
 
         return buffer.toString();
     }
@@ -288,6 +288,12 @@ public class SplashVersion1 implements Splash {
             int bin = (int)(EPS_CORRECTION + binnedIons.get(i));
             result.append(INTENSITY_MAP[bin]);
         }
+
+
+        String data = result.toString();
+
+
+        this.notifyListener(new SplashingEvent(data, data, SplashBlock.SECOND, spectrum));
 
         return result.toString();
     }

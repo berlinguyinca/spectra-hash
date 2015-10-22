@@ -408,7 +408,7 @@ public class ValidationController implements CommandLineRunner {
      */
     private void splashIt(String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
 
-        String code = SplashUtil.splash(spectra, msType);
+        String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
 
         serializeResult(new Result(code, spectra, origin, msType, seperator), stream, cmd);
@@ -426,8 +426,8 @@ public class ValidationController implements CommandLineRunner {
      * @param seperator
      * @param cmd
      */
-    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
-        String code = SplashUtil.splash(spectra, msType);
+    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, Serializer stream, String seperator, final CommandLine cmd, boolean last) throws Exception {
+        String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
         boolean valid = (splash.equals(code));
 

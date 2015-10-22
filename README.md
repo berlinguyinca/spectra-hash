@@ -6,12 +6,6 @@ this library is the current reference implementation for the splash. Splash stan
 
 You can access it as a REST service, at http://splash.fiehnlab.ucdavis.edu
 
-The java implementation includes a command line tool to create a set of hashes:
-
-```
-java -jar validation/target/validation-1.0-SNAPSHOT.jar -c -s 1 -t ms base-dataset/spectra/test-set-not-splashed-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv 
-```
-
 Or use one any of the available implementations, which should have been validated against the REST validation service.
 
 # usage
@@ -32,7 +26,7 @@ Alternatively, you can also utilize the following code, to directly splash a spe
     String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
 
-We are also providing an easy way, to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplasListener to your Splash instance or alternativly using the util like this
+We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplasListener to your Splash instance or alternativly using the util like this
 
 ```
     String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS,new SplashListener(){
@@ -111,7 +105,7 @@ this will present you with the usage for this tool.
 An example to validate a file against the reference implementation and saving the output to a file would be
 
 ```
-java -jar validation/target/validation-1.0-SNAPSHOT.jar -k 2  -o 1 -s 3 -t ms -T, -X input.csv output.csv
+java -jar validation/target/validation-1.3-SNAPSHOT.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
 ```
 
 The specified flags in the example mean:

@@ -6,12 +6,6 @@ this library is the current reference implementation for the splash. Splash stan
 
 You can access it as a REST service, at http://splash.fiehnlab.ucdavis.edu
 
-The java implementation includes a command line tool to create a set of hashes:
-
-```
-java -jar validation/target/validation-1.3-SNAPSHOT.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
-```
-
 Or use one any of the available implementations, which should have been validated against the REST validation service.
 
 # usage
@@ -111,7 +105,7 @@ this will present you with the usage for this tool.
 An example to validate a file against the reference implementation and saving the output to a file would be
 
 ```
-java -jar validation/target/validation-1.3-SNAPSHOT.jar -k 2  -o 1 -s 3 -t ms -T, -X input.csv output.csv
+java -jar validation/target/validation-1.3-SNAPSHOT.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
 ```
 
 The specified flags in the example mean:

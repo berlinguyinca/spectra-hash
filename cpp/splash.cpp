@@ -21,12 +21,16 @@ const char SPLASH_VERSION = '0';
 const bool DEBUG = false;
 
 // Precision of floating point operations and representations
-const double PRECISION = 6;
-const long long PRECISION_FACTOR = static_cast<long long>(pow(10, PRECISION));
+const double MZ_PRECISION = 6;
+const long long MZ_PRECISION_FACTOR = static_cast<long long>(pow(10, MZ_PRECISION));
+
+const double INTENSITY_PRECISION = 0;
+const long long INTENSITY_PRECISION_FACTOR = static_cast<long long>(pow(10, INTENSITY_PRECISION));
+
 const double EPS = 1.0e-6;
 
 // Value to scale relative spectra
-const double RELATIVE_INTENSITY_SCALE = 1000.0;
+const double RELATIVE_INTENSITY_SCALE = 100.0;
 
 // Separator for building spectrum strings
 const char ION_SEPARATOR = ' ';
@@ -112,9 +116,9 @@ string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_typ
 	stringstream ss;
 
 	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * PRECISION_FACTOR)
+		ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * MZ_PRECISION_FACTOR)
 		   << ION_PAIR_SEPARATOR
-		   << static_cast<long long>(((*it).second + EPS_CORRECTION) * PRECISION_FACTOR);
+		   << static_cast<long long>(((*it).second + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR);
 
 		if(++i < spectrum.size()) {
 			ss << ION_SEPARATOR;

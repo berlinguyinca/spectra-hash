@@ -35,7 +35,7 @@ public class SplashVersion1 implements Splash {
     /**
      * how to scale the spectrum
      */
-    public static final int scalingOfRelativeIntensity = 1000;
+    public static final int scalingOfRelativeIntensity = 100;
 
     /**
      * how should ions in the string representation be separeted
@@ -49,14 +49,24 @@ public class SplashVersion1 implements Splash {
     private static final int maxCharactersForSpectrumBlockTruncation = 20;
 
     /**
-     * max fixedPrecissionOfMassesAndIntensities
+     * Fixed precission of masses
      */
-    private static final int fixedPrecissionOfMassesAndIntensities = 6;
+    private static final int fixedPrecissionOfMasses = 6;
 
     /**
-     * factor to scale floating point values
+     * factor to scale m/z floating point values
      */
-    private static final long PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMassesAndIntensities);
+    private static final long MZ_PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMasses);
+
+    /**
+     * Fixed precission of intensites
+     */
+    private static final int fixedPrecissionOfIntensities = 0;
+
+    /**
+     * factor to scale m/z floating point values
+     */
+    private static final long INTENSITY_PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfIntensities);
 
     /**
      * Correction factor to avoid floating point issues between implementations
@@ -103,13 +113,23 @@ public class SplashVersion1 implements Splash {
     }
 
     /**
-     * formats a number to our defined fixedPrecissionOfMassesAndIntensities
+     * formats a m/z value to our defined fixedPrecissionOfMasses
      *
      * @param value
      * @return
      */
-    String formatNumber(double value) {
-        return String.format("%d", (long)((value + EPS_CORRECTION) * PRECISION_FACTOR));
+    String formatMZ(double value) {
+        return String.format("%d", (long)((value + EPS_CORRECTION) * MZ_PRECISION_FACTOR));
+    }
+
+    /**
+     * formats an intensity value to our defined fixedPrecissionOfIntensites
+     *
+     * @param value
+     * @return
+     */
+    String formatIntensity(double value) {
+        return String.format("%d", (long)((value + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR));
     }
 
     /**
@@ -130,9 +150,9 @@ public class SplashVersion1 implements Splash {
 
         //build the first string
         for (int i = 0; i < ions.size(); i++) {
-            buffer.append(formatNumber(ions.get(i).getMass()));
+            buffer.append(formatMZ(ions.get(i).getMass()));
             buffer.append(":");
-            buffer.append(formatNumber(ions.get(i).getIntensity()));
+            buffer.append(formatIntensity(ions.get(i).getIntensity()));
 
             //add our separator
             if (i < ions.size() - 1) {
@@ -151,7 +171,7 @@ public class SplashVersion1 implements Splash {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "-" + fixedPrecissionOfMassesAndIntensities;
+        return this.getClass().getSimpleName() + "-" + fixedPrecissionOfMasses;
     }
 
     /**

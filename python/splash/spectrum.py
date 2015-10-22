@@ -5,7 +5,7 @@ import re
 
 class Spectrum:
     # Value to scale relative spectra
-    RELATIVE_INTENSITY_SCALE = 1000.0
+    RELATIVE_INTENSITY_SCALE = 100.0
 
     # Regular expression to match a spectrum string of the form:
     #     [m/z]:[intensity][ ]...

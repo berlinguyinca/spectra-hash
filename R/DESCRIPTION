@@ -8,6 +8,6 @@ Maintainer: Egon Willighagen <egon.willighagen@maastrichtuniversity.nl>
 Depends: R (>= 3.2.0), digest
 Suggests: testthat
 Description: This package allows the calculation of spectral hashes.
-License: file LICENSE
+License: BSD_3_clause + file LICENSE
 BugReports: https://github.com/berlinguyinca/spectra-hash/issues
 LazyLoad: yes

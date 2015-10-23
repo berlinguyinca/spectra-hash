@@ -1,0 +1,13 @@
+Package: splash
+Type: Package
+Title: splash - package to great hashes for spectra
+Version: 0.0.1
+Date: 2015-10-23
+Author: Steffen Neumann <sneumann@ipb-halle.de>
+Maintainer: Egon Willighagen <egon.willighagen@maastrichtuniversity.nl>
+Depends: R (>= 3.2.0), digest
+Suggests: testthat
+Description: This package allows the calculation of spectral hashes.
+License: file LICENSE
+BugReports: https://github.com/berlinguyinca/spectra-hash/issues
+LazyLoad: yes

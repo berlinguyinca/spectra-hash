@@ -4,8 +4,12 @@ import hashlib
 import string
 
 
-PRECISION = 6;
-PRECISION_FACTOR = 10**PRECISION
+MZ_PRECISION = 6
+MZ_PRECISION_FACTOR = 10**MZ_PRECISION
+
+INTENSITY_PRECISION = 0
+INTENSITY_PRECISION_FACTOR = 10**INTENSITY_PRECISION
+
 EPS = 1.0e-6
 
 # Separator for building spectrum strings
@@ -29,13 +33,16 @@ class SplashVersion1():
         # Build initial block to indicate version and spectrum type
         return 'splash%s0' % spectrum.spectrum_type
 
-    def format_number(self, x):
-        return int((x + EPS_CORRECTION) * PRECISION_FACTOR)
+    def format_mz(self, x):
+        return int((x + EPS_CORRECTION) * MZ_PRECISION_FACTOR)
+
+    def format_intensity(self, x):
+        return int((x + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR)
 
 
     def encode_spectrum(self, spectrum):
         # Format m/z and intensity 
-        s = [(self.format_number(mz), self.format_number(intensity)) for mz, intensity in spectrum.spectrum]
+        s = [(self.format_mz(mz), self.format_intensity(intensity)) for mz, intensity in spectrum.spectrum]
 
         # Sort by increasing m/z and then by decreasing intensity
         s.sort(key = lambda x: (x[0], -x[1]))

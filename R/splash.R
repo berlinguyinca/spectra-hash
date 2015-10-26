@@ -3,6 +3,7 @@ library(digest) # for digest
 ## Some constants, taken from SplashVersion1.java
 BINS <- 10;
 BIN_SIZE <- 100;
+EPS_CORRECTION = 1.0e-7
 
 ## FINAL_SCALE_FACTOR <- 9; ## Base 10
 FINAL_SCALE_FACTOR <- 35; ## Base 36 
@@ -12,20 +13,20 @@ decimalavoidance <- function(x) {
 }
 
 getBlockHash <- function(peaks,
-                          RELATIVE_INTENSITY_SCALE=1000.0,
+                          RELATIVE_INTENSITY_SCALE=100,
                           MAX_HASH_CHARATERS_ENCODED_SPECTRUM=20) {
     max_intensity = max(peaks[,2])
 
     ## Scale to maximum intensity
-    peaks[,2] <-    peaks[,2] / max(peaks[,2]) * RELATIVE_INTENSITY_SCALE
+    peaks[,2] <-    as.integer(peaks[,2] / max(peaks[,2]) * RELATIVE_INTENSITY_SCALE)
 
     ## Sorted by ascending m/z and ties broken by descending intensity
     o <- order(peaks[,1], -1*peaks[,2], decreasing=FALSE)
     
     peakString <- paste(apply(peaks[o,,drop=FALSE], MARGIN=1,
-                              FUN=function(x) {paste(c(decimalavoidance(x[1]),
-                                                       decimalavoidance(x[2])),
+                              FUN=function(x) {paste(c(decimalavoidance(x[1]+EPS_CORRECTION), x[2]),
                                   collapse=":")}), collapse=" ")
+
     ## cat("Prehash: ", peakString, sep="", file="/tmp/prehash-R") ## Debugging of spectrum-string
     block2 <- substr(digest(peakString, algo="sha256", serialize=FALSE),
                      1, MAX_HASH_CHARATERS_ENCODED_SPECTRUM)    
@@ -84,8 +85,18 @@ if (FALSE) {
     filedata <- read.csv("../base-dataset/spectra/splashed/csharp/test-set-v1-csharp.csv",
                          header=FALSE, stringsAsFactors=FALSE)
 
+    filedata <- read.csv("../base-dataset/spectra/test-set-with-splash-v1.csv",
+                         header=FALSE, stringsAsFactors=FALSE)
+
+    filedata <- read.csv("../base-dataset/spectra/validated/csharp/test-set-v1-csharp-validated.csv",
+                         header=FALSE, stringsAsFactors=FALSE)
+
+    filedata <- read.csv("/tmp/output.csv",
+                         header=FALSE, stringsAsFactors=FALSE)
+
+
     spectra <- filedata[,3]
-    names(spectra) <- filedata[,1]
+    names(spectra) <- filedata[,2]
 
     peaks <- lapply(spectra, function(s) {
         t(sapply(unlist(strsplit(s, " "), use.names=F),
@@ -99,7 +110,7 @@ if (FALSE) {
     ## "test" hashes
     ##
 
-    truefullhash <- sapply(strsplit((filedata[,2]), "-"), function(x) x[3])
+    truefullhash <- sapply(strsplit((filedata[,1]), "-"), function(x) x[3])
     ourfullhash <- sapply(strsplit((results), "-"), function(x) x[3])
 
     if (any(truefullhash!=ourfullhash)) {
@@ -107,7 +118,9 @@ if (FALSE) {
         mismatches <- truefullhash!=ourfullhash
         output <- paste(truefullhash[mismatches], ourfullhash[mismatches], sep=" != ")
         names(output) <- names(spectra)[mismatches]
-        output    
+        output
+        cat("In total ", length(output), "mismatches\n")
+        cat("In line: ", which(mismatches), "\n")
     } else {
         cat("Hashes passed test\n")
     }

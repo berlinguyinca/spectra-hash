@@ -32,6 +32,7 @@ namespace NSSplash {
 		private const string PREFIX = "splash";
 		private const int VERSION = 0;
 		private const int FACTOR = 1000000;
+		private const int INT_FACTOR = 1;
 		private int BINS = 10;
 		private int BIN_SIZE = 100;
 
@@ -79,7 +80,7 @@ namespace NSSplash {
 
 			StringBuilder strIons = new StringBuilder();
 			foreach (Ion i in ions) {
-				strIons.Append(String.Format("{0}:{1}", formatNumber(i.MZ + EPSILON), formatNumber(i.Intensity + EPSILON)));
+				strIons.Append(String.Format("{0}:{1}", formatMZ(i.MZ + EPSILON), formatIntensity(i.Intensity + EPSILON)));
 				strIons.Append(" ");
 			}
 
@@ -151,8 +152,12 @@ namespace NSSplash {
 			return histogram.ToString();
 		}
 
-		private string formatNumber(double number) {
+		private string formatMZ(double number) {
 			return String.Format("{0}", (long)(number * FACTOR));
+		}
+
+		private string formatIntensity(double number) {
+			return String.Format("{0}", (long)(number * INT_FACTOR));
 		}
 	}
 }

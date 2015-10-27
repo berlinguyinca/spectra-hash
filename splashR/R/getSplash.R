@@ -1,6 +1,8 @@
-## Some constants, taken from SplashVersion1.java
+
+## Some constants
 BINS <- 10;
 BIN_SIZE <- 100;
+EPS_CORRECTION = 1.0e-7
 
 ## FINAL_SCALE_FACTOR <- 9; ## Base 10
 FINAL_SCALE_FACTOR <- 35; ## Base 36 
@@ -10,20 +12,20 @@ decimalavoidance <- function(x) {
 }
 
 getBlockHash <- function(peaks,
-                          RELATIVE_INTENSITY_SCALE=1000.0,
+                          RELATIVE_INTENSITY_SCALE=100,
                           MAX_HASH_CHARATERS_ENCODED_SPECTRUM=20) {
     max_intensity = max(peaks[,2])
 
     ## Scale to maximum intensity
-    peaks[,2] <-    peaks[,2] / max(peaks[,2]) * RELATIVE_INTENSITY_SCALE
+    peaks[,2] <-    as.integer(peaks[,2] / max(peaks[,2]) * RELATIVE_INTENSITY_SCALE + EPS_CORRECTION)
 
     ## Sorted by ascending m/z and ties broken by descending intensity
     o <- order(peaks[,1], -1*peaks[,2], decreasing=FALSE)
     
     peakString <- paste(apply(peaks[o,,drop=FALSE], MARGIN=1,
-                              FUN=function(x) {paste(c(decimalavoidance(x[1]),
-                                                       decimalavoidance(x[2])),
+                              FUN=function(x) {paste(c(decimalavoidance(x[1]+EPS_CORRECTION), x[2]),
                                   collapse=":")}), collapse=" ")
+
     ## cat("Prehash: ", peakString, sep="", file="/tmp/prehash-R") ## Debugging of spectrum-string
     block2 <- substr(digest(peakString, algo="sha256", serialize=FALSE),
                      1, MAX_HASH_CHARATERS_ENCODED_SPECTRUM)    

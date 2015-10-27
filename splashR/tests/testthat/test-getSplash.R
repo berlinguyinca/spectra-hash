@@ -10,7 +10,7 @@ test_that("caffeine", {
 
 test_that("hashes", {
   filedata <- read.csv(
-    system.file("extdata", "test-set-v1-splashed-with-validation-1.3-SNAPSHOT.csv", package = "splash"),
+    system.file("extdata", "test-set-v1-splashed-with-validation-1.3-SNAPSHOT.csv", package = "splashR"),
     header=FALSE, stringsAsFactors=FALSE
   )
 
@@ -46,7 +46,7 @@ test_that("hashes", {
 
 test_that("histograms", {
   filedata <- read.csv(
-    system.file("extdata", "test-set-v1-splashed-with-validation-1.3-SNAPSHOT.csv", package = "splash"),
+    system.file("extdata", "test-set-v1-splashed-with-validation-1.3-SNAPSHOT.csv", package = "splashR"),
     header=FALSE, stringsAsFactors=FALSE
   )
 

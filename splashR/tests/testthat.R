@@ -1,5 +1,5 @@
 library(testthat)
 library(splashR)
 
-test_check("splash")
+test_check("splashR")
 

@@ -120,7 +120,7 @@ namespace NSSplash.impl {
 			return sorted;
 		}
 
-		// calculate the relative spectrum in the range [0 .. 1000]
+		// calculate the relative spectrum in the range [0 .. 100]
 		private List<Ion> toRelative(int scale) {
 			List<Ion> relativeIons = new List<Ion>();
 			relativeIons.AddRange(Ions);

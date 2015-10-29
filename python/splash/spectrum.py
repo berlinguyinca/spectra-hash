@@ -21,7 +21,6 @@ class Spectrum:
 
     def parse_spectrum(self, spectrum):
         """Parse the provided mass spectrum into the internal format"""
-        print(re.match(self.SPECTRUM_REGEX, spectrum))
         
         # Handle the spectrum string format
         if type(spectrum) is str and re.match(self.SPECTRUM_REGEX, spectrum):

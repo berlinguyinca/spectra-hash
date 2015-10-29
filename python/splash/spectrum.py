@@ -9,16 +9,19 @@ class Spectrum:
 
     # Regular expression to match a spectrum string of the form:
     #     [m/z]:[intensity][ ]...
-    SPECTRUM_REGEX = r'^((\d*\.?\d+(?:e-?\d+)?):(\d*\.?\d+(?:e-?\d+)?)\s?)+$'
+    DECIMAL_REGEX = r'[+-]?\d+(\.\d+)?([Ee][+-]?\d+)?'
+    ION_REGEX = DECIMAL_REGEX +':'+ DECIMAL_REGEX
+    SPECTRUM_REGEX = '^'+ ION_REGEX +'(\s'+ ION_REGEX +')*$'
 
     
     def __init__(self, spectrum, spectrum_type):
-        self.spectrum = self.parse_spectrum(spectrum)
+        self.spectrum = self.parse_spectrum(spectrum.strip())
         self.spectrum_type = spectrum_type
     
 
     def parse_spectrum(self, spectrum):
         """Parse the provided mass spectrum into the internal format"""
+        print(re.match(self.SPECTRUM_REGEX, spectrum))
         
         # Handle the spectrum string format
         if type(spectrum) is str and re.match(self.SPECTRUM_REGEX, spectrum):

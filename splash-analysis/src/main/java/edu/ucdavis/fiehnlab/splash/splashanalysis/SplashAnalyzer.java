@@ -5,10 +5,14 @@ import edu.ucdavis.fiehnlab.splash.splashanalysis.algorithms.HistogramSimilarity
 import edu.ucdavis.fiehnlab.splash.splashanalysis.algorithms.SpectralSimilarity;
 import edu.ucdavis.fiehnlab.splash.splashanalysis.algorithms.SumSimilarity;
 
+import java.io.*;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created by sajjan on 10/27/15.
@@ -23,8 +27,16 @@ public class SplashAnalyzer {
 
 
     public static void analyzeSplashes(int startingIndex, Channel sendingChannel) throws IOException {
-        FileReader fileReader = new FileReader(Application.FILENAME);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+                FileInputStream fileReader = new FileInputStream(new File(Application.FILENAME));
+        BufferedReader bufferedReader = null;
+
+        if(!Application.FILENAME.toLowerCase().endsWith(".gz")){
+            bufferedReader =         new BufferedReader(new java.io.InputStreamReader(fileReader));
+        }
+        else{
+            bufferedReader =         new BufferedReader(new InputStreamReader(new GZIPInputStream(fileReader)));
+        }
+
 
         // Skip initial lines
         int idx = 0;

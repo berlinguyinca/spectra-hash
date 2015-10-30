@@ -39,7 +39,7 @@ public class Application implements CommandLineRunner {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(SERVER);
         factory.setUsername("sajjan");
-        factory.setPassword("");
+        factory.setPassword("fiehnlab2015");
         Connection connection = factory.newConnection();
 
         receivingChannel = connection.createChannel();

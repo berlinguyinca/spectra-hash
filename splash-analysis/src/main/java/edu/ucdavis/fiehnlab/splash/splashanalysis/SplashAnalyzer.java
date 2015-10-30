@@ -12,29 +12,51 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 /**
  * Created by sajjan on 10/27/15.
  */
 public class SplashAnalyzer {
-    public static DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+    private static DecimalFormat FORMATTER = new DecimalFormat("0.000000");
+
+    private static List<String> MESSAGE_QUEUE = new ArrayList<String>();
 
 
-    public static void sendResults(Channel sendingChannel, String message) throws IOException {
-        sendingChannel.basicPublish("", Application.SENDING_QUEUE_NAME, null, message.getBytes());
+    private static void sendResults(Channel sendingChannel, String message) throws IOException {
+        MESSAGE_QUEUE.add(message);
+
+        if(MESSAGE_QUEUE.size() >= 10000)
+            flushResults(sendingChannel);
+    }
+
+    private static void flushResults(Channel sendingChannel) throws IOException {
+        if(MESSAGE_QUEUE.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < MESSAGE_QUEUE.size(); i++) {
+                if (i > 0)
+                    sb.append('\n');
+                sb.append(MESSAGE_QUEUE.get(i));
+            }
+
+            MESSAGE_QUEUE.clear();
+            sendingChannel.basicPublish("", Application.SENDING_QUEUE_NAME, null, sb.toString().getBytes());
+            System.out.println(" [x] Sent message queue");
+        }
     }
 
 
     public static void analyzeSplashes(int startingIndex, Channel sendingChannel) throws IOException {
-                FileInputStream fileReader = new FileInputStream(new File(Application.FILENAME));
+        FileInputStream fileReader = new FileInputStream(new File(Application.FILENAME));
         BufferedReader bufferedReader = null;
 
         if(!Application.FILENAME.toLowerCase().endsWith(".gz")){
-            bufferedReader =         new BufferedReader(new java.io.InputStreamReader(fileReader));
-        }
-        else{
-            bufferedReader =         new BufferedReader(new InputStreamReader(new GZIPInputStream(fileReader)));
+            bufferedReader = new BufferedReader(new java.io.InputStreamReader(fileReader));
+        } else{
+            bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fileReader)));
         }
 
 
@@ -138,6 +160,8 @@ public class SplashAnalyzer {
                 System.out.println(logStatus(startingIndex, baseSpectrum.origin, idx, start_time));
             }
         }
+
+        flushResults(sendingChannel);
 
         System.out.println(logStatus(startingIndex, baseSpectrum.origin, idx, start_time, true));
     }

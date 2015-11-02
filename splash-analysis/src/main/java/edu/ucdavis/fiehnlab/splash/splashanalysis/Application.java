@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.IOException;
+import java.lang.System;
 
 /**
  * Created by sajjan on 10/27/2015.
@@ -19,6 +20,7 @@ public class Application implements CommandLineRunner {
     public final static String SERVER = "gose.fiehnlab.ucdavis.edu";
     public static String FILENAME = "/Users/sajjan/Projects/spectra-hash/test-precomputed.csv";
 
+    public static boolean keepRunning = true;
     private Channel receivingChannel;
     private Channel sendingChannel;
 
@@ -35,6 +37,8 @@ public class Application implements CommandLineRunner {
             FILENAME = args[0];
         System.out.println("Processing file "+ FILENAME);
 
+        if(args.length > 1)
+            keepRunning = Boolean.parseBoolean(args[1]);
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(SERVER);
@@ -65,6 +69,11 @@ public class Application implements CommandLineRunner {
 
                 long deliveryTag = envelope.getDeliveryTag();
                 receivingChannel.basicAck(deliveryTag, false);
+
+                if(!keepRunning){
+                    System.out.println("requested to shutdown after job");
+                    System.exit(1);
+                }
             }
         };
 

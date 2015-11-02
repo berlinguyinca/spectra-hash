@@ -12,7 +12,7 @@
         <assertj.version>1.7.0</assertj.version>
         <mockito.version>1.10.8</mockito.version>
         <rest-assured.version>2.4.0</rest-assured.version>
-        <java.version>1.7</java.version>
+        <java.version>1.6</java.version>
     </properties>
 
     <parent>
@@ -104,7 +104,7 @@
                         <configuration>
                             <target>
                                 <exec executable="bash">
-                                    <arg line="build.sh push" />
+                                    <arg line="build.sh" />
                                 </exec>
                             </target>
                         </configuration>

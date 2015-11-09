@@ -5,3 +5,8 @@ target
 *~
 *.gz
 *.Rcheck/
+.DS_Store
+
+__pycache__
+build
+*.pyc

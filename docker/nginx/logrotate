@@ -1,0 +1,19 @@
+/var/log/nginx/*.log {
+        daily
+        missingok
+        rotate 365
+        compress
+        delaycompress
+        notifempty
+        create 0640 www-data adm
+        sharedscripts
+        prerotate
+                if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+                        run-parts /etc/logrotate.d/httpd-prerotate; \
+                fi 
+		/usr/lib/cgi-bin/awstats.pl -config=client -update -output > /var/cache/awstats/index.html 
+        endscript
+        postrotate
+                [ -s /run/nginx.pid ] && kill -USR1 `cat /run/nginx.pid`
+        endscript
+}

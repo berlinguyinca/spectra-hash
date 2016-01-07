@@ -9,10 +9,10 @@
     <modules>
         <module>java</module>
         <module>web</module>
-        <module>docker</module>
         <module>validation</module>
         <module>specgen</module>
         <module>scala</module>
+        <module>docker</module>
     </modules>
 
 	<scm>

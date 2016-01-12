@@ -6,6 +6,7 @@
 'use strict';
 
 var request = require('request');
+require('request-debug')(request);
 request.debug = true;
 
 
@@ -55,17 +56,24 @@ function loadSplash(spectra) {
     if (serializeSpectra !== 'undefined') {
 
         var options = {
-            uri: SPLASH_REST,
+            url: SPLASH_REST,
             method: 'POST',
             json: spectra
         };
 
         var callback = function (error, res, body) {
-            console.log('test');
+            console.log(' RESULTS: ', error, res.statusCode, body);
         };
 
         //console.log(request(options,function(){}));
-        request(options,callback);
+        //request(options, callback);
+
+        request.get('http://www.google.com', function (error, response, body) {
+                console.log(error);
+                console.log(body);
+                console.log(response.statusCode);// Show the HTML for the Modulus homepage.
+
+        });
 
         //var data = queryString.stringify({
         //    'compilation_level': 'ADVANCED_OPTIMIZATIONS',

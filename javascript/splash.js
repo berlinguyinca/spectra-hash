@@ -1,8 +1,13 @@
 /**
  * Service to get and validate Splash key.
+ *
  */
 
 'use strict';
+
+var request = require('request');
+request.debug = true;
+
 
 // rest endpoint
 const SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
@@ -13,13 +18,12 @@ module.exports = {
     loadSplash: loadSplash,
     validateSplash: validateSplash,
     formatData: formatData,
-    test: 'test',
     SPLASH_REST: SPLASH_REST,
     SPLASH_VALIDATE: SPLASH_VALIDATE
-
 };
 
 function formatData(spectra) {
+
     if (typeof spectra === 'object') {
         return spectra;
     }
@@ -30,7 +34,7 @@ function formatData(spectra) {
         return spectra.serializeArray();
     }
     else {
-        alert('Spectra must be an Object, String, or Array');
+        console.log('Spectra must be an Object, String, or Array');
         return 'undefined';
     }
 }
@@ -47,21 +51,51 @@ function loadSplash(spectra) {
     // verify spectra object
     var serializeSpectra = formatData(spectra);
 
-    // make ajax call
+    // make http rest call
     if (serializeSpectra !== 'undefined') {
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            url: SPLASH_REST,
-            data: serializeSpectra,
-            success: function (data) {
-                splashKey = data;
-            },
-            error: function (error, msg, httpStatus) {
-                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
-            }
-        });
+
+        var options = {
+            uri: SPLASH_REST,
+            method: 'POST',
+            json: spectra
+        };
+
+        var callback = function (error, res, body) {
+            console.log('test');
+        };
+
+        //console.log(request(options,function(){}));
+        request(options,callback);
+
+        //var data = queryString.stringify({
+        //    'compilation_level': 'ADVANCED_OPTIMIZATIONS',
+        //    'output_format': 'json',
+        //    'output_info': 'compiled_code',
+        //    'warning_level': 'QUIET',
+        //    'js_code': spectra
+        //});
+        //
+        //var options = {
+        //    host: SPLASH_REST,
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json',
+        //        'Content-Length': Buffer.byteLength(data)
+        //    }
+        //};
+        //
+        //var request = http.request(options, function(res) {
+        //   res.setEncoding('utf8');
+        //   res.on('error', function(error) {
+        //      console.log(error);
+        //   });
+        //   res.on('data', function(chunk) {
+        //       console.log('RESPONSE ' + chunk);
+        //   });
+        //});
+        //
+        //request.write(data);
+        //request.end();
     }
 
     return splashKey;
@@ -79,13 +113,13 @@ function validateSplash(spectra) {
 
     // validate spectra object
     if (typeof spectra !== 'object') {
-        alert('Spectra must be a valid JSON object');
+        console.log('Spectra must be a valid JSON object');
     }
     else if (typeof spectra.splash === 'undefined') {
-        alert('request must have a valid splash key');
+        console.log('request must have a valid splash key');
     }
 
-    // make ajax call
+    // make http rest call
     else {
         $.ajax({
             type: 'POST',
@@ -97,7 +131,7 @@ function validateSplash(spectra) {
                 result = data;
             },
             error: function (error, msg, httpStatus) {
-                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
+                console.log('ERROR ' + msg + ' STATUS ' + httpStatus);
             }
         });
     }

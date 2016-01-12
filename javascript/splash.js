@@ -2,21 +2,22 @@
  * Service to get and validate Splash key.
  */
 
-
-
 'use strict';
 
 // rest endpoint
-var SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
-var SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
+const SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
+const SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
 
-// contain our REST services
-var splashService = {
+// export our NPM module
+module.exports = {
     loadSplash: loadSplash,
     validateSplash: validateSplash,
-    formatData: formatData
-};
+    formatData: formatData,
+    test: 'test',
+    SPLASH_REST: SPLASH_REST,
+    SPLASH_VALIDATE: SPLASH_VALIDATE
 
+};
 
 function formatData(spectra) {
     if (typeof spectra === 'object') {

@@ -2,9 +2,9 @@
   "name": "splash",
   "version": "0.0.1",
   "description": "javascript implementation of the Splash algorithm",
-  "main": "/javascript/splash.js",
+  "main": "splash.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "javascipt",
@@ -14,5 +14,9 @@
   "license": "MIT",
   "dependencies": {
     "jquery": "^2.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
   }
 }

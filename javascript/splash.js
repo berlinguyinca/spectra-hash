@@ -4,22 +4,16 @@
 'use strict';
 
 // rest endpoint
-const SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
-const SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
+var SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
+var SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
 
 
 function formatData(spectra) {
     if (typeof spectra === 'object') {
-        return spectra;
-    }
-    else if (typeof spectra === 'string') {
-        return JSON.parse(spectra);
-    }
-    else if (Array.isArray(spectra)) {
-        return spectra.serializeArray();
+        return JSON.stringify(spectra);
     }
     else {
-        alert('Spectra must be an Object, String, or Array');
+        console.log('Spectra must be an Object');
         return 'undefined';
     }
 }
@@ -46,9 +40,10 @@ function loadSplash(spectra) {
             data: serializeSpectra,
             success: function (data) {
                 splashKey = data;
+                console.log(splashKey);
             },
             error: function (error, msg, httpStatus) {
-                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
+                console.log('ERROR ' + msg + ' STATUS ' + httpStatus);
             }
         });
     }
@@ -86,7 +81,7 @@ function validateSplash(spectra) {
                 result = data;
             },
             error: function (error, msg, httpStatus) {
-                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
+                console.log('ERROR ' + msg + ' STATUS ' + httpStatus);
             }
         });
     }

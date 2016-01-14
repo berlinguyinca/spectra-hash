@@ -1,0 +1,25 @@
+{
+  "name": "js-spectra-splash",
+  "description": "JS Splash Key creation and validation",
+  "main": "splash.js",
+  "authors": [
+    "Ben Nguyen"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "javascipt",
+    "splash"
+  ],
+  "homepage": "https://github.com/berlinguyinca/spectra-hash",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0"
+  }
+}

@@ -1,30 +1,14 @@
 /**
  * Service to get and validate Splash key.
- *
  */
-
 'use strict';
-
-var request = require('request');
-require('request-debug')(request);
-request.debug = true;
-
 
 // rest endpoint
 const SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
 const SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
 
-// export our NPM module
-module.exports = {
-    loadSplash: loadSplash,
-    validateSplash: validateSplash,
-    formatData: formatData,
-    SPLASH_REST: SPLASH_REST,
-    SPLASH_VALIDATE: SPLASH_VALIDATE
-};
 
 function formatData(spectra) {
-
     if (typeof spectra === 'object') {
         return spectra;
     }
@@ -35,7 +19,7 @@ function formatData(spectra) {
         return spectra.serializeArray();
     }
     else {
-        console.log('Spectra must be an Object, String, or Array');
+        alert('Spectra must be an Object, String, or Array');
         return 'undefined';
     }
 }
@@ -52,58 +36,21 @@ function loadSplash(spectra) {
     // verify spectra object
     var serializeSpectra = formatData(spectra);
 
-    // make http rest call
+    // make ajax call
     if (serializeSpectra !== 'undefined') {
-
-        var options = {
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
             url: SPLASH_REST,
-            method: 'POST',
-            json: spectra
-        };
-
-        var callback = function (error, res, body) {
-            console.log(' RESULTS: ', error, res.statusCode, body);
-        };
-
-        //console.log(request(options,function(){}));
-        //request(options, callback);
-
-        request.get('http://www.google.com', function (error, response, body) {
-                console.log(error);
-                console.log(body);
-                console.log(response.statusCode);// Show the HTML for the Modulus homepage.
-
+            data: serializeSpectra,
+            success: function (data) {
+                splashKey = data;
+            },
+            error: function (error, msg, httpStatus) {
+                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
+            }
         });
-
-        //var data = queryString.stringify({
-        //    'compilation_level': 'ADVANCED_OPTIMIZATIONS',
-        //    'output_format': 'json',
-        //    'output_info': 'compiled_code',
-        //    'warning_level': 'QUIET',
-        //    'js_code': spectra
-        //});
-        //
-        //var options = {
-        //    host: SPLASH_REST,
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'application/json',
-        //        'Content-Length': Buffer.byteLength(data)
-        //    }
-        //};
-        //
-        //var request = http.request(options, function(res) {
-        //   res.setEncoding('utf8');
-        //   res.on('error', function(error) {
-        //      console.log(error);
-        //   });
-        //   res.on('data', function(chunk) {
-        //       console.log('RESPONSE ' + chunk);
-        //   });
-        //});
-        //
-        //request.write(data);
-        //request.end();
     }
 
     return splashKey;
@@ -121,13 +68,13 @@ function validateSplash(spectra) {
 
     // validate spectra object
     if (typeof spectra !== 'object') {
-        console.log('Spectra must be a valid JSON object');
+        alert('Spectra must be a valid JSON object');
     }
     else if (typeof spectra.splash === 'undefined') {
-        console.log('request must have a valid splash key');
+        alert('request must have a valid splash key');
     }
 
-    // make http rest call
+    // make ajax call
     else {
         $.ajax({
             type: 'POST',
@@ -139,10 +86,9 @@ function validateSplash(spectra) {
                 result = data;
             },
             error: function (error, msg, httpStatus) {
-                console.log('ERROR ' + msg + ' STATUS ' + httpStatus);
+                alert('ERROR ' + msg + ' STATUS ' + httpStatus);
             }
         });
     }
     return result;
 }
-

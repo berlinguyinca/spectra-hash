@@ -57,8 +57,7 @@ module.exports = function (config) {
         autoWatch: true,
 
 
-        // start these browsers
-        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        // ***customize browser to bypass CORS for ajax REST API call testing*****
         browsers: ['Chrome_without_security' ],
 
         customLaunchers: {

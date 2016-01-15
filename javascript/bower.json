@@ -1,5 +1,6 @@
 {
   "name": "js-spectra-splash",
+  "version": "0.0.1",
   "description": "JS Splash Key creation and validation",
   "main": "splash.js",
   "authors": [

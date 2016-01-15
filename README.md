@@ -63,6 +63,24 @@ string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.023
 
 TODO
 
+## JavaScript api:
+
+Usage:
+    Include splash.js script in index.html
+
+```
+    generateSplash(spectra) - generates Splash Key
+    validateSplash(spectra) - validates Splash Key
+```
+
+    Spectra must be in valid JSON object. Refer to main splash site for examples
+        http://splash.fiehnlab.ucdavis.edu/
+
+```
+    Testing
+        Install Jasmine and Karma then run "karma start" from command line
+```
+
 ## R api:
 
 To generate a splash you need to source the R functions, and call `getSplash()`

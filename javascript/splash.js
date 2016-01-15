@@ -23,7 +23,7 @@ function formatData(spectra) {
  * @param spectra Object {}
  * @return splashKey
  */
-function loadSplash(spectra) {
+function generateSplash(spectra) {
 
 	var splashKey = '';
 

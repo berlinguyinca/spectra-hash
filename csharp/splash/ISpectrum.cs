@@ -28,6 +28,7 @@ namespace NSSplash {
 		List<Ion> getSortedIonsByMZ(bool desc = false);
 		List<Ion> getSortedIonsByIntensity(bool desc = true);
 		SpectrumType getSpectrumType();
+		string ToString();
 	}
 }
 

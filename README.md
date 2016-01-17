@@ -88,13 +88,20 @@ on a dataframe or matrix with two numeric columns containing m/z and intensity:
 
 ```
     ## The caffeine example from the paper
-    source("R/splash.R")
+    library(splashR)
 
     ## The caffeine example from the paper
     caffeine <- cbind(mz=c(138.0641, 195.0815),
                       intensity=c(71.59, 261.7))
     getSplash(caffeine)
+```
 
+Installing the R package can be done with the devtools package directly from within
+R:
+
+```
+    > library(devtools)
+    > install_github("berlinguyinca/spectra-hash", subdir="splashR")           
 ```
 
 ## Python api:

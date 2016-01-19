@@ -11,7 +11,7 @@ RUN apt-get update -y
 
 RUN apt-get install -y lynx mc vim
 RUN apt-get -y install unzip curl
-RUN apt-get install awstats -y libnet-ip-perl libgeo-ipfree-perl
+RUN apt-get install awstats -y libnet-ip-perl libgeo-ipfree-perl logrotate
 RUN apt-get install -y nginx
 
 ####

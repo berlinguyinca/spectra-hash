@@ -33,6 +33,7 @@ function generateSplash(spectra) {
 	// make ajax call
 	if (serializeSpectra !== 'undefined') {
 		$.ajax({
+			async: false,
 			type: 'POST',
 			contentType: 'application/json; charset=utf-8',
 			url: SPLASH_REST,
@@ -47,7 +48,7 @@ function generateSplash(spectra) {
 			}
 		});
 	}
-
+	console.log(splashKey);
 	return splashKey;
 }
 
@@ -76,6 +77,7 @@ function validateSplash(spectra) {
 
 		if (serializeSpectra !== 'undefined') {
 			$.ajax({
+				async: false,
 				type: 'POST',
 				contentType: 'application/json; charset=utf-8',
 				url: SPLASH_VALIDATE,

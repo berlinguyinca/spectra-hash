@@ -55,6 +55,13 @@ describe('Splash Key Test: ', function () {
 		var result = formatData('');
 		expect(result).toBe('undefined');
 	});
+
+	it('returns a splashkey', function(done) {
+		var result = generateSplash(spectra);
+		expect(result).toBe('splash10-0z00000000-f5bf6f6a4a1520a35d4f');
+		done();
+	});
+
 });
 
 

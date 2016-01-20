@@ -5,13 +5,12 @@
     <groupId>edu.ucdavis.fiehnlab</groupId>
     <artifactId>splash</artifactId>
     <packaging>pom</packaging>
-    <version>1.4-SNAPSHOT</version>
+	<version>1.4</version>
     <modules>
-        <module>java</module>
+	    <module>core</module>
         <module>web</module>
         <module>validation</module>
-        <module>specgen</module>
-        <module>scala</module>
+	    <module>scala</module>
         <module>docker</module>
     </modules>
 
@@ -30,4 +29,17 @@
 	</developer>
 
     </developers>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>Fiehnlab Releases</name>
+			<url>http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Fiehnlab Snapshots</name>
+			<url>http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

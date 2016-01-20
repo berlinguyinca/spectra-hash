@@ -1,89 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.ucdavis.fiehnlab.splash</groupId>
-  <artifactId>scala</artifactId>
-  <version>0.1</version>
+	<groupId>edu.ucdavis.fiehnlab.splash</groupId>
+	<artifactId>scala</artifactId>
+	<version>0.1</version>
 
-  <name>splash-scala</name>
-  <description>Scala wrapper for the Splash java library</description>
+	<name>splash-scala</name>
+	<description>Scala wrapper for the Splash java library</description>
 
-  <parent>
-    <artifactId>splash</artifactId>
-    <groupId>edu.ucdavis.fiehnlab</groupId>
-    <version>1.4-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>edu.ucdavis.fiehnlab</groupId>
+		<artifactId>splash</artifactId>
+		<version>1.4</version>
+	</parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>edu.ucdavis.fiehnlab.splash</groupId>
-      <artifactId>java</artifactId>
-      <version>1.4-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.11.7</version>
-    </dependency>
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_2.11</artifactId>
-      <version>2.2.5</version>
-    </dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>edu.ucdavis.fiehnlab.splash</groupId>
+			<artifactId>core</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>2.11.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.11</artifactId>
+			<version>2.2.5</version>
+		</dependency>
+	</dependencies>
 
-  <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
-    <plugins>
-      <!-- Enable scala goals -->
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
-        <configuration>
-          <args>
-            <arg>-Xlint</arg>
-            <arg>-deprecation</arg>
-            <arg>-Xfatal-warnings</arg>
-            <arg>-feature</arg>
-            <arg>-unchecked</arg>
-            <arg>-explaintypes</arg>
-          </args>
-        </configuration>
-      </plugin>
+	<build>
+		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/scala</testSourceDirectory>
+		<plugins>
+			<!-- Enable scala goals -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<args>
+						<arg>-Xlint</arg>
+						<arg>-deprecation</arg>
+						<arg>-Xfatal-warnings</arg>
+						<arg>-feature</arg>
+						<arg>-unchecked</arg>
+						<arg>-explaintypes</arg>
+					</args>
+				</configuration>
+			</plugin>
 
-      <!-- Disable surefire in order to use scalatest -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.7</version>
-        <configuration>
-          <skipTests>true</skipTests>
-        </configuration>
-      </plugin>
+			<!-- Disable surefire in order to use scalatest -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
 
-      <!-- Enable scalatest -->
-      <plugin>
-        <groupId>org.scalatest</groupId>
-        <artifactId>scalatest-maven-plugin</artifactId>
-        <version>1.0</version>
-        <configuration>
-          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-          <junitxml>.</junitxml>
-          <filereports>WDF TestSuite.txt</filereports>
-        </configuration>
-        <executions>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+			<!-- Enable scalatest -->
+			<plugin>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest-maven-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<junitxml>.</junitxml>
+					<filereports>WDF TestSuite.txt</filereports>
+				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-    </plugins>
-  </build>
+		</plugins>
+	</build>
 </project>

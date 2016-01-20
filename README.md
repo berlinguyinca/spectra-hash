@@ -11,6 +11,26 @@ Or use one any of the available implementations, which should have been validate
 # usage
 
 ## java api:
+The reference implementation jar file can be downloaded from: http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases/edu/ucdavis/fiehnlab/splash/core/1.4/core-1.4.jar
+
+The Maven dependency information is:
+```
+	<dependency>
+        <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+        <artifactId>core</artifactId>
+        <version>1.4</version>
+    </dependency>
+```
+
+The Maven repository information is:
+```
+	<repository>
+	    <id>releases</id>
+	    <name>Fiehnlab Mave Repository - Releases</name>
+	    <url>http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases</url>
+	</repository>
+```
+
 To generate a new splash, please utilize the following:
 
 
@@ -26,10 +46,10 @@ Alternatively, you can also utilize the following code, to directly splash a spe
     String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
 
-We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplasListener to your Splash instance or alternativly using the util like this
+We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplashListener to your Splash instance or alternativly using the util like this
 
 ```
-    String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS,new SplashListener(){
+    String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212", SpectraType.MS, new SplashListener(){
             @Override
             public void eventReceived(SplashingEvent e) {
             }
@@ -39,29 +59,20 @@ We are also providing an easy way to connect a listener to the splashing algorit
                 
             }
         });
-
 ```
-
-## scala api:
-
-TODO
 
 ## C# api:
 
-To generate a splash you need to add a reference to the Splash.dll to your project then add the following 'using' statement:
+To generate a splash you need to add a reference to the assembly `Splash.dll` to your project then add the following 'using' statement:
 ```
 using NSSplash;
 ```
 
 To get the hash for a given spectrum you can call:
 ```
-Splash splasher = new Splash();
-string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.02395773287:2.0 11.234568:.10", SpectrumType.MS));
+	Splash splasher = new Splash();
+	string hash = splasher.splashIt(new Spectrum("5.0000001:1.0 5.0000005:0.5 10.02395773287:2.0 11.234568:.10", SpectrumType.MS));
 ```
-
-## C++ api:
-
-TODO
 
 ## JavaScript api:
 
@@ -108,6 +119,14 @@ R:
 
 TODO
 
+## C++ api:
+
+TODO
+
+## scala api:
+
+TODO
+
 ## rest service:
 
 the documentation for the REST service, is available as a dedicated index page, once you start the REST server. If you like to use the official webservice, you can find it at http://splash.fiehnlab.ucdavis.edu
@@ -117,10 +136,12 @@ the documentation for the REST service, is available as a dedicated index page, 
 
 As part of the splash specificitation, we are providing a simple validation tool, in the validation folder.
 
-to run this tool please build the distribution and afterwards run
+The latest jar can be found at: http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases/edu/ucdavis/fiehnlab/splash/validation/1.4/validation-1.4.jar
+
+to run this tool (from the sources) please clone and build the project and afterwards run
 
 ```
- java -jar validation-VERSION.jar
+java -jar validation-1.4.jar
 ```
 
 this will present you with the usage for this tool. 
@@ -128,9 +149,10 @@ this will present you with the usage for this tool.
 ### validation example
 
 An example to validate a file against the reference implementation and saving the output to a file would be
+(run from the root of the project)
 
 ```
-java -jar validation/target/validation-1.3-SNAPSHOT.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
+java -jar validation/target/validation-1.4.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
 ```
 
 The specified flags in the example mean:
@@ -147,7 +169,7 @@ The input and output files are specified as arguments.
 * input.csv your input file
 * output.csv your output file
 
-The format for a spectra must be:
+The format for a spectrum must be:
 
 ```
 ion:intensity ion:intensity
@@ -165,14 +187,6 @@ mvn clean install
 
 will build your project, run all the tests and you can find the build jar files, in the target directories of the project.
 
-## Python
-
-TODO
-
-## C++
-
-TODO
-
 ## C# 
 
 ### Requirements:
@@ -182,6 +196,14 @@ TODO
 The easiest way to build the project is using MonoDevelop, open the IDE and load the solution (<download folder>/csharp/splash.sln).
 On the 'Solution Explorer' (left panel), right click 'splash' and select 'Build splash', if there are no errors you will see a 'Build successful' message.
 
-#Contributing
+## Python
+
+TODO
+
+## C++
+
+TODO
+
+# Contributing
 
 if you like to contribute to this project, please feel free to contact me.

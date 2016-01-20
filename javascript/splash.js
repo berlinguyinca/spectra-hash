@@ -9,9 +9,9 @@ var SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
 
 
 function handleError(xhr, status, errorThrown) {
-    console.log('XHR ' + JSON.stringify(xhr));
-    console.log('STATUS ' + status);
-    console.log('ERROR THROWN ' + errorThrown);
+    alert('Xhr Error ' + xhr.responseText);
+    alert('Http Status ' + status);
+    alert('Error ' + errorThrown);
 }
 
 function formatData(spectra) {
@@ -32,7 +32,7 @@ function formatData(spectra) {
 function generateSplash(spectra, callback) {
 
     callback = (typeof callback !== 'undefined') ? callback : function(data) {
-        console.log(data)
+        console.log(data);
     };
 
     // verify spectra object

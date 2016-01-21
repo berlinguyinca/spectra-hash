@@ -7,7 +7,7 @@
 var SPLASH_REST = 'http://splash.fiehnlab.ucdavis.edu/splash/it';
 var SPLASH_VALIDATE = 'http://splash.fiehnlab.ucdavis.edu/splash/validate';
 
-
+//
 function handleError(xhr, status, errorThrown) {
     alert('Xhr Error ' + xhr.responseText);
     alert('Http Status ' + status);

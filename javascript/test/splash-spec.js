@@ -46,22 +46,16 @@ describe('Splash Key Test: ', function() {
         });
     });
 
-    it('calls REST and returns a splash key', function(done) {
-        expect(splashKey).toBe('splash10-0z00000000-f5bf6f6a4a1520a35d4f');
-        done();
-    });
-
     it('returns undefined when spectra is not a JSON object', function() {
         var result = formatData('');
         expect(result).toBe('undefined');
     });
 
-    it('returns a splashkey', function(done) {
-        var result = generateSplash(spectra, function(data) {
-            return data;
-        });
-        console.log(result);
-        //expect(result).toBe('splash10-0z00000000-f5bf6f6a4a1520a35d4f');
+    it('generate a splashkey', function(done) {
+        var callback = function(data) {
+            expect(data).toBe('splash10-0z00000000-f5bf6f6a4a1520a35d4f');
+        };
+        generateSplash(spectra,callback);
         done();
     });
 
@@ -117,7 +111,9 @@ describe('Validate Splash Key Test: ', function() {
     });
 
     it('calls REST API and validates the splash key', function(done) {
-        expect(result.validationSuccessful).toBe(true);
+        validateSplash(spectraToValidate, function(data) {
+           expect(data.validationSuccessful).toBe(true);
+        });
         done();
     });
 

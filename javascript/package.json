@@ -1,0 +1,21 @@
+{
+  "name": "javascript",
+  "version": "0.0.1",
+  "description": "contains dependencies for testing ",
+  "main": "splash.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ben Nguyen",
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-cli": "^0.1.2",
+    "karma-jasmine": "^0.3.6"
+  }
+}

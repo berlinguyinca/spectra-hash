@@ -17,14 +17,14 @@
     <parent>
         <artifactId>splash</artifactId>
         <groupId>edu.ucdavis.fiehnlab</groupId>
-        <version>1.4-SNAPSHOT</version>
+	    <version>1.4</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
-            <artifactId>java</artifactId>
-            <version>1.4-SNAPSHOT</version>
+	        <artifactId>core</artifactId>
+	        <version>1.4</version>
         </dependency>
 
         <dependency>
@@ -66,8 +66,8 @@
             <scope>test</scope>
 
         </dependency>
-        
-        <dependency>
+
+	    <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
@@ -80,8 +80,8 @@
             <version>${rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
-        
-        <dependency>
+
+	    <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
             <version>2.4.1</version>
@@ -103,8 +103,8 @@
                     </execution>
                 </executions>
             </plugin>
-            
-            <plugin>
+
+	        <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>

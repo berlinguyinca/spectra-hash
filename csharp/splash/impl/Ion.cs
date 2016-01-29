@@ -28,8 +28,8 @@ namespace NSSplash.impl {
 		private double intensity = 0.0;
         private const int PRECISION = 6;
 
-        private string mzFormat = String.Format("{{0,5:F{0}}}", PRECISION);
-		private string intFormat = String.Format("{{0:D}}");
+        private string mzFormat = string.Format("{{0,5:F{0}}}", PRECISION);
+		private string intFormat = string.Format("{{0,5:F{0}}}", PRECISION);
 
 		public double MZ { 
 			get { return mz; } 
@@ -48,8 +48,7 @@ namespace NSSplash.impl {
 
 		//returning ion in mz:intensity format with 6 decimals
 		public override string ToString() {
-            StringBuilder tostring = new StringBuilder();
-			return (tostring.AppendFormat(mzFormat, mz).Append(":").AppendFormat(intFormat, intensity).ToString());
+			return string.Format("{0}:{1}", string.Format(mzFormat, mz), string.Format(intFormat, intensity));
 		}
 
 		//returning ion in mz:intensity format with 6 decimals in JSON format

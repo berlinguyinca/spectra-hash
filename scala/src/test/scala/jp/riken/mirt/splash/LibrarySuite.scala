@@ -11,7 +11,7 @@ class LibrarySuite extends FlatSpec with Matchers {
     val spectrum = v1.SpectrumImpl(Seq(Ion(100.0, 50)), SpectraType.MS)
     val splash = factory.splashIt(spectrum)
 
-    splash should equal("splash10-e59bbea622-a7e7e25ce3df92f66309-0000100000")
+    splash should equal("splash10-0z00000000-cc0ed451a7eca3bcb4a6")
   }
 
   it should "be able to work using Scala-specific usage" in {
@@ -21,6 +21,6 @@ class LibrarySuite extends FlatSpec with Matchers {
     val spectrum: Spectrum  = Seq(Ion(100.0, 50))
     val splash: String = spectrum.splashIt
 
-    splash should equal("splash10-e59bbea622-a7e7e25ce3df92f66309-0000100000")
+    splash should equal("splash10-0z00000000-cc0ed451a7eca3bcb4a6")
   }
 }

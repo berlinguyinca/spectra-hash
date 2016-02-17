@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
 import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThanIntensityComperator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
@@ -178,15 +179,15 @@ public class SplashVersion1 implements Splash {
      * @return
      */
     public final String splashIt(Spectrum spectrum) {
-
-        for (Ion ion : spectrum.getIons()) {
-            if (ion.getIntensity() < 0) {
-                throw new RuntimeException("ion's need to have an intensity larger than zero");
+        if (spectrum.getType() == SpectraType.MS) {
+            for (Ion ion : spectrum.getIons()) {
+                if (ion.getIntensity() < 0) {
+                    throw new RuntimeException("ion's need to have an intensity larger than zero");
+                }
+                if (ion.getMass() < 0) {
+                    throw new RuntimeException("ion's need to have an mass larger than zero");
+                }
             }
-            if (ion.getMass() < 0) {
-                throw new RuntimeException("ion's need to have an mass larger than zero");
-            }
-
         }
 
         //convert the spectrum to relative values

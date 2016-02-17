@@ -22,6 +22,8 @@
 			<artifactId>core</artifactId>
 			<version>1.4</version>
 		</dependency>
+
+		<!--
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
@@ -32,13 +34,14 @@
 			<artifactId>scalatest_2.11</artifactId>
 			<version>2.2.5</version>
 		</dependency>
-	</dependencies>
 
+		-->
+	</dependencies>
+<!--
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
-			<!-- Enable scala goals -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
@@ -55,7 +58,6 @@
 				</configuration>
 			</plugin>
 
-			<!-- Disable surefire in order to use scalatest -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -65,7 +67,6 @@
 				</configuration>
 			</plugin>
 
-			<!-- Enable scalatest -->
 			<plugin>
 				<groupId>org.scalatest</groupId>
 				<artifactId>scalatest-maven-plugin</artifactId>
@@ -87,4 +88,6 @@
 
 		</plugins>
 	</build>
+
+-->
 </project>

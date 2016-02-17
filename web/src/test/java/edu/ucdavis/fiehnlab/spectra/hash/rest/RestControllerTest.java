@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.rest;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,6 +80,7 @@ public class RestControllerTest {
     }
 
     @org.junit.Test
+    @Ignore
     public void testConvert() throws Exception {
 
         given().log().all()
@@ -90,6 +92,7 @@ public class RestControllerTest {
     }
 
     @org.junit.Test
+    @Ignore
     public void testConvert2() throws Exception {
 
         given().log().all()

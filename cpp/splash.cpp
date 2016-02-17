@@ -187,66 +187,32 @@ string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
 	return ss.str();
 }
 
+string splashIt(string spectrum_string, char spectrum_type) {
+    // Convert spectrum to a vector of ion pairs and find the max intensity
+    vector<string> ion_strings = split(spectrum_string, ' ');
+    vector<pair<double, double> > spectrum;
 
-int main(int argc, char** argv) {
-	int i = 0;
-	string input;
-	
-	// Log times
-	clock_t start = clock();
-	double processingTime;
-	
+    double maxIntensity = 0;
 
-	while(getline(cin, input)) {
-		++i;
-		
-		if(DEBUG) {
-			cerr << "Spectrum #" << i << endl;
-		}
+    for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
+        int delim_pos = (*it).find(':');
 
-		// Handle input of the form [id],[spectrum string]
-		int delim_pos = input.find(',');
-		
-		string id = input.substr(0, delim_pos);
-		string spectrum_string = input.substr(delim_pos + 1);
+        double mz = atof((*it).substr(0, delim_pos).c_str());
+        double intensity = atof((*it).substr(delim_pos + 1).c_str());
 
-		// Convert spectrum to a vector of ion pairs and find the max intensity
-		vector<string> ion_strings = split(spectrum_string, ' ');
-		vector<pair<double, double> > spectrum;
-		double maxIntensity = 0;
+        if(intensity > maxIntensity)
+            maxIntensity = intensity;
 
-		for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
-			delim_pos = (*it).find(':');
-			double mz = atof((*it).substr(0, delim_pos).c_str());
-			double intensity = atof((*it).substr(delim_pos + 1).c_str());
+        // Store ion as a pair object, with 'first' corresponding to m/z
+        // and 'second' to intensity
+        spectrum.push_back(make_pair(mz, intensity));
+    }
 
-			if(intensity > maxIntensity)
-				maxIntensity = intensity;
-
-			// Store ion as a pair object, with 'first' corresponding to m/z
-			// and 'second' to intensity
-			spectrum.push_back(make_pair(mz, intensity));
-		}
-
-		// Normalize spectrum
-		for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-			(*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
-		}
-		
-		// Provide output for large files
-		if(i % 10000 == 0) {
-			cerr << "processed " << i << " spectra, " << setprecision(2) << fixed
-				 << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i
-				 << " ms average time to splash a spectrum." << endl;
-		}
-
-		// Print the spectrum id with the calculated splash id
-		cout << splashIt(spectrum, '1') << "," << id << "," << spectrum_string << endl;
-	}
-
-	cerr << "finished processing, processing took: " << setprecision(2) << fixed
-		 << (std::clock() - start) / (double)CLOCKS_PER_SEC << " s" << endl;
-	cerr << "processed " << i << " spectra" << endl;
-	cerr << "average time including io to splash a spectrum is: " << setprecision(2) << fixed
-		 << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i  << " ms" << endl;
+    // Normalize spectrum
+    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+        (*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
+    }
+    
+    // Return the calculated splash id
+    return splashIt(spectrum, '1');
 }

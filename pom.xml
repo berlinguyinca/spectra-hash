@@ -15,6 +15,7 @@
 	<version>1.4</version>
     <modules>
 	    <module>core</module>
+        <module>utilities</module>
         <module>web</module>
         <module>validation</module>
 	    <module>scala</module>

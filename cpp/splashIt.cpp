@@ -30,12 +30,17 @@ int main(int argc, char** argv) {
 
         // Handle input of the form [id],[spectrum string]
         int delim_pos = input.find(',');
-        
-        string id = input.substr(0, delim_pos);
-        string spectrum_string = input.substr(delim_pos + 1);
 
-        // Print the spectrum id with the calculated splash id
-        cout << splashIt(spectrum_string, '1') << "," << id << "," << spectrum_string << endl;
+        if(delim_pos != string::npos) {
+            string id = input.substr(0, delim_pos);
+            string spectrum_string = input.substr(delim_pos + 1);
+
+            // Print the spectrum id with the calculated splash id
+            cout << splashIt(spectrum_string, '1') << "," << id << "," << spectrum_string << endl;
+        } else {
+            // Print the spectrum id with the calculated splash id
+            cout << splashIt(input, '1') << "," << input << endl;
+        }
         
         // Provide output for large files
         if(i % 10000 == 0) {
@@ -46,8 +51,8 @@ int main(int argc, char** argv) {
     }
 
     cerr << "finished processing, processing took: " << setprecision(2) << fixed
-         << (std::clock() - start) / (double)CLOCKS_PER_SEC << " s" << endl;
-    cerr << "processed " << i << " spectra" << endl;
-    cerr << "average time including io to splash a spectrum is: " << setprecision(2) << fixed
+         << (std::clock() - start) / (double)CLOCKS_PER_SEC << " s" << endl
+         << "processed " << i << " spectra" << endl
+         << "average time including io to splash a spectrum is: " << setprecision(2) << fixed
          << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) / i  << " ms" << endl;
 }

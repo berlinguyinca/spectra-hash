@@ -9,7 +9,7 @@ TARGET = splash
 all: $(TARGET)
 
 $(TARGET): $(TARGET).cpp
-	$(CC) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS) -o $(TARGET) splash.cpp splashIt.cpp
+	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(TARGET) splash.cpp splashIt.cpp $(LDLIBS)
 
 clean:
 	$(RM) $(TARGET)

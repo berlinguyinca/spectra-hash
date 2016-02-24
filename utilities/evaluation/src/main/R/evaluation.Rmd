@@ -61,14 +61,14 @@ myData_filtered_by_linear_index = as.matrix(subset(myData,grepl("Linear",index))
 normalized_data = myData
 
 for(i in 1:nrow(myData_filtered_by_linear_index)){
-    for(j in 1:nrow(normalized_data)){
-      if(myData_filtered_by_linear_index[i,2] == normalized_data[j,2]){
+    filtered = subset(normalized_data,splash == myData_filtered_by_linear_index[i,2])
+
+        for(j in 1:nrow(filtered)){
         result = as.numeric(myData_filtered_by_linear_index[i,4])/as.numeric(normalized_data[j,4])        
         if(is.nan(result) || is.infinite(result)){
           result = 0
         }
         normalized_data[j,4] = result
-      }
   }
 }
 

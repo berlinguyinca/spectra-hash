@@ -1,0 +1,86 @@
+```{r setup,echo=FALSE}
+require(knitr)
+
+opts_knit$set(root.dir = "C:/Users/wohlg_000/Documents/workspace/spectra-hash/utilities/evaluation/src/main/R")
+```
+
+
+---
+title: "Index Evaluation"
+author: "Gert Wohlgemuth"
+date: "February 23, 2016"
+output: html_document
+---
+
+Generated Report of the evaluation of the Index Calculations
+
+```{r, echo=FALSE}
+
+#install.packages("data.table")
+library(data.table)
+library(pander) 
+library(plyr)
+
+panderOptions('table.split.table', Inf) 
+
+```
+
+
+```{r, echo=FALSE}
+
+#load data table
+myData = read.table("result.txt",col.names = c('inchi','splash','index','count'))
+
+
+```
+
+Simple aggregated overview of the hit rates for the indexes.
+
+```{r,echo=FALSE}
+#aggregations
+
+myDataTable = data.table(myData)
+myData_agg_sum_index <- as.data.frame(myDataTable[, sum(count, na.rm = TRUE),by = list(index)])
+
+```
+
+```{r,echo=FALSE}
+
+
+set.caption("aggregated sum for all indexes")
+pander(arrange(myData_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'right'))
+
+```
+
+Simple aggregated overview of the hit rates, after normalizing based on the linear index
+
+```{r}
+
+
+myData_filtered_by_linear_index = as.matrix(subset(myData,grepl("Linear",index)))
+normalized_data = myData
+
+for(i in 1:nrow(myData_filtered_by_linear_index)){
+    filtered = subset(normalized_data,splash == myData_filtered_by_linear_index[i,2])
+
+        for(j in 1:nrow(filtered)){
+        result = as.numeric(myData_filtered_by_linear_index[i,4])/as.numeric(normalized_data[j,4])        
+        if(is.nan(result) || is.infinite(result)){
+          result = 0
+        }
+        normalized_data[j,4] = result
+  }
+}
+
+
+normalized_data_table = data.table(normalized_data)
+normalized_data_agg_sum_index <- as.data.frame(normalized_data_table[, sum(count, na.rm = TRUE),by = list(index)])
+
+
+```
+
+
+```{r,echo=FALSE}
+
+set.caption("aggregated summed score for all indexes")
+pander(arrange(normalized_data_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'right'))

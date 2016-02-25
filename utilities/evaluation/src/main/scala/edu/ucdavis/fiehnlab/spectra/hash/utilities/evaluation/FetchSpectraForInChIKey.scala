@@ -25,6 +25,9 @@ class FetchSpectraForInChIKey(system: ActorSystem) {
 
   val pipeline: HttpRequest => Future[List[SpectraRetrievedResult]] = sendReceive(system, system.dispatcher, timeout) ~> unmarshal[List[SpectraRetrievedResult]]
 
+  val host = "http://resolver-mona.apps.fiehnlab.ucdavis.edu/rest/spectra/";
+//  val host = "http://127.0.0.1:8080/rest/spectra/";
+
   /**
     * resolves all the spectra for a given inchi key
     *
@@ -33,7 +36,7 @@ class FetchSpectraForInChIKey(system: ActorSystem) {
     */
   def resolve(key: String): List[SpectraRetrievedResult] = {
 
-    val response = pipeline(Get(s"http://resolver-mona.apps.fiehnlab.ucdavis.edu/rest/spectra/${key}"))
+    val response = pipeline(Get(s"${host}${key}"))
 
     Await.result(response,900 seconds)
 

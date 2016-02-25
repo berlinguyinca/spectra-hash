@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.spectra.hash.utilities.evaluation
 
-import java.io.File
+import java.io.{Writer, FileWriter, File}
+import akka.actor.Actor.Receive
 import edu.ucdavis.fiehnlab.index._
 
-import akka.actor.ActorSystem
+import akka.actor._
 import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.io.{SpectraReadEventHandler, FileParser}
 import edu.ucdavis.fiehnlab.math.similarity.CompositeSimilarity
@@ -60,9 +61,10 @@ class EvaluationStartup extends ApplicationRunner {
     }
 
 
-    val indexes:List[Index] = new IndexBuilder().build()
+    val indexes: List[Index] = new IndexBuilder().build()
 
     val parser = new FileParser()
+
 
     //defined handler to index all our found spectra
     val handler = new SpectraReadEventHandler {
@@ -72,44 +74,67 @@ class EvaluationStartup extends ApplicationRunner {
     }
 
     //generate our indexes, from all the defined files
-    applicationArguments.getOptionValues("library").foreach(x => parser.parseFile(new File(x), handler))
+    applicationArguments.getOptionValues("library").par.foreach(x => parser.parseFile(new File(x), handler))
 
 
-    indexes.foreach(x => logger.debug(x.toString + " contains  " + x.size + " spectra"))
+    indexes.par.foreach(x => logger.info(x.toString + " contains  " + x.size + " spectra"))
+
+    logger.info(indexes.size + " different index methods will be compared")
 
     val resolver = new FetchSpectraForInChIKey(system)
+
+    val writer = new FileWriter(new File(applicationArguments.getOptionValues("output").head))
+    val finishActor = system.actorOf(Props(new FinishActor(writer)))
 
     applicationArguments.getOptionValues("inchiKeys").foreach {
       x => {
         for (line <- Source.fromFile(new File(x)).getLines()) {
-          logger.info("read inchi key: " + line)
+          val data = line.split("\t")
+          logger.info("read inchi key: " + data(1))
 
-          val spectraRetrievedResult:List[SpectraRetrievedResult] = resolver.resolve(line)
 
-          logger.info("found " + spectraRetrievedResult.size + " possible matches")
-          spectraRetrievedResult.foreach{
-            y => searchIndex(indexes,y)
+          val begin = System.currentTimeMillis()
+          try {
+            val spectraRetrievedResult: Set[SpectraRetrievedResult] = resolver.resolve(data(1)).toSet
+
+            logger.info("found " + spectraRetrievedResult.size + " spectra for this compound")
+            spectraRetrievedResult.foreach {
+              y => searchIndex(indexes, y,finishActor)
+            }
+            logger.info("finished index search")
           }
+          catch {
+            case e: Exception => logger.error("retrieval error for key: " + data(1) + " - " + e.getMessage)
+          }
+
+          val duration = (System.currentTimeMillis() - begin)/1000
+
+          logger.info("duration: " + duration + "s")
         }
       }
 
     }
 
+    finishActor ! PoisonPill
     //our work is done
     system.shutdown()
   }
 
-  def searchIndex(indexes:List[Index], spectra:SpectraRetrievedResult) : Unit = {
+  def searchIndex(indexes: List[Index], spectra: SpectraRetrievedResult,finish:ActorRef): Unit = {
 
-    val spectrum = Utilities.convertStringToSpectrum(spectra.spectrum,spectra.splash,spectra.inchiKey)
+    val spectrum = Utilities.convertStringToSpectrum(spectra.spectrum, spectra.splash, spectra.inchiKey)
 
     indexes.foreach { idx =>
 
-      val hits:Int = idx.search(spectrum,new CompositeSimilarity,0.7).size()
+      logger.debug("evaluating index " + idx)
+      val before: Long = System.currentTimeMillis()
+      val hits: Int = idx.search(spectrum, new CompositeSimilarity, 0.7).size()
 
-      logger.info( idx.getClass + " hits: " + hits)
+      val duration:Long = System.currentTimeMillis() - before
+      finish ! (idx,hits,spectra,duration, idx.size)
     }
   }
+
   def usage(): Unit = {
 
     println("Usage:")
@@ -120,5 +145,27 @@ class EvaluationStartup extends ApplicationRunner {
 
     System.exit(-1)
 
+  }
+
+  class FinishActor(val writer:Writer) extends Actor{
+    override def receive: Receive = {
+
+      case x:(Index,Int,SpectraRetrievedResult,Long,Int) =>
+        writer.write(x._3.inchiKey)
+        writer.write("\t")
+        writer.write(x._3.splash)
+        writer.write("\t")
+        writer.write(x._1.toString)
+        writer.write("\t")
+
+        writer.write(x._2.toString)
+        writer.write("\t")
+        writer.write(x._4.toString)
+        writer.write("\t")
+        writer.write(x._5.toString)
+
+        writer.write("\n")
+        writer.flush()
+    }
   }
 }

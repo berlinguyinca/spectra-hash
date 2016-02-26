@@ -29,7 +29,7 @@ panderOptions('table.split.table', Inf)
 ```{r, echo=FALSE}
 
 #load data table
-myData = read.table("result.txt",col.names = c('inchi','splash','index','count'))
+myData = read.table("result.txt",col.names = c('inchi','splash','index','count','duration','index_size'))
 
 
 ```

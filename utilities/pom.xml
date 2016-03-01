@@ -6,13 +6,13 @@
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>splash</artifactId>
         <version>1.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>edu.ucdavis.fiehnlab.splash</groupId>
     <artifactId>utilities</artifactId>
     <packaging>pom</packaging>
-	<version>1.4</version>
+    <version>1.4</version>
+
     <modules>
         <module>evaluation</module>
     </modules>

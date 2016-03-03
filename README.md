@@ -11,11 +11,11 @@ Or use one any of the available implementations, which should have been validate
 # usage
 
 ## java api:
-The reference implementation jar file can be downloaded from: http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases/edu/ucdavis/fiehnlab/splash/core/1.4/core-1.4.jar
+The reference implementation jar file can be downloaded from: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.4/core-1.4.jar
 
 The Maven dependency information is:
 ```
-	<dependency>
+    <dependency>
         <groupId>edu.ucdavis.fiehnlab.splash</groupId>
         <artifactId>core</artifactId>
         <version>1.4</version>
@@ -26,8 +26,8 @@ The Maven repository information is:
 ```
 	<repository>
 	    <id>releases</id>
-	    <name>Fiehnlab Mave Repository - Releases</name>
-	    <url>http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases</url>
+	    <name>Fiehnlab Public Maven Repository</name>
+	    <url>http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public</url>
 	</repository>
 ```
 
@@ -136,7 +136,7 @@ the documentation for the REST service, is available as a dedicated index page, 
 
 As part of the splash specificitation, we are providing a simple validation tool, in the validation folder.
 
-The latest jar can be found at: http://repo.fiehnlab.ucdavis.edu:55000/content/repositories/releases/edu/ucdavis/fiehnlab/splash/validation/1.4/validation-1.4.jar
+The latest jar can be found at: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.4/validation-1.4.jar
 
 to run this tool (from the sources) please clone and build the project and afterwards run
 

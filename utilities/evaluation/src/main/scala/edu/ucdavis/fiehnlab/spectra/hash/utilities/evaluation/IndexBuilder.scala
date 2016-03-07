@@ -113,7 +113,7 @@ class IndexBuilder {
       case histogram => new HistogramIndex(binniningMethod, spectraCache, histogram)
     }.toList
 
-    val indexList = histogramBasedIndex
+    val indexList = new LinearIndex :: histogramBasedIndex
 
     indexList
   }

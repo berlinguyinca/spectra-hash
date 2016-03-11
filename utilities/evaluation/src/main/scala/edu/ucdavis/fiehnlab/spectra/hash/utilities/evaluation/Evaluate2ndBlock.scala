@@ -1,11 +1,14 @@
 package edu.ucdavis.fiehnlab.spectra.hash.utilities.evaluation
 
 import java.io.{Writer, FileWriter, File}
+import java.util
 import akka.actor.Actor.Receive
 import edu.ucdavis.fiehnlab.index._
 
 import akka.actor._
-import edu.ucdavis.fiehnlab.Spectrum
+import edu.ucdavis.fiehnlab.index.histogram.HistogramIndex
+import edu.ucdavis.fiehnlab.math.histogram.Histogram
+import edu.ucdavis.fiehnlab.{ComputationalResult, Spectrum}
 import edu.ucdavis.fiehnlab.io.{SpectraReadEventHandler, FileParser}
 import edu.ucdavis.fiehnlab.math.similarity.CompositeSimilarity
 import edu.ucdavis.fiehnlab.splash.resolver.SpectraRetrievedResult
@@ -61,7 +64,10 @@ class EvaluationStartup extends ApplicationRunner {
     }
 
 
-    val indexes: List[Index] = new IndexBuilder().build()
+    val builder = new IndexBuilder
+    val indexes: List[Index] = builder.buildBestIndexes
+
+    val linearIndex = builder.buildLinear
 
     val parser = new FileParser()
 
@@ -70,6 +76,7 @@ class EvaluationStartup extends ApplicationRunner {
     val handler = new SpectraReadEventHandler {
       override def readSpectra(spectrum: Spectrum): Unit = {
         indexes.par.foreach(_.index(spectrum))
+        linearIndex.index(spectrum)
       }
     }
 
@@ -85,6 +92,8 @@ class EvaluationStartup extends ApplicationRunner {
 
     val writer = new FileWriter(new File(applicationArguments.getOptionValues("output").head))
     val finishActor = system.actorOf(Props(new FinishActor(writer)))
+    val missingActor = system.actorOf(Props(new MissingActor(new FileWriter("missingSpectra.txt"))))
+
 
     applicationArguments.getOptionValues("inchiKeys").foreach {
       x => {
@@ -97,9 +106,12 @@ class EvaluationStartup extends ApplicationRunner {
           try {
             val spectraRetrievedResult: Set[SpectraRetrievedResult] = resolver.resolve(data(1)).toSet
 
+
             logger.info("found " + spectraRetrievedResult.size + " spectra for this compound")
             spectraRetrievedResult.foreach {
-              y => searchIndex(indexes, y,finishActor)
+
+              y =>
+                searchIndex(indexes, y, finishActor, missingActor, linearIndex)
             }
             logger.info("finished index search")
           }
@@ -107,7 +119,7 @@ class EvaluationStartup extends ApplicationRunner {
             case e: Exception => logger.error("retrieval error for key: " + data(1) + " - " + e.getMessage)
           }
 
-          val duration = (System.currentTimeMillis() - begin)/1000
+          val duration = (System.currentTimeMillis() - begin) / 1000
 
           logger.info("duration: " + duration + "s")
         }
@@ -116,23 +128,39 @@ class EvaluationStartup extends ApplicationRunner {
     }
 
     finishActor ! PoisonPill
+    missingActor ! PoisonPill
+
     //our work is done
     system.shutdown()
   }
 
-  def searchIndex(indexes: List[Index], spectra: SpectraRetrievedResult,finish:ActorRef): Unit = {
+  def searchIndex(indexes: List[Index], spectra: SpectraRetrievedResult, finish: ActorRef, missing: ActorRef, referenceIndex: Index): Unit = {
 
-    val spectrum = Utilities.convertStringToSpectrum(spectra.spectrum, spectra.splash, spectra.inchiKey)
+    val referenceResult = referenceIndex.search(Utilities.convertStringToSpectrum(spectra.spectrum, spectra.splash, spectra.inchiKey), new CompositeSimilarity, 0.7)
 
     indexes.foreach { idx =>
+      val result = searchIndex(spectra, finish, idx)
 
-      logger.debug("evaluating index " + idx)
-      val before: Long = System.currentTimeMillis()
-      val hits: Int = idx.search(spectrum, new CompositeSimilarity, 0.7).size()
+      val missingSpectra: Set[ComputationalResult] = referenceResult.toSet diff result.toSet
 
-      val duration:Long = System.currentTimeMillis() - before
-      finish ! (idx,hits,spectra,duration, idx.size)
+      if (missingSpectra.nonEmpty) {
+        logger.info("missing spectra in this index: " + missingSpectra.size)
+        missing ! MissingValueData(idx, missingSpectra, spectra)
+      }
     }
+  }
+
+  def searchIndex(spectra: SpectraRetrievedResult, finish: ActorRef, idx: Index): util.Collection[ComputationalResult] = {
+    val spectrum = Utilities.convertStringToSpectrum(spectra.spectrum, spectra.splash, spectra.inchiKey)
+
+    logger.debug("evaluating index " + idx)
+    val before: Long = System.currentTimeMillis()
+    val result = idx.search(spectrum, new CompositeSimilarity, 0.7)
+
+    val duration: Long = System.currentTimeMillis() - before
+    finish !FinishResult(idx, result.size(), spectra, duration, idx.size)
+
+    result
   }
 
   def usage(): Unit = {
@@ -147,25 +175,70 @@ class EvaluationStartup extends ApplicationRunner {
 
   }
 
-  class FinishActor(val writer:Writer) extends Actor{
+  class FinishActor(val writer: Writer) extends Actor {
     override def receive: Receive = {
 
-      case x:(Index,Int,SpectraRetrievedResult,Long,Int) =>
-        writer.write(x._3.inchiKey)
+      case x: FinishResult =>
+        writer.write(x.spectra.inchiKey)
         writer.write("\t")
-        writer.write(x._3.splash)
+        writer.write(x.spectra.splash)
         writer.write("\t")
-        writer.write(x._1.toString)
+        writer.write(x.index.toString)
         writer.write("\t")
 
-        writer.write(x._2.toString)
+        writer.write(x.count.toString)
         writer.write("\t")
-        writer.write(x._4.toString)
+        writer.write(x.duration.toString)
         writer.write("\t")
-        writer.write(x._5.toString)
+        writer.write(x.indexSize.toString)
 
         writer.write("\n")
         writer.flush()
     }
   }
+
+  class MissingActor(val writer: Writer) extends Actor {
+    override def receive: Receive = {
+
+      case x: MissingValueData =>
+        x.set.foreach { missing =>
+
+          writer.write(x.spectra.inchiKey)
+          writer.write("\t")
+          writer.write(x.spectra.splash)
+          writer.write("\t")
+          writer.write(x.index.toString)
+          writer.write("\t")
+          writer.write(missing.hit.splash)
+          writer.write("\t")
+          writer.write(missing.unknown.splash)
+          writer.write("\t")
+          writer.write(missing.score.toString)
+
+          //special check for histogram based indexes
+          x.index match {
+            case idx:HistogramIndex =>
+              val histogram = idx.histogram
+
+              writer.write("\t")
+              writer.write(histogram.generate(missing.hit))
+              writer.write("\t")
+              writer.write(histogram.generate(missing.unknown))
+              writer.write("\t")
+              writer.write(histogram.toString)
+
+            case _ =>
+              writer.write("\t")
+              writer.write("\t")
+              writer.write("\t")
+          }
+          writer.write("\n")
+          writer.flush()
+        }
+    }
+  }
+
+  case class FinishResult(index:Index, count:Int, spectra:SpectraRetrievedResult,duration:Long, indexSize:Int)
+  case class MissingValueData(index:Index, set:Set[ComputationalResult], spectra:SpectraRetrievedResult)
+
 }

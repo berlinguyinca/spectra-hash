@@ -23,8 +23,6 @@ class FetchSpectraForInChIKey(system: ActorSystem) {
 
   import system.dispatcher
 
-  val pipeline: HttpRequest => Future[List[SpectraRetrievedResult]] = sendReceive(system, system.dispatcher, timeout) ~> unmarshal[List[SpectraRetrievedResult]]
-
   val host = "http://resolver-mona.apps.fiehnlab.ucdavis.edu/rest/spectra/";
 //  val host = "http://127.0.0.1:8080/rest/spectra/";
 
@@ -36,9 +34,12 @@ class FetchSpectraForInChIKey(system: ActorSystem) {
     */
   def resolve(key: String): List[SpectraRetrievedResult] = {
 
+    val pipeline: HttpRequest => Future[List[SpectraRetrievedResult]] = sendReceive(system, system.dispatcher, timeout) ~> unmarshal[List[SpectraRetrievedResult]]
+
     val response = pipeline(Get(s"${host}${key}"))
 
     Await.result(response,900 seconds)
+
 
   }
 }

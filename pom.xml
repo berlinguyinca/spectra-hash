@@ -12,21 +12,22 @@
     <groupId>edu.ucdavis.fiehnlab</groupId>
     <artifactId>splash</artifactId>
     <packaging>pom</packaging>
-	<version>1.4</version>
+    <version>1.4</version>
+
     <modules>
-	    <module>core</module>
+	<module>core</module>
         <module>utilities</module>
         <module>web</module>
         <module>validation</module>
-	    <module>scala</module>
+	<module>scala</module>
         <module>docker</module>
     </modules>
 
-	<scm>
-		<url>https://github.com/berlinguyinca/spectra-hash</url>
-		<connection>scm:git:git://github.com/berlinguyinca/spectra-hash.git</connection>
-		<developerConnection>scm:git:git@github.com:berlinguyinca/spectra-hash.git</developerConnection>
-	</scm>
+    <scm>
+	<url>https://github.com/berlinguyinca/spectra-hash</url>
+	<connection>scm:git:git://github.com/berlinguyinca/spectra-hash.git</connection>
+	<developerConnection>scm:git:git@github.com:berlinguyinca/spectra-hash.git</developerConnection>
+    </scm>
 
     <developers>
 	<developer>
@@ -38,4 +39,11 @@
 
     </developers>
 
+    <repositories>
+	<repository>
+	    <id>fiehnlab public</id>
+	    <name>flp</name>
+	    <url>http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public</url>
+	</repository>
+    </repositories>
 </project>

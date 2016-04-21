@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
+from __future__ import division, print_function
 from splash import SplashVersion1, Spectrum, SpectrumType
 
 import argparse 
@@ -11,7 +11,7 @@ import time
 
 
 SPLASH_BANNER = """
-   .---. ,---.  ,-.      .--.     .---. .-. .-. 1.3
+   .---. ,---.  ,-.      .--.     .---. .-. .-. 1.4
   ( .-._)| .-.\ | |     / /\ \   ( .-._)| | | |    
  (_) \   | |-' )| |    / /__\ \ (_) \   | `-' |    
  _  \ \  | |--' | |    |  __  | _  \ \  | .-. |    

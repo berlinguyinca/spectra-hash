@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.8-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 

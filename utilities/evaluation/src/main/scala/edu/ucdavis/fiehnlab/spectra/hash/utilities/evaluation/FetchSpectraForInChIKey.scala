@@ -18,7 +18,6 @@ import MonaJSONFormat._
   */
 class FetchSpectraForInChIKey(system: ActorSystem) {
 
-
   implicit val timeout = Timeout(6000, TimeUnit.MINUTES)
 
   import system.dispatcher
@@ -33,13 +32,10 @@ class FetchSpectraForInChIKey(system: ActorSystem) {
     * @return
     */
   def resolve(key: String): List[SpectraRetrievedResult] = {
-
     val pipeline: HttpRequest => Future[List[SpectraRetrievedResult]] = sendReceive(system, system.dispatcher, timeout) ~> unmarshal[List[SpectraRetrievedResult]]
 
     val response = pipeline(Get(s"${host}${key}"))
 
     Await.result(response,900 seconds)
-
-
   }
 }

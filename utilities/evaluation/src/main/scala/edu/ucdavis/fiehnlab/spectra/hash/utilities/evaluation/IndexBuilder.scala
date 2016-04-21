@@ -20,10 +20,7 @@ class IndexBuilder {
 
   val binniningMethod: BinningMethod = new BinningMethod {
     override def binSpectrum(spectrum: Spectrum): Spectrum = {
-
-      def round(ion: Ion): Ion = new Ion(Math.floor(ion.mz))
-
-      new Spectrum(spectrum.splash, MathUtilities.binFragments(spectrum.peaklist, round), spectrum.id, spectrum.origin) with SpectrumIsBinned
+      new Spectrum(spectrum.splash, MathUtilities.binFragments(spectrum.peaklist, MathUtilities.roundMZ), spectrum.id, spectrum.origin) with SpectrumIsBinned
     }
   }
 
@@ -41,21 +38,25 @@ class IndexBuilder {
   def build(): List[Index] = {
 
     val histogramList: List[Histogram] =
+      new Base64Histogram(252, 4, 0.0) ::
+      new Base64Histogram(252, 4, 0.5) ::
+      new Base64Histogram(252, 4, 1.5) ::
+      new Base64Histogram(252, 4, 2.0) ::
+      new Base64Histogram(126, 4, 0.0) ::
+      new Base64Histogram(126, 4, 0.5) ::
       new Top10IonsSeparationHistogram ::
-        new Top10IonsModulo36Histogram ::
-        Seq(8, 10, 16, 36).collect {
-          case base =>
+      new Top10IonsModulo36Histogram ::
+      Seq(8, 10, 16, 36).collect {
+        case base =>
+          Seq(10, 15, 20, 25).collect {
+            case length =>
+              Seq(5, 10, 25, 50, 75, 100, 125, 150).collect {
+                case bin =>
+                  new SplashHistogram(base, length, bin)
+              }
+          }.flatten
+      }.flatten.toList
 
-            Seq(10, 15, 20, 25).collect {
-              case length =>
-
-                Seq(5, 10, 25, 50, 75, 100).collect {
-
-                  case bin =>
-                    new SplashHistogram(base, length, bin)
-                }
-            }.flatten
-        }.flatten.toList
 
     val histogramBasedIndex: List[Index] = histogramList.collect {
       case histogram => new HistogramIndex(binniningMethod, spectraCache, histogram)
@@ -96,13 +97,13 @@ class IndexBuilder {
   def buildBestIndexes: List[Index] = {
 
     val histogramList: List[Histogram] =
-      Seq(8, 10).collect {
+      new Top10IonsSeparationHistogram ::
+      new Top10IonsModulo36Histogram ::
+      Seq(3, 4, 5, 6, 8, 10).collect {
         case base =>
-
           Seq(10, 15, 20, 25).collect {
             case length =>
-
-              Seq(100, 125, 150, 250).collect {
+              Seq(5, 10, 25, 50, 75, 100, 125, 150).collect {
                 case bin =>
                   new SplashHistogram(base, length, bin)
               }

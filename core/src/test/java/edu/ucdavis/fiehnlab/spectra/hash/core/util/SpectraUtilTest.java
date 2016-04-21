@@ -17,14 +17,10 @@ public class SpectraUtilTest {
 
     @Test
     public void testConvertStringToSpectrum() throws Exception {
-
         Spectrum spectrum = SpectraUtil.convertStringToSpectrum("127:12 128:12.12 129:123", SpectraType.MS);
-
 
         assertTrue(spectrum.getIons().contains(new Ion(127,12)));
         assertTrue(spectrum.getIons().contains(new Ion(128,12.12)));
         assertTrue(spectrum.getIons().contains(new Ion(129,123)));
-
-
     }
 }

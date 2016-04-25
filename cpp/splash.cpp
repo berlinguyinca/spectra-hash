@@ -192,6 +192,7 @@ string translateBase(string number, int initialBase, int finalBase, int fill) {
 }
 
 
+
 string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
 	stringstream ss;
 	
@@ -213,8 +214,8 @@ string splashIt(string spectrum_string, char spectrum_type) {
     for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
         int delim_pos = (*it).find(':');
 
-        double mz = atof((*it).substr(0, delim_pos).c_str());
-        double intensity = atof((*it).substr(delim_pos + 1).c_str());
+        double mz = stod((*it).substr(0, delim_pos));
+        double intensity = stod((*it).substr(delim_pos + 1));
 
         if(intensity > maxIntensity)
             maxIntensity = intensity;

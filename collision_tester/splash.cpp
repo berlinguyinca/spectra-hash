@@ -16,7 +16,7 @@ using namespace std;
 
 
 // Debug mode
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 // Precision of floating point operations and representations
 const double MZ_PRECISION = 6;
@@ -97,15 +97,7 @@ bool ionPairMzComparatorDouble(const pair<double, double> a, const pair<double, 
     }
 }
 
-bool ionPairMzComparatorFloat(const pair<float, float> a, const pair<float, float> b) {
-    if(abs(a.first - b.first) < EPS) {
-        return a.second > b.second;
-    } else {
-        return a.first < b.first;
-    }
-}
-
-string buildSpectrumStringDouble(vector<pair<double, double> > &spectrum, char spectrum_type, int precision) {
+string buildSpectrumString(vector<pair<double, double> > &spectrum, char spectrum_type, int precision) {
     sort(spectrum.begin(), spectrum.end(), ionPairMzComparatorDouble);
 
     int i = 0;
@@ -133,12 +125,12 @@ string buildSpectrumStringDouble(vector<pair<double, double> > &spectrum, char s
                  << (mz + correction) * pow(10, precision - power) << " " 
                  << static_cast<long long>((mz + correction) * pow(10, precision - power)) << " " 
                  << intensity << " "
-                 << (intensity + 1.0e-3) * INTENSITY_PRECISION_FACTOR << endl;
+                 << (intensity + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR << endl;
         }
 
         ss << static_cast<long long>((mz + correction) * pow(10, precision - power))
            << ION_PAIR_SEPARATOR
-           << static_cast<long long>(((*it).second + 1.0e-3) * INTENSITY_PRECISION_FACTOR);
+           << static_cast<long long>(((*it).second + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR);
 
         if(++i < spectrum.size()) {
             ss << ION_SEPARATOR;
@@ -159,7 +151,7 @@ string encodeSpectrum(string s) {
 
 
 string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type, int precision) {
-    string s = buildSpectrumStringDouble(spectrum, spectrum_type, precision);
+    string s = buildSpectrumString(spectrum, spectrum_type, precision);
 
     stringstream ss;
     ss << encodeSpectrum(s) << "\t" << md5(s);
@@ -170,7 +162,6 @@ string splashIt(string spectrum_string, char spectrum_type) {
     // Convert spectrum to a vector of ion pairs and find the max intensity
     vector<string> ion_strings = split(spectrum_string, ' ');
     vector<pair<double, double> > spectrum_double;
-    vector<pair<double, double> > spectrum_float;
 
     double maxIntensity = 0;
 
@@ -180,28 +171,19 @@ string splashIt(string spectrum_string, char spectrum_type) {
         double mz = stod((*it).substr(0, delim_pos));
         double intensity = stod((*it).substr(delim_pos + 1));
 
-        float mz2 = stof((*it).substr(0, delim_pos));
-        float intensity2 = stof((*it).substr(delim_pos + 1));
-
         if(intensity > maxIntensity)
             maxIntensity = intensity;
 
         // Store ion as a pair object, with 'first' corresponding to m/z
         // and 'second' to intensity
         spectrum_double.push_back(make_pair(mz, intensity));
-        spectrum_float.push_back(make_pair(mz2, intensity2));
     }
 
     // Normalize spectrum
     for(vector<pair<double, double> >::iterator it = spectrum_double.begin(); it != spectrum_double.end(); ++it) {
         (*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
     }
-    for(vector<pair<double, double> >::iterator it = spectrum_float.begin(); it != spectrum_float.end(); ++it) {
-        (*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
-    }
     
     // Return the calculated splash id
-    stringstream ss;
-    ss << splashIt(spectrum_double, '1', 6) << "\t" << splashIt(spectrum_float, '1', 6);
-    return ss.str();
+    return splashIt(spectrum_double, '1', 6);
 }

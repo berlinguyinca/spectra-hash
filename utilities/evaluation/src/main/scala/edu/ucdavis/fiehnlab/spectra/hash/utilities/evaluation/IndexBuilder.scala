@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.math.histogram.SplashHistogram._
 import edu.ucdavis.fiehnlab.math.spectrum.{BinByRoundingMethod, BinningMethod}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import edu.ucdavis.fiehnlab.math.histogram.Base64Histogram._
 
 /**
   * Created by wohlgemuth on 2/19/16.
@@ -95,7 +96,7 @@ class IndexBuilder {
     */
   def buildBestIndexes: List[Index] = {
 
-    val histogramList: List[Histogram] =
+    val histogramList: List[Histogram] =  LongBase64NoToleranceHistogram :: LongBase64SmallToleranceHistogram :: LongBase64MediumToleranceHistogram :: LongBase64LargeToleranceHistogram:: ShortBase64NoToleranceHistogram :: ShortBase64SmallToleranceHistogram ::
       Seq(8, 10).collect {
         case base =>
 

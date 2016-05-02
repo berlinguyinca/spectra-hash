@@ -95,7 +95,7 @@ class EvaluationStartup extends ApplicationRunner {
     val missingActor = system.actorOf(Props(new MissingActor(new FileWriter("missingSpectra.txt"))))
 
 
-    applicationArguments.getOptionValues("inchiKeys").foreach {
+    applicationArguments.getOptionValues("inchiKeys").foreach 0
       x => {
         for (line <- Source.fromFile(new File(x)).getLines()) {
           val data = line.split("\t")
@@ -158,7 +158,7 @@ class EvaluationStartup extends ApplicationRunner {
     val result = idx.search(spectrum, new CompositeSimilarity, 0.7)
 
     val duration: Long = System.currentTimeMillis() - before
-    finish !FinishResult(idx, result.size(), spectra, duration, idx.size)
+    finish !FinishResult(idx, result.size(), spectra, duration, idx.get(spectrum).size)
 
     result
   }

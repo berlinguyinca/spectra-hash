@@ -12,7 +12,7 @@
 
     <groupId>edu.ucdavis.fiehnlab.splash.utilities</groupId>
     <artifactId>evaluation</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 
 
     <dependencies>

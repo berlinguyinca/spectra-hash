@@ -24,28 +24,74 @@ using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Linq;
-using System.Numerics;
 using NSSplash.impl;
+using System.Diagnostics;
 
 namespace NSSplash {
 	public class Splash : ISplash {
 		private const string PREFIX = "splash";
 		private const int VERSION = 0;
-		private const int FACTOR = 1000000;
-		private const int INT_FACTOR = 1;
-		private int BINS = 10;
-		private int BIN_SIZE = 100;
 
-		private const double EPSILON = 1e-7;
+		private const int PREFILTER_BASE = 3;
+		private const int PREFILTER_LENGTH = 10;
+		private const int PREFILTER_BIN_SIZE = 5;
 
-		private static readonly char[] INTENSITY_MAP = new char[] {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
-			'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-			'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-		};
-		private int FINAL_SCALE_FACTOR = INTENSITY_MAP.Length -1;
+		private const int SIMILARITY_BASE = 10;
+		private const int SIMILARITY_LENGTH = 10;
+		private const int SIMILARITY_BIN_SIZE = 100;
 
-		//public string splashIt(ISpectrum spectrum, string sim) {
+		/// <summary>
+		/// how to scale the spectrum
+		/// </summary>
+		public static readonly int scalingOfRelativeIntensity = 100;
+
+		//private static readonly char[] INTENSITY_MAP = new char[] {
+		//	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
+		//	'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+		//	'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+		//};
+
+		private static readonly string BASE36_MAP = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+		/// <summary>
+		/// how should ions in the string representation be separeted
+		/// </summary>
+		private static readonly string ION_SEPERATOR = " ";
+
+		/// <summary>
+		/// how many character should be in the spectrum block. Basically this reduces the SHA256 code down
+		/// to a fixed length of N characater
+		/// </summary>
+		private static readonly int maxCharactersForSpectrumBlockTruncation = 20;
+
+		/// <summary>
+		/// Fixed precission of masses
+		/// </summary>
+		private static readonly int fixedPrecissionOfMasses = 6;
+
+		/// <summary>
+		/// factor to scale m/z floating point values
+		/// </summary>
+		private static readonly long MZ_PRECISION_FACTOR = (long)Math.Pow(10, fixedPrecissionOfMasses);
+
+		/// <summary>
+		/// Fixed precission of intensites
+		/// </summary>
+		private static readonly int fixedPrecissionOfIntensities = 0;
+
+		/// <summary>
+		/// factor to scale m/z floating point values
+		/// </summary>
+		private static readonly long INTENSITY_PRECISION_FACTOR = (long)Math.Pow(10, fixedPrecissionOfIntensities);
+
+		/// <summary>
+		/// Correction factor to avoid floating point issues between implementations
+		/// and processor architectures
+		/// </summary>
+		private static readonly double EPSILON = 1.0e-7;
+
+
+
 		public string splashIt(ISpectrum spectrum) {
 
 			// check spectrum var
@@ -59,29 +105,84 @@ namespace NSSplash {
 			hash.Append(getFirstBlock(spectrum.getSpectrumType()));
 			hash.Append('-');
 
-			//create histogram block
-			hash.Append(getHistoBlock(spectrum));
+			//create prefilter block
+			hash.Append(translateBase(getHistoBlock(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4));
 			hash.Append('-');
 
-			//create the spetrum block
+			//create similarity block
+			hash.Append(getHistoBlock(spectrum, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE));
+			hash.Append('-');
+
+			//create the spetrum hash block
 			hash.Append(getSpectrumBlock(spectrum));
 
 			return hash.ToString();
 
 		}
 
+
+		
+		/// <summary>
+		/// Generates the version block
+		/// </summary>
+		/// <param name="specType">type of spectrum beign splashed</param>
+		/// <returns>the version block as a string</returns>
 		private string getFirstBlock(SpectrumType specType) {
+			Debug.WriteLine(string.Format("version block: {0}", PREFIX + (int)specType + VERSION));
 			return (PREFIX + (int)specType + VERSION);
 		}
 
-		//calculate the hash for the whole spectrum
-		private string getSpectrumBlock(ISpectrum spec) {
+
+		/// <summary>
+		/// calculates a histogram of the spectrum. If weighted, it sums the mz * intensities for the peaks in each bin
+		/// </summary>
+		/// <param name="spec">the spectrum data (in mz:int pairs)</param>
+		/// <returns>the histogram block for the given spectrum</returns>
+		private string getHistoBlock(ISpectrum spec, int nbase, int length, int binSize) {
+			double[] binnedIons = new double[length];
+			double maxIntensity = 0;
+
+			// initialize and populate bins
+			foreach (Ion ion in ((MSSpectrum)spec).Ions) {
+				int bin = (int)(ion.MZ / binSize) % length;
+				binnedIons[bin] += ion.Intensity;
+
+				if (binnedIons[bin] > maxIntensity) {
+					maxIntensity = binnedIons[bin];
+				}
+			}
+
+			// Normalize the histogram
+			for (int i = 0; i < length; i++) {
+				binnedIons[i] = (nbase - 1) * binnedIons[i] / maxIntensity;
+			}
+
+			// build histogram
+			StringBuilder histogram = new StringBuilder();
+
+			foreach (double bin in binnedIons.ToList().GetRange(0, length)) {
+				histogram.Append(BASE36_MAP.ElementAt((int)(bin + EPSILON)));
+			}
+
+			Debug.WriteLine(string.Format("{1} block: {0}", histogram.ToString(), length==10?"histogram":"similarity"));
+			return histogram.ToString();
+		}
+
+
+		/// <summary>
+		/// calculate the hash for the whole spectrum
+		/// </summary>
+		/// <param name="spec">the spectrum data (in mz:int pairs)</param>
+		/// <returns>the Hash of the spectrum data</returns>
+		private string getSpectrumBlock(ISpectrum spec)
+		{
 			List<Ion> ions = spec.getSortedIonsByMZ();
 
 			StringBuilder strIons = new StringBuilder();
-			foreach (Ion i in ions) {
-				strIons.Append(String.Format("{0}:{1}", formatMZ(i.MZ + EPSILON), formatIntensity(i.Intensity + EPSILON)));
-				strIons.Append(" ");
+			foreach (Ion i in ions)
+			{
+				strIons.Append(string.Format("{0}:{1}", formatMZ(i.MZ), formatIntensity(i.Intensity)));
+				strIons.Append(ION_SEPERATOR);
 			}
 
 			//string to hash
@@ -92,72 +193,64 @@ namespace NSSplash {
 			hashString.ComputeHash(message);
 
 			string hash = BitConverter.ToString(hashString.Hash);
-			hash = hash.Replace("-", "").Substring(0, 20).ToLower();
+			hash = hash.Replace("-", "").Substring(0, maxCharactersForSpectrumBlockTruncation).ToLower();
 
-			//			Console.WriteLine("3nd block raw: {0}\n3rd block pro: {1}", strIons, hash);
+			Debug.WriteLine(string.Format("hash block: {0}", hash));
 
 			return hash;
 		}
 
-		// calculates a histogram of the spectrum. If weighted, it sums the mz * intensities for the peaks in each bin
-		private string getHistoBlock(ISpectrum spec) {
-			List<double> binnedIons = new List<double>();
-			double maxIntensity = 0;
 
-			// initialize and populate bins
-			foreach (Ion i in spec.getSortedIonsByMZ()) {
-				int index = (int)(i.MZ / BIN_SIZE);
+		/// <summary>
+		/// Translate a number in string format from one numerical base to another
+		/// </summary>
+		/// <param name="number">number in string format</param>
+		/// <param name="initialBase">base in which the given number is represented</param>
+		/// <param name="finalBase">base to translate the number to, up to 36</param>
+		/// <param name="fill">minimum length of string</param>
+		/// <returns></returns>
+		private string translateBase(string number, int initialBase, int finalBase, int fill)
+		{
+			Debug.WriteLine("N= " + number);
+			int n = ToBase10(number, initialBase);
+			Debug.WriteLine("N= " + n);
 
-				while (binnedIons.Count <= index) {
-					binnedIons.Add(0.0);
-				}
+			StringBuilder result = new StringBuilder();
 
-				double value = binnedIons[index] + i.Intensity;
-				binnedIons[index] = value;
-
-				if (value > maxIntensity) {
-					maxIntensity = value;
-				}
-
+			while (n > 0)
+			{
+				result.Insert(0, BASE36_MAP[n % finalBase]);
+				n /= finalBase;
 			}
 
-			// Wrap the bins
-			for (int i = BINS; i < binnedIons.Count; i++) {
-				double value = binnedIons[i % BINS] + binnedIons[i];
-				binnedIons[i % BINS] = value;
+			while (result.Length < fill)
+			{
+				result.Insert(0, '0');
 			}
 
-			// Normalize
-			maxIntensity = 0;
-			for (int i = 0; i < BINS; i++) {
-				if (i < binnedIons.Count) {
-					if (binnedIons[i] > maxIntensity) {
-						maxIntensity = binnedIons[i];
-					}
-				} else {
-					binnedIons.Add(0.0);
-				}
-			}
-
-			for (int i = 0; i < binnedIons.Count; i++) {
-				binnedIons[i] = FINAL_SCALE_FACTOR * binnedIons[i] / maxIntensity;
-			}
-
-			StringBuilder histogram = new StringBuilder();
-
-			foreach (double bin in binnedIons.GetRange(0, BINS)) {
-				histogram.Append(INTENSITY_MAP.ElementAt((int)(bin + EPSILON)));
-			}
-
-			return histogram.ToString();
+			return result.ToString();
 		}
 
 		private string formatMZ(double number) {
-			return String.Format("{0}", (long)(number * FACTOR));
+			return string.Format("{0}", (long)((number + EPSILON) * MZ_PRECISION_FACTOR));
 		}
 
 		private string formatIntensity(double number) {
-			return String.Format("{0}", (long)(number * INT_FACTOR));
+			return string.Format("{0}", (long)((number + EPSILON) * INTENSITY_PRECISION_FACTOR));
+		}
+
+
+		public static int ToBase10(string number, int start_base)
+		{
+			int sum = 0;
+			int power = 0;
+			foreach(char c in number.Reverse())
+			{
+				sum += (int)(BASE36_MAP.IndexOf(c) * Math.Pow(start_base, power));
+				power++;
+			}
+
+			return sum;
 		}
 	}
 }

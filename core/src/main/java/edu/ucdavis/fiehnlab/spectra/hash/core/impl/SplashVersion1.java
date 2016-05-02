@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -19,10 +18,15 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * the reference implementation of the Spectral Hash Key
  */
 public class SplashVersion1 implements Splash {
-    private static final int BINS = 10;
-    private static final int BIN_SIZE = 100;
+    private static final int PREFILTER_BASE = 3;
+    private static final int PREFILTER_LENGTH = 10;
+    private static final int PREFILTER_BIN_SIZE = 5;
 
-    private static final char[] INTENSITY_MAP = new char[] {
+    private static final int SIMILARITY_BASE = 10;
+    private static final int SIMILARITY_LENGTH = 10;
+    private static final int SIMILARITY_BIN_SIZE = 100;
+
+    private static final char[] BASE_36_MAP = new char[] {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
             'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
@@ -199,11 +203,15 @@ public class SplashVersion1 implements Splash {
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
 
-        //second block
-        buffer.append(calculateHistogramBlock(spectrum));
+        //prefilter block
+        buffer.append(translateBase(calculateHistogramBlock(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4));
         buffer.append("-");
 
-        //third block
+        //similarity block
+        buffer.append(calculateHistogramBlock(spectrum, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE));
+        buffer.append("-");
+
+        //hash block
         buffer.append(encodeSpectrum(spectrum));
 
         return buffer.toString();
@@ -239,59 +247,62 @@ public class SplashVersion1 implements Splash {
      * @param spectrum
      * @return histogram
      */
-    protected String calculateHistogramBlock(Spectrum spectrum) {
-        List<Double> binnedIons = new ArrayList<Double>();
+    protected String calculateHistogramBlock(Spectrum spectrum, int base, int length, int binSize) {
+        double[] binnedIons = new double[length];
 
-        // Bin ions
-        for (Ion ion : spectrum.getIons()) {
-            int index = (int)(ion.getMass() / BIN_SIZE);
-
-            // Add bins as needed
-            while (binnedIons.size() <= index) {
-                binnedIons.add(0.0);
-            }
-
-            double value = binnedIons.get(index) + ion.getIntensity();
-            binnedIons.set(index, value);
-        }
-
-        // Wrap the histogram
-        for (int i = BINS; i < binnedIons.size(); i++) {
-            double value = binnedIons.get(i % BINS) + binnedIons.get(i);
-            binnedIons.set(i % BINS, value);
-        }
-
-        // Normalize the histogram
         double maxIntensity = 0;
 
-        for (int i = 0; i < BINS; i++) {
-            if (i < binnedIons.size()) {
-                if (binnedIons.get(i) > maxIntensity) {
-                    maxIntensity = binnedIons.get(i);
-                }
-            } else {
-                binnedIons.add(0.0);
+        // Bin ions using the histogram wrapping strategy
+        for (Ion ion : spectrum.getIons()) {
+            int bin = (int)(ion.getMass() / binSize) % length;
+            binnedIons[bin] += ion.getIntensity();
+
+            if (binnedIons[bin] > maxIntensity) {
+                maxIntensity = binnedIons[bin];
             }
         }
 
-
-        for (int i = 0; i < BINS; i++) {
-            binnedIons.set(i, EPS_CORRECTION + FINAL_SCALE_FACTOR * binnedIons.get(i) / maxIntensity);
+        // Normalize the histogram and scale to the provided base
+        for (int i = 0; i < length; i++) {
+            binnedIons[i] = (base - 1) * binnedIons[i] / maxIntensity;
         }
 
         // Build histogram string
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < BINS; i++) {
-            int bin = (int)(EPS_CORRECTION + binnedIons.get(i));
-            result.append(INTENSITY_MAP[bin]);
+        for (int i = 0; i < length; i++) {
+            int bin = (int)(EPS_CORRECTION + binnedIons[i]);
+            result.append(BASE_36_MAP[bin]);
         }
 
 
         String data = result.toString();
 
-
         this.notifyListener(new SplashingEvent(data, data, SplashBlock.SECOND, spectrum));
+
+        return result.toString();
+    }
+
+    /**
+     * Translate a number in string format from one numerical base to another
+     * @param number number in string format
+     * @param initialBase base in which the given number is represented
+     * @param finalBase base to translate the number to, up to 36
+     * @param fill minimum length of string
+     */
+    protected String translateBase(String number, int initialBase, int finalBase, int fill) {
+        int n = Integer.parseInt(number, initialBase);
+
+        StringBuilder result = new StringBuilder();
+
+        while (n > 0) {
+            result.insert(0, BASE_36_MAP[n % finalBase]);
+            n /= finalBase;
+        }
+
+        while (result.length() < fill) {
+            result.insert(0, '0');
+        }
 
         return result.toString();
     }

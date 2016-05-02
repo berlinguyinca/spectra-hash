@@ -5,14 +5,14 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.8-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>edu.ucdavis.fiehnlab</groupId>
     <artifactId>splash</artifactId>
     <packaging>pom</packaging>
-    <version>1.4</version>
+    <version>1.5</version>
 
     <modules>
 	<module>core</module>

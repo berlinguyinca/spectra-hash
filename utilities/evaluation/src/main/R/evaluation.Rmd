@@ -31,10 +31,11 @@ panderOptions('table.split.table', Inf)
 #load data table
 myData = read.table("result.txt",col.names = c('inchi','splash','index','count','duration','index_size'))
 
+myData = myData[myData$count != 0,]
 
 ```
 
-Simple aggregated overview of the hit rates for the indexes.
+Simple aggregated overview of the hit rates for the indexes, higher is better
 
 ```{r,echo=FALSE}
 #aggregations
@@ -52,35 +53,40 @@ pander(arrange(myData_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'rig
 
 ```
 
-Simple aggregated overview of the hit rates, after normalizing based on the linear index
+Simple aggregated overview of the computational cost for the indexes. Cost is in ms, lower is better
 
-```{r}
+```{r,echo=FALSE}
+#aggregations
 
+myDataTable = data.table(myData)
+myData_agg_sum_index <- as.data.frame(myDataTable[, sum(duration, na.rm = TRUE),by = list(index)])
 
-myData_filtered_by_linear_index = as.matrix(subset(myData,grepl("Linear",index)))
-normalized_data = myData
+```
 
-for(i in 1:nrow(myData_filtered_by_linear_index)){
-    filtered = subset(normalized_data,splash == myData_filtered_by_linear_index[i,2])
-
-        for(j in 1:nrow(filtered)){
-        result = as.numeric(myData_filtered_by_linear_index[i,4])/as.numeric(normalized_data[j,4])        
-        if(is.nan(result) || is.infinite(result)){
-          result = 0
-        }
-        normalized_data[j,4] = result
-  }
-}
+```{r,echo=FALSE}
 
 
-normalized_data_table = data.table(normalized_data)
-normalized_data_agg_sum_index <- as.data.frame(normalized_data_table[, sum(count, na.rm = TRUE),by = list(index)])
-
+set.caption("aggregated sum for all indexes")
+pander(arrange(myData_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'right'))
 
 ```
 
 
+Simple aggregated overview of the count/computational cost for the indexes. Higher is better
+
+```{r,echo=FALSE}
+#aggregations
+
+myDataTable = data.table(myData)
+myData_agg_sum_index <- as.data.frame(myDataTable[, sum((count+1)/(duration+1), na.rm = TRUE),by = list(index)])
+
+```
+
 ```{r,echo=FALSE}
 
-set.caption("aggregated summed score for all indexes")
-pander(arrange(normalized_data_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'right'))
+
+set.caption("aggregated sum for all indexes")
+pander(arrange(myData_agg_sum_index,V1,decreasing=TRUE),justify = c('left', 'right'))
+
+```
+

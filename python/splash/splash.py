@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 import hashlib
 import string
 
@@ -20,9 +21,15 @@ ION_PAIR_SEPARATOR = ':'
 MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20
 EPS_CORRECTION = 1.0e-7
 
-# Histogram properties
-BINS = 10
-BIN_SIZE = 100
+# Prefilter properties
+PREFILTER_BASE = 3
+PREFILTER_LENGTH = 10
+PREFILTER_BIN_SIZE = 5
+
+# Similarity histogram properties
+SIMILARITY_BASE = 10
+SIMILARITY_LENGTH = 10
+SIMILARITY_BIN_SIZE = 100
 
 INTENSITY_MAP = string.digits + string.ascii_lowercase
 FINAL_SCALE_FACTOR = len(INTENSITY_MAP) - 1
@@ -54,33 +61,46 @@ class SplashVersion1():
         return hashlib.sha256(s).hexdigest()[: MAX_HASH_CHARATERS_ENCODED_SPECTRUM]
 
 
-    def calculate_histogram(self, spectrum):
-        histogram = [0.0 for _ in range(BINS)]
+    def calculate_histogram(self, spectrum, base, length, bin_size):
+        # Define the empty histogram
+        histogram = [0.0 for _ in range(length)]
 
-        # Bin ions
+        # Bin ions using the histogram wrapping strategy
         for mz, intensity in spectrum.spectrum:
-            idx = int(mz / BIN_SIZE)
-
-            while len(histogram) <= idx:
-                histogram.append(0.0) 
-
+            idx = int(mz / bin_size) % length
             histogram[idx] += intensity
 
-        # Wrap the histogram
-        for i in range(BINS, len(histogram)):
-            histogram[i % BINS] += histogram[i]
-
-        # Normalize the histogram
-        max_intensity = max(histogram[:BINS])
-        histogram = [int(EPS_CORRECTION + FINAL_SCALE_FACTOR * x / max_intensity) for x in histogram[:BINS]]
+        # Normalize the histogram and scale to the provided base
+        max_intensity = max(histogram)
+        histogram = [int(EPS_CORRECTION + (base - 1) * x / max_intensity) for x in histogram]
 
         # Return histogram string with value substitutions
         return ''.join(map(INTENSITY_MAP.__getitem__, histogram))
 
 
+    def translate_base(self, s, initial_base, final_base, fill_length):
+        n = int(s, initial_base)
+        digits = []
+
+        while n > 0:
+            digits.append(n % final_base)
+            n //= final_base
+
+        # Build string in final base and fill to the desired length
+        return (''.join(map(INTENSITY_MAP.__getitem__, reversed(digits)))).zfill(fill_length)
+
+
     def splash(self, spectrum):
-        return '%s-%s-%s' % (
+        return '-'.join([
+            # Initial splash block
             self.build_initial_block(spectrum),
-            self.calculate_histogram(spectrum),
+
+            # Prefilter block
+            self.translate_base(self.calculate_histogram(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4),
+
+            # Similarity histogram block
+            self.calculate_histogram(spectrum, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE),
+
+            # Exact hash block
             self.encode_spectrum(spectrum)
-        )
+        ])

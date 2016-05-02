@@ -40,151 +40,168 @@ const char ION_PAIR_SEPARATOR = ':';
 const int MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20;
 const double EPS_CORRECTION = 1.0e-7;
 
-// Histogram properties
-const int BINS = 10;
-const int BIN_SIZE = 100;
+// Prefilter properties
+const int PREFILTER_BASE = 3;
+const int PREFILTER_LENGTH = 10;
+const int PREFILTER_BIN_SIZE = 5;
 
-const char INTENSITY_MAP[] = {
+// Similarity histogram properties
+const int SIMILARITY_BASE = 10;
+const int SIMILARITY_LENGTH = 10;
+const int SIMILARITY_BIN_SIZE = 100;
+
+// Map to convert up to base 36
+const char BASE_36_MAP[] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
     'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
     'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 };
-const int FINAL_SCALE_FACTOR = 35;
 
 
 
 string sha256(const string s) {
-	unsigned char digest[SHA256_DIGEST_LENGTH];
+    unsigned char digest[SHA256_DIGEST_LENGTH];
 
-	SHA256_CTX sha256;
-	SHA256_Init(&sha256);
-	SHA256_Update(&sha256, s.c_str(), s.size());
-	SHA256_Final(digest, &sha256);
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, s.c_str(), s.size());
+    SHA256_Final(digest, &sha256);
 
-	stringstream ss;
+    stringstream ss;
 
-	for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-		ss << hex << setw(2) << setfill('0') << (int)digest[i];
-	}
+    for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+        ss << hex << setw(2) << setfill('0') << (int)digest[i];
+    }
 
-	return ss.str();
+    return ss.str();
 }
 
 
 // http://stackoverflow.com/a/236803
 vector<string> split(const string &s, char delimeter) {
-	vector<string> elements;
-	stringstream ss(s);
-	string element;
+    vector<string> elements;
+    stringstream ss(s);
+    string element;
 
-	while(getline(ss, element, delimeter)) {
-		elements.push_back(element);
-	}
+    while(getline(ss, element, delimeter)) {
+        elements.push_back(element);
+    }
 
-	return elements;
+    return elements;
 }
 
 
 bool ionPairMzComparator(const pair<double, double> a, const pair<double, double> b) {
-	if(abs(a.first - b.first) < EPS) {
-		return a.second > b.second;
-	} else {
-		return a.first < b.first;
-	}
+    if(abs(a.first - b.first) < EPS) {
+        return a.second > b.second;
+    } else {
+        return a.first < b.first;
+    }
 }
 
 
 bool ionPairIntensityComparator(const pair<double, double> a, const pair<double, double> b) {
-	if(abs(a.second - b.second) < EPS) {
-		return a.first < b.first;
-	} else {
-		return a.second > b.second;
-	}
+    if(abs(a.second - b.second) < EPS) {
+        return a.first < b.first;
+    } else {
+        return a.second > b.second;
+    }
 }
 
 
 string buildInitialBlock(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	stringstream ss;
-	ss << "splash" << spectrum_type << SPLASH_VERSION;
-	return ss.str();
+    stringstream ss;
+    ss << "splash" << spectrum_type << SPLASH_VERSION;
+    return ss.str();
 }
 
 string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	sort(spectrum.begin(), spectrum.end(), ionPairMzComparator);
+    sort(spectrum.begin(), spectrum.end(), ionPairMzComparator);
 
-	int i = 0;
-	stringstream ss;
+    int i = 0;
+    stringstream ss;
 
-	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * MZ_PRECISION_FACTOR)
-		   << ION_PAIR_SEPARATOR
-		   << static_cast<long long>(((*it).second + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR);
+    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+        ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * MZ_PRECISION_FACTOR)
+           << ION_PAIR_SEPARATOR
+           << static_cast<long long>(((*it).second + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR);
 
-		if(++i < spectrum.size()) {
-			ss << ION_SEPARATOR;
-		}
-	}
+        if(++i < spectrum.size()) {
+            ss << ION_SEPARATOR;
+        }
+    }
 
-	if(DEBUG) {
-		cerr << "Encoded Spectrum: '" << ss.str() << "'" << endl;
-	}
+    if(DEBUG) {
+        cerr << "Encoded Spectrum: '" << ss.str() << "'" << endl;
+    }
 
-	return sha256(ss.str()).substr(0, MAX_HASH_CHARATERS_ENCODED_SPECTRUM);
+    return sha256(ss.str()).substr(0, MAX_HASH_CHARATERS_ENCODED_SPECTRUM);
 }
 
 
-string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	vector<double> histogram;
+string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum_type, int base, int length, int bin_size) {
+    double* histogram = new double[length]();
+    double maxIntensity = 0;
 
-	// Bin ions
-	for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-		int idx = static_cast<int>((*it).first / BIN_SIZE);
+    // Bin ions using the histogram wrapping strategy
+    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+        int idx = static_cast<int>((*it).first / bin_size) % length;
+        histogram[idx] += (*it).second;
 
-		while(histogram.size() <= idx) {
-			histogram.push_back(0.0);
-		}
+        if(histogram[idx] > maxIntensity)
+            maxIntensity = histogram[idx];
+    }
 
-		histogram[idx] += (*it).second;
-	}
+    // Normalize the histogram and scale to the provided base
+    for (int i = 0; i < length; i++) {
+        histogram[i] = (base - 1) * histogram[i] / maxIntensity;
+    }
 
-	// Ensure that the histogram has at least BINS bins
-	while(histogram.size() < BINS) {
-		histogram.push_back(0.0);
-	}
+    stringstream ss;
 
-	// Wrap the histogram
-	for(int i = BINS; i < histogram.size(); i++) {
-		histogram[i % BINS] += histogram[i];
-	}
-
-	// Normalize the histogram and convert to base 36
-	double max_intensity = 0;
-
-	for(int i = 0; i < BINS; i++) {
-		if(histogram[i] > max_intensity)
-			max_intensity = histogram[i];
-	}
-
-	stringstream ss;
-
-	for(int i = 0; i < BINS; i++) {
-		int bin = static_cast<int>(EPS_CORRECTION + histogram[i] / max_intensity * FINAL_SCALE_FACTOR);
-		ss << INTENSITY_MAP[bin];
-	}
+    for(int i = 0; i < length; i++) {
+        int bin = static_cast<int>(EPS_CORRECTION + histogram[i]);
+        ss << BASE_36_MAP[bin];
+    }
 
     // Return histogram
     return ss.str();
 }
 
 
-string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
-	stringstream ss;
-	
-	ss << buildInitialBlock(spectrum, spectrum_type) << '-';
-	ss << calculateHistogram(spectrum, spectrum_type) << '-';
-	ss << encodeSpectrum(spectrum, spectrum_type);
+string translateBase(string number, int initialBase, int finalBase, int fill) {
+    long int n = stoi(number, nullptr, initialBase);
 
-	return ss.str();
+    stringstream ss;
+    int length = 0;
+
+    while(n > 0) {
+        ss << BASE_36_MAP[n % finalBase];
+        n /= finalBase;
+        length++;
+    }
+
+    for(int i = 0; i < fill - length; i++) {
+        ss << "0";
+    }
+
+    string s = ss.str();
+    reverse(s.begin(), s.end());
+
+    return s;
+}
+
+
+
+string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
+    stringstream ss;
+    
+    ss << buildInitialBlock(spectrum, spectrum_type) << '-';
+    ss << translateBase(calculateHistogram(spectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4) << '-';
+    ss << calculateHistogram(spectrum, spectrum_type, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE) << '-';
+    ss << encodeSpectrum(spectrum, spectrum_type);
+
+    return ss.str();
 }
 
 string splashIt(string spectrum_string, char spectrum_type) {
@@ -197,8 +214,8 @@ string splashIt(string spectrum_string, char spectrum_type) {
     for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
         int delim_pos = (*it).find(':');
 
-        double mz = atof((*it).substr(0, delim_pos).c_str());
-        double intensity = atof((*it).substr(delim_pos + 1).c_str());
+        double mz = stod((*it).substr(0, delim_pos));
+        double intensity = stod((*it).substr(delim_pos + 1));
 
         if(intensity > maxIntensity)
             maxIntensity = intensity;

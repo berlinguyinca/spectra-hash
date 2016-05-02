@@ -55,7 +55,7 @@ class EvaluationStartup extends ApplicationRunner {
       usage()
     }
 
-    if (!applicationArguments.containsOption("inchiKeys")) {
+    if (!applicationArguments.containsOption("inchiKeys") && !applicationArguments.containsOption("spectra")) {
       usage()
     }
 
@@ -77,6 +77,7 @@ class EvaluationStartup extends ApplicationRunner {
       override def readSpectra(spectrum: Spectrum): Unit = {
         indexes.par.foreach(_.index(spectrum))
         linearIndex.index(spectrum)
+
       }
     }
 
@@ -93,6 +94,7 @@ class EvaluationStartup extends ApplicationRunner {
     val writer = new FileWriter(new File(applicationArguments.getOptionValues("output").head))
     val finishActor = system.actorOf(Props(new FinishActor(writer)))
     val missingActor = system.actorOf(Props(new MissingActor(new FileWriter("missingSpectra.txt"))))
+    val similarActor = system.actorOf(Props(new SimilarActor(new FileWriter("similarSpectra.txt"))))
 
 
     applicationArguments.getOptionValues("inchiKeys").foreach 0
@@ -111,7 +113,7 @@ class EvaluationStartup extends ApplicationRunner {
             spectraRetrievedResult.foreach {
 
               y =>
-                searchIndex(indexes, y, finishActor, missingActor, linearIndex)
+                searchIndex(indexes, y, finishActor, missingActor, similarActor, linearIndex)
             }
             logger.info("finished index search")
           }
@@ -134,12 +136,14 @@ class EvaluationStartup extends ApplicationRunner {
     system.shutdown()
   }
 
-  def searchIndex(indexes: List[Index], spectra: SpectraRetrievedResult, finish: ActorRef, missing: ActorRef, referenceIndex: Index): Unit = {
+  def searchIndex(indexes: List[Index], spectra: SpectraRetrievedResult, finish: ActorRef, missing: ActorRef, similar: ActorRef, referenceIndex: Index): Unit = {
 
     val referenceResult = referenceIndex.search(Utilities.convertStringToSpectrum(spectra.spectrum, spectra.splash, spectra.inchiKey), new CompositeSimilarity, 0.7)
+    similar ! SimilarValueData(referenceIndex, referenceResult.toSet, spectra)
 
     indexes.foreach { idx =>
       val result = searchIndex(spectra, finish, idx)
+      similar ! SimilarValueData(idx, result.toSet, spectra)
 
       val missingSpectra: Set[ComputationalResult] = referenceResult.toSet diff result.toSet
 
@@ -164,15 +168,12 @@ class EvaluationStartup extends ApplicationRunner {
   }
 
   def usage(): Unit = {
-
     println("Usage:")
     println("--library=FILE the libraries to compare our tests again, can be supplied several times or as directory of libraries")
     println("--inchiKeys=FILE the file containing all our inchi keys to evaluate")
     println("--output=FILE where to store our results in form of a csv file")
 
-
     System.exit(-1)
-
   }
 
   class FinishActor(val writer: Writer) extends Actor {
@@ -238,7 +239,48 @@ class EvaluationStartup extends ApplicationRunner {
     }
   }
 
+  class SimilarActor(val writer: Writer) extends Actor {
+    override def receive: Receive = {
+
+      case x: SimilarValueData =>
+        x.set.foreach { missing =>
+
+          writer.write(x.spectra.inchiKey)
+          writer.write("\t")
+          writer.write(x.spectra.splash)
+          writer.write("\t")
+          writer.write(x.index.toString)
+          writer.write("\t")
+          writer.write(missing.hit.splash)
+          writer.write("\t")
+          writer.write(missing.unknown.splash)
+          writer.write("\t")
+          writer.write(missing.score.toString)
+
+          //special check for histogram based indexes
+          x.index match {
+            case idx:HistogramIndex =>
+              val histogram = idx.histogram
+
+              writer.write("\t")
+              writer.write(histogram.generate(missing.hit))
+              writer.write("\t")
+              writer.write(histogram.generate(missing.unknown))
+              writer.write("\t")
+              writer.write(histogram.toString)
+
+            case _ =>
+              writer.write("\t")
+              writer.write("\t")
+              writer.write("\t")
+          }
+          writer.write("\n")
+          writer.flush()
+        }
+    }
+  }
+
   case class FinishResult(index:Index, count:Int, spectra:SpectraRetrievedResult,duration:Long, indexSize:Int)
   case class MissingValueData(index:Index, set:Set[ComputationalResult], spectra:SpectraRetrievedResult)
-
+  case class SimilarValueData(index:Index, set:Set[ComputationalResult], spectra:SpectraRetrievedResult)
 }

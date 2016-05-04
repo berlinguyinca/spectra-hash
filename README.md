@@ -123,9 +123,9 @@ TODO
 
 TODO
 
-## scala api:
+## Scala api:
 
-TODO
+See [subproject documentation](scala)
 
 ## rest service:
 

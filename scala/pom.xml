@@ -5,7 +5,7 @@
 
 	<groupId>edu.ucdavis.fiehnlab.splash</groupId>
 	<artifactId>scala</artifactId>
-	<version>0.1</version>
+	<version>1.5</version>
 
 	<name>splash-scala</name>
 	<description>Scala wrapper for the Splash java library</description>
@@ -13,81 +13,14 @@
 	<parent>
 		<groupId>edu.ucdavis.fiehnlab</groupId>
 		<artifactId>splash</artifactId>
-		<version>1.4</version>
+		<version>1.5</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
 			<groupId>edu.ucdavis.fiehnlab.splash</groupId>
 			<artifactId>core</artifactId>
-			<version>1.4</version>
+			<version>1.5</version>
 		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.11.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_2.11</artifactId>
-			<version>2.2.5</version>
-		</dependency>
-
-		-->
 	</dependencies>
-<!--
-	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<args>
-						<arg>-Xlint</arg>
-						<arg>-deprecation</arg>
-						<arg>-Xfatal-warnings</arg>
-						<arg>-feature</arg>
-						<arg>-unchecked</arg>
-						<arg>-explaintypes</arg>
-					</args>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.scalatest</groupId>
-				<artifactId>scalatest-maven-plugin</artifactId>
-				<version>1.0</version>
-				<configuration>
-					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<junitxml>.</junitxml>
-					<filereports>WDF TestSuite.txt</filereports>
-				</configuration>
-				<executions>
-					<execution>
-						<id>test</id>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-		</plugins>
-	</build>
-
--->
 </project>

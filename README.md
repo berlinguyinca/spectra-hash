@@ -123,9 +123,17 @@ TODO
 
 TODO
 
-## scala api:
+## Scala api:
 
-TODO
+```scala
+import jp.riken.mirt.splash._
+import jp.riken.mirt.splash.JavaConversions._
+
+val spectrum: Spectrum  = Seq(Ion(100.0, 50))
+val splash: String = spectrum.splashIt
+```
+
+See [subproject documentation](scala).
 
 ## rest service:
 

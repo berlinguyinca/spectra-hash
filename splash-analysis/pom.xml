@@ -12,20 +12,19 @@
         <assertj.version>1.7.0</assertj.version>
         <mockito.version>1.10.8</mockito.version>
         <rest-assured.version>2.4.0</rest-assured.version>
-        <java.version>1.6</java.version>
     </properties>
 
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>splash</artifactId>
-	    <version>1.4</version>
+i	    <version>1.5</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
 	        <artifactId>core</artifactId>
-	        <version>1.4</version>
+	        <version>1.5</version>
         </dependency>
 
         <dependency>

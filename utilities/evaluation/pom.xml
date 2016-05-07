@@ -6,7 +6,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab.splash</groupId>
         <artifactId>utilities</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </parent>
 
 

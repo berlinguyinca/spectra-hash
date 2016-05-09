@@ -83,7 +83,8 @@ class SplashVersion1():
         if base_peak_percentage is not None:
             base_peak_intensity = max(intensity for mz, intensity in spectrum)
 
-            spectrum = [(mz, intensity) for mz, intensity in spectrum if intensity >= base_peak_percentage * base_peak_intensity]
+            spectrum = [(mz, intensity) for mz, intensity in spectrum \
+                if intensity + EPS_CORRECTION >= base_peak_percentage * base_peak_intensity]
 
         # Filter by top ions if needed
         if top_ions is not None:
@@ -112,7 +113,6 @@ class SplashVersion1():
             self.build_initial_block(spectrum),
 
             # Prefilter block
-
             self.translate_base(
                 self.calculate_histogram(filtered_spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), 
                 PREFILTER_BASE, 36, 4

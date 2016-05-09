@@ -11,7 +11,7 @@ Or use one any of the available implementations, which should have been validate
 # usage
 
 ## java api:
-The reference implementation jar file can be downloaded from: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.4/core-1.4.jar
+The reference implementation jar file can be downloaded from: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.6/core-1.6.jar
 
 The Maven dependency information is:
 ```

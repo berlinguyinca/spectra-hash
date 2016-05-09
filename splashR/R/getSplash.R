@@ -2,6 +2,18 @@
 ## Some constants
 BINS <- 10;
 BIN_SIZE <- 100;
+
+# Prefilter properties
+PREFILTER_BASE = 3
+PREFILTER_LENGTH = 10
+PREFILTER_BIN_SIZE = 5
+
+# Similarity histogram properties
+SIMILARITY_BASE = 10
+SIMILARITY_LENGTH = 10
+SIMILARITY_BIN_SIZE = 100
+
+
 EPS_CORRECTION = 1.0e-7
 
 ## FINAL_SCALE_FACTOR <- 9; ## Base 10
@@ -36,16 +48,16 @@ integer2base36 <- function(i) {
     paste(integer2base36code[i+1], collapse="")
 }
 
-getBlockHist <- function(peaks) {
+getBlockHist <- function(peaks, histBase, histLength, binSize) {
     ## Initialise output
-    wrappedhist <- integer(BINS)
+    wrappedhist <- integer(histLength)
 
-    binindex <- as.integer(peaks[,1] / BIN_SIZE) 
+    binindex <- as.integer(peaks[,1] / binSize) 
 
     summedintensities <- tapply(peaks[,2], binindex, sum)
-    wrappedbinindex <- unique(binindex) %% BINS 
+    wrappedbinindex <- unique(binindex) %% histLength
     wrappedintensities <- tapply(summedintensities, wrappedbinindex, sum)
-    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*FINAL_SCALE_FACTOR)
+    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*histBase)
     
     wrappedhist[sort(unique(wrappedbinindex))+1] <- normalisedintensities
     paste(integer2base36(wrappedhist), collapse="")
@@ -54,7 +66,7 @@ getBlockHist <- function(peaks) {
 
 getSplash <- function(peaks) {
 
-    block2 <- getBlockHist(peaks)
+    block2 <- getBlockHist(peaks, FINAL_SCALE_FACTOR, BINS, BIN_SIZE)
     block3 <- getBlockHash(peaks)
 
     splash <- paste("splash10",

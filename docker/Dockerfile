@@ -33,7 +33,7 @@ RUN \
     echo "===> install Java"  && \
     echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections  && \
     echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections  && \
-    DEBIAN_FRONTEND=noninteractive  apt-get install -y --force-yes oracle-java7-installer oracle-java7-set-default  && \
+    DEBIAN_FRONTEND=noninteractive  apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default  && \
     \
     \
     echo "===> installing utilities" && \
@@ -45,7 +45,7 @@ RUN \
       links2 \
       ant  && \
     echo "===> clean up..."  && \
-    rm -rf /var/cache/oracle-jdk7-installer
+    rm -rf /var/cache/oracle-jdk8-installer
 
 
 ADD target/splash.jar /opt/splash.jar

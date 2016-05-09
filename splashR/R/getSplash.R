@@ -1,14 +1,27 @@
 
 ## Some constants
-BINS <- 10;
-BIN_SIZE <- 100;
-EPS_CORRECTION = 1.0e-7
 
-## FINAL_SCALE_FACTOR <- 9; ## Base 10
-FINAL_SCALE_FACTOR <- 35; ## Base 36 
+## Prefilter properties
+PREFILTER_BASE = 3
+PREFILTER_LENGTH = 10
+PREFILTER_BIN_SIZE = 5
+
+## Similarity histogram properties
+SIMILARITY_BASE = 10
+SIMILARITY_LENGTH = 10
+SIMILARITY_BIN_SIZE = 100
+
+EPS_CORRECTION = 1.0e-7
 
 decimalavoidance <- function(x) {
     format(floor (x * 1000000), scientific=FALSE)
+}
+
+nist2matrix <- function(s) {
+    t(sapply(
+        unlist(strsplit(s, " "), use.names=F),
+        function(y) as.numeric(unlist(strsplit(y, ":"))), USE.NAMES=FALSE
+    ))
 }
 
 getBlockHash <- function(peaks,
@@ -36,16 +49,54 @@ integer2base36 <- function(i) {
     paste(integer2base36code[i+1], collapse="")
 }
 
-getBlockHist <- function(peaks) {
-    ## Initialise output
-    wrappedhist <- integer(BINS)
 
-    binindex <- as.integer(peaks[,1] / BIN_SIZE) 
+filter_spectrum <- function(peaks, top_ions = NULL, base_peak_percentage = NULL) {
+
+    ## Filter first by base peak percentage if specified
+    if (!missing(base_peak_percentage)) {
+        base_peak_intensity = max(peaks[,2])
+        peaks <- peaks[peaks[,2] >= base_peak_percentage * base_peak_intensity, , drop=FALSE]
+    }
+
+    ## Filter by top ions if specified
+    if (!missing(top_ions)) {
+        o <- order(-1*peaks[,2], peaks[,1], decreasing=FALSE)[seq(1:min(top_ions, nrow(peaks)))]
+        peaks <- peaks[o, , drop=FALSE]
+    }
+    peaks
+}
+
+translate_base <- function(s, initial_base, final_base, fill_length) {
+    n <- strtoi(s, initial_base)
+
+    ns <- integer(fill_length)
+    i <- 1
+    
+    while (n > 0) {
+        ns[i] <- n %% final_base
+        n <- n %/% final_base
+        i <- i+1
+    } 
+    
+    s <- integer2base36(rev(ns))
+    
+    return (s)
+}
+
+getBlockHist <- function(peaks, histBase, histLength, binSize) {
+    ## Initialise output
+    wrappedhist <- integer(histLength)
+
+    ## Sorted by ascending m/z and ties broken by descending intensity
+    o <- order(peaks[,1], -1*peaks[,2], decreasing=FALSE)
+    peaks <- peaks[o,,drop=FALSE]
+    
+    binindex <- as.integer(peaks[,1] / binSize) 
 
     summedintensities <- tapply(peaks[,2], binindex, sum)
-    wrappedbinindex <- unique(binindex) %% BINS 
+    wrappedbinindex <- unique(binindex) %% histLength
     wrappedintensities <- tapply(summedintensities, wrappedbinindex, sum)
-    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*FINAL_SCALE_FACTOR)
+    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*(histBase-1))
     
     wrappedhist[sort(unique(wrappedbinindex))+1] <- normalisedintensities
     paste(integer2base36(wrappedhist), collapse="")
@@ -54,12 +105,24 @@ getBlockHist <- function(peaks) {
 
 getSplash <- function(peaks) {
 
-    block2 <- getBlockHist(peaks)
-    block3 <- getBlockHash(peaks)
+    filteredPeaks <- filter_spectrum(peaks, 10, 0.1)
+    
+    block2 <-     translate_base(getBlockHist(filteredPeaks,
+                           histBase=PREFILTER_BASE,
+                           histLength=PREFILTER_LENGTH,
+                           binSize=PREFILTER_BIN_SIZE),PREFILTER_BASE,36,4)
+
+    block3 <- getBlockHist(peaks,
+                           histBase=SIMILARITY_BASE,
+                           histLength=SIMILARITY_LENGTH,
+                           binSize=SIMILARITY_BIN_SIZE)
+
+    block4 <- getBlockHash(peaks)
 
     splash <- paste("splash10",
                     block2,
                     block3,
+                    block4,
                     sep="-")
 
     return(splash)

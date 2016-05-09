@@ -5,16 +5,15 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>splash</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </parent>
 
     <groupId>edu.ucdavis.fiehnlab.splash</groupId>
     <artifactId>utilities</artifactId>
     <packaging>pom</packaging>
-    <version>1.5</version>
+    <version>1.6</version>
 
     <modules>
         <module>evaluation</module>
     </modules>
-
 </project>

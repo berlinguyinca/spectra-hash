@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>edu.ucdavis.fiehnlab.splash</groupId>
 			<artifactId>core</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 
 		<dependency>
@@ -92,5 +92,4 @@
 			<id>linuxmant</id>
 		</developer>
 	</developers>
-
 </project>

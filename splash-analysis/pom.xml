@@ -17,14 +17,14 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>splash</artifactId>
-i	    <version>1.5</version>
+        <version>1.6</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
-	        <artifactId>core</artifactId>
-	        <version>1.5</version>
+            <artifactId>core</artifactId>
+            <version>1.6</version>
         </dependency>
 
         <dependency>
@@ -60,7 +60,7 @@ i	    <version>1.5</version>
             <scope>test</scope>
         </dependency>
 
-	    <dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>${mockito.version}</version>
@@ -84,7 +84,7 @@ i	    <version>1.5</version>
                 </executions>
             </plugin>
 
-	        <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>

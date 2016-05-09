@@ -4,7 +4,7 @@ from __future__ import division
 import hashlib
 import string
 
-from splash.spectrum import Spectrum
+from .spectrum import Spectrum
 
 
 EPS_CORRECTION = 1.0e-7

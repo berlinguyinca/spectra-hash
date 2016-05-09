@@ -7,7 +7,7 @@ import java.util.Comparator;
 /**
  * sorts ions first by intensity, secondary by mass
  */
-public class IonComperator implements Comparator<Ion> {
+public class IntensityThenMassComparator implements Comparator<Ion> {
     public int compare(Ion o1, Ion o2) {
         int result = o2.getIntensity().compareTo(o1.getIntensity());
 

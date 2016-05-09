@@ -10,7 +10,7 @@ import java.util.Comparator;
  * Date: 7/20/15
  * Time: 10:22 AM
  */
-public class IonMZComperator implements Comparator<Ion> {
+public class MassComperator implements Comparator<Ion> {
     @Override
     public int compare(Ion o1, Ion o2) {
         return o1.getMass().compareTo(o2.getMass());

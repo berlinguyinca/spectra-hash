@@ -51,7 +51,7 @@ namespace NSSplash {
 		//	'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 		//};
 
-		private static readonly string BASE36_MAP = "0123456789abcdefghijklmnopqrstuvwxyz";
+		private static readonly string INTENSITY_MAP = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 		/// <summary>
 		/// how should ions in the string representation be separeted
@@ -106,7 +106,13 @@ namespace NSSplash {
 			hash.Append('-');
 
 			//create prefilter block
-			hash.Append(translateBase(getHistoBlock(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4));
+			var filteredSpec = filterSpectrum(spectrum, 10, 0.1);
+			Debug.WriteLine("filtered spectrum: " + filteredSpec.ToString());
+			var preFilterHistogram = getHistoBlock(filteredSpec, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE);
+			Debug.WriteLine("prefilter block: " + preFilterHistogram);
+			var translated = translateBase(preFilterHistogram, PREFILTER_BASE, 36, 4);
+
+			hash.Append(translated);
 			hash.Append('-');
 
 			//create similarity block
@@ -161,7 +167,7 @@ namespace NSSplash {
 			StringBuilder histogram = new StringBuilder();
 
 			foreach (double bin in binnedIons.ToList().GetRange(0, length)) {
-				histogram.Append(BASE36_MAP.ElementAt((int)(bin + EPSILON)));
+				histogram.Append(INTENSITY_MAP.ElementAt((int)(bin + EPSILON)));
 			}
 
 			Debug.WriteLine(string.Format("{1} block: {0}", histogram.ToString(), length==10?"histogram":"similarity"));
@@ -211,15 +217,13 @@ namespace NSSplash {
 		/// <returns></returns>
 		private string translateBase(string number, int initialBase, int finalBase, int fill)
 		{
-			Debug.WriteLine("N= " + number);
 			int n = ToBase10(number, initialBase);
-			Debug.WriteLine("N= " + n);
 
 			StringBuilder result = new StringBuilder();
 
 			while (n > 0)
 			{
-				result.Insert(0, BASE36_MAP[n % finalBase]);
+				result.Insert(0, INTENSITY_MAP[n % finalBase]);
 				n /= finalBase;
 			}
 
@@ -228,6 +232,7 @@ namespace NSSplash {
 				result.Insert(0, '0');
 			}
 
+			Debug.WriteLine("prefilter: " + result);
 			return result.ToString();
 		}
 
@@ -244,13 +249,82 @@ namespace NSSplash {
 		{
 			int sum = 0;
 			int power = 0;
+			Debug.WriteLine("before base10: " + number);
 			foreach(char c in number.Reverse())
 			{
-				sum += (int)(BASE36_MAP.IndexOf(c) * Math.Pow(start_base, power));
+				sum += (int)(INTENSITY_MAP.IndexOf(c) * Math.Pow(start_base, power));
 				power++;
 			}
+			Debug.WriteLine("after base10: " + sum);
 
 			return sum;
+		}
+
+		/**
+		 * Filters spectrum by number of highest abundance ions and by base peak percentage
+		 * @param s spectrum
+		 * @param topIons number of top ions to retain
+		 * @param basePeakPercentage percentage of base peak above which to retain
+		 * @return filtered spectrum
+		 */
+		protected ISpectrum filterSpectrum(ISpectrum s, int topIons, double basePeakPercentage)
+		{
+			List<Ion> ions = s.GetIons();
+
+			// Find base peak intensity
+			double basePeakIntensity = 0.0;
+
+			foreach (Ion ion in ions)
+			{
+				if (ion.Intensity > basePeakIntensity)
+					basePeakIntensity = ion.Intensity;
+			}
+
+			// Filter by base peak percentage if needed
+			if (basePeakPercentage >= 0)
+			{
+				List<Ion> filteredIons = new List<Ion>();
+
+				foreach (Ion ion in ions)
+				{
+					if (ion.Intensity + EPSILON >= basePeakPercentage * basePeakIntensity)
+						filteredIons.Add(new Ion(ion.MZ, ion.Intensity));
+				}
+
+				ions = filteredIons;
+			}
+
+			// Filter by top ions if necessary
+			if (topIons > 0 && ions.Count > topIons)
+			{
+				ions = ions.OrderByDescending(i => i.Intensity).ThenBy(m => m.MZ).ToList();
+
+				ions = ions.GetRange(0, topIons);
+			}
+
+			return new MSSpectrum(ions);
+		}
+
+		/**
+		 * Filters spectrum by number of highest abundance ions
+		 * @param s spectrum
+		 * @param topIons number of top ions to retain
+		 * @return filtered spectrum
+		 */
+		protected ISpectrum filterSpectrum(ISpectrum s, int topIons)
+		{
+			return filterSpectrum(s, topIons, -1);
+		}
+
+		/**
+		 * Filters spectrum by base peak percentage
+		 * @param s spectrum
+		 * @param basePeakPercentage percentage of base peak above which to retain
+		 * @return filtered spectrum
+		 */
+		protected ISpectrum filterSpectrum(ISpectrum s, double basePeakPercentage)
+		{
+			return filterSpectrum(s, -1, basePeakPercentage);
 		}
 	}
 }

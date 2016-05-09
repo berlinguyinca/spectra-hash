@@ -25,6 +25,7 @@ using NSSplash.impl;
 
 namespace NSSplash {
 	public interface ISpectrum {
+		List<Ion> GetIons();
 		List<Ion> getSortedIonsByMZ(bool desc = false);
 		List<Ion> getSortedIonsByIntensity(bool desc = true);
 		SpectrumType getSpectrumType();

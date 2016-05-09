@@ -43,7 +43,7 @@ To generate a new splash, please utilize the following:
 Alternatively, you can also utilize the following code, to directly splash a spectra, if it's accessible as a string representation.
 
 ```
-    String splash = SplashUtils.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
+    String splash = SplashUtil.splash("10:123.12 12:123.11 13:22 14:212",SpectraType.MS);
 ```
 
 We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplashListener to your Splash instance or alternativly using the util like this

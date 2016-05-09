@@ -1,3 +1,8 @@
+2016-05-09  Steffen Neumann  <sneumann@acryl.ipb-sub.ipb-halle.de>
+
+	* Raise version to 0.0.3
+	* R/getSplash.R: move to 4-block SPLASH
+
 2015-10-27  Steffen Neumann  <sneumann@ipb-halle.de>
 
 	* Bump version to 0.0.2

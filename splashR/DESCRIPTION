@@ -1,7 +1,7 @@
 Package: splashR
 Type: Package
 Title: splashR - package to create hashes for spectra
-Version: 0.0.2.1
+Version: 0.0.3
 Date: 2016-05-09
 Author: Steffen Neumann <sneumann@ipb-halle.de>
 Maintainer: Egon Willighagen <egon.willighagen@maastrichtuniversity.nl>

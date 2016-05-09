@@ -207,6 +207,7 @@ public class SplashVersion1 implements Splash {
         //prefilter block
         Spectrum filteredSpectrum = filterSpectrum(spectrum, 10, 0.1);
         String prefilterHistogram = calculateHistogramBlock(filteredSpectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE);
+
         buffer.append(translateBase(prefilterHistogram, PREFILTER_BASE, 36, 4));
         buffer.append("-");
 
@@ -330,7 +331,7 @@ public class SplashVersion1 implements Splash {
             List<Ion> filteredIons = new ArrayList<Ion>();
 
             for(Ion ion : ions) {
-                if (ion.getIntensity() > basePeakPercentage * basePeakIntensity)
+                if (ion.getIntensity() + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
                     filteredIons.add(new Ion(ion.getMass(), ion.getIntensity()));
             }
 
@@ -346,21 +347,6 @@ public class SplashVersion1 implements Splash {
 
         return new SpectrumImpl(ions, s.getOrigin(), s.getType());
     }
-
-        /*
-        def filter_spectrum(spectrum, top_ions = None, base_peak_percentage = None):
-    # Filter first by base peak percentage if meeded
-    if base_peak_percentage is not None:
-        base_peak_intensity = max(intensity for mz, intensity in spectrum)
-
-        spectrum = [(mz, intensity) for mz, intensity in spectrum if intensity >= base_peak_percentage * base_peak_intensity]
-
-    # Filter by top ions if needed
-    if top_ions is not None:
-        spectrum = sorted(spectrum, key = lambda x: -x[1])[: top_ions]
-
-    return spectrum
-         */
 
     /**
      * Translate a number in string format from one numerical base to another

@@ -118,7 +118,7 @@ string buildInitialBlock(vector<pair<double, double> > &spectrum, char spectrum_
 string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_type) {
     sort(spectrum.begin(), spectrum.end(), ionPairMzComparator);
 
-    int i = 0;
+    unsigned int i = 0;
     stringstream ss;
 
     for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
@@ -169,8 +169,38 @@ string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum
 }
 
 
+vector<pair<double, double> > filterSpectrum(vector<pair<double, double> > &spectrum, int topIons, double basePeakPercentage) {
+    vector<pair<double, double> > filteredSpectrum;
+    double basePeakIntensity = 0;
+
+    // Populate the filtered spectrum
+    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+        filteredSpectrum.push_back(*it);
+
+        if((*it).second > basePeakIntensity)
+            basePeakIntensity = (*it).second;
+    }
+
+    if(basePeakPercentage >= 0) {
+        vector<pair<double, double> >::iterator it = filteredSpectrum.begin();
+
+        if((*it).second + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
+            ++it;
+        else
+            it = spectrum.erase(it);
+    }
+
+    if(topIons > 0) {
+        sort(filteredSpectrum.begin(), filteredSpectrum.end(), ionPairIntensityComparator);
+        filteredSpectrum.resize(topIons);
+    }
+
+    return filteredSpectrum;
+}
+
+
 string translateBase(string number, int initialBase, int finalBase, int fill) {
-    long int n = stoi(number, nullptr, initialBase);
+    long int n = strtol(number.c_str(), NULL, initialBase);
 
     stringstream ss;
     int length = 0;
@@ -197,7 +227,9 @@ string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
     stringstream ss;
     
     ss << buildInitialBlock(spectrum, spectrum_type) << '-';
-    ss << translateBase(calculateHistogram(spectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4) << '-';
+    ss << translateBase(
+        calculateHistogram(spectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE),
+        PREFILTER_BASE, 36, 4) << '-';
     ss << calculateHistogram(spectrum, spectrum_type, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE) << '-';
     ss << encodeSpectrum(spectrum, spectrum_type);
 
@@ -212,10 +244,10 @@ string splashIt(string spectrum_string, char spectrum_type) {
     double maxIntensity = 0;
 
     for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
-        int delim_pos = (*it).find(':');
+        size_t delim_pos = (*it).find(':');
 
-        double mz = stod((*it).substr(0, delim_pos));
-        double intensity = stod((*it).substr(delim_pos + 1));
+        double mz = atof((*it).substr(0, delim_pos).c_str());
+        double intensity = atof((*it).substr(delim_pos + 1).c_str());
 
         if(intensity > maxIntensity)
             maxIntensity = intensity;

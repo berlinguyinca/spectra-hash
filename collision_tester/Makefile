@@ -1,6 +1,6 @@
 CC = g++
 RM = rm -f
-CPPFLAGS = -Wall -O2
+CPPFLAGS = -O2
 LDFLAGS =
 LDLIBS = -lcrypto -lssl
 

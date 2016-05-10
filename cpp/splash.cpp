@@ -169,7 +169,7 @@ string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum
 }
 
 
-vector<pair<double, double> > filterSpectrum(vector<pair<double, double> > &spectrum, int topIons, double basePeakPercentage) {
+vector<pair<double, double> > filterSpectrum(vector<pair<double, double> > &spectrum, unsigned int topIons, double basePeakPercentage) {
     vector<pair<double, double> > filteredSpectrum;
     double basePeakIntensity = 0;
 
@@ -184,13 +184,15 @@ vector<pair<double, double> > filterSpectrum(vector<pair<double, double> > &spec
     if(basePeakPercentage >= 0) {
         vector<pair<double, double> >::iterator it = filteredSpectrum.begin();
 
-        if((*it).second + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
-            ++it;
-        else
-            it = spectrum.erase(it);
+        while(it != filteredSpectrum.end()) {
+            if((*it).second + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
+                ++it;
+            else
+                it = filteredSpectrum.erase(it);
+        }
     }
 
-    if(topIons > 0) {
+    if(topIons > 0 && filteredSpectrum.size() > topIons) {
         sort(filteredSpectrum.begin(), filteredSpectrum.end(), ionPairIntensityComparator);
         filteredSpectrum.resize(topIons);
     }
@@ -225,10 +227,12 @@ string translateBase(string number, int initialBase, int finalBase, int fill) {
 
 string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
     stringstream ss;
+
+    vector<pair<double, double> > filteredSpectrum = filterSpectrum(spectrum, 10, 0.1);
     
     ss << buildInitialBlock(spectrum, spectrum_type) << '-';
     ss << translateBase(
-        calculateHistogram(spectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE),
+        calculateHistogram(filteredSpectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE),
         PREFILTER_BASE, 36, 4) << '-';
     ss << calculateHistogram(spectrum, spectrum_type, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE) << '-';
     ss << encodeSpectrum(spectrum, spectrum_type);

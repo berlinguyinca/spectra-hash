@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
         }
 
         // Handle input of the form [id],[spectrum string]
-        int delim_pos = input.find(',');
+        size_t delim_pos = input.find(',');
 
         if(delim_pos != string::npos) {
             string id = input.substr(0, delim_pos);

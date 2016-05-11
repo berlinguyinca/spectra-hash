@@ -6,13 +6,13 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab.splash</groupId>
         <artifactId>utilities</artifactId>
-        <version>1.4</version>
+        <version>1.7</version>
     </parent>
 
 
     <groupId>edu.ucdavis.fiehnlab.splash.utilities</groupId>
     <artifactId>evaluation</artifactId>
-    <version>1.5</version>
+    <version>1.7</version>
 
 
     <dependencies>
@@ -72,8 +72,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
 </project>

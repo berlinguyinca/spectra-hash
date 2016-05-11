@@ -15,7 +15,7 @@ class Spectrum:
 
     
     def __init__(self, spectrum, spectrum_type):
-        self.spectrum = self.parse_spectrum(spectrum.strip())
+        self.spectrum = self.parse_spectrum(spectrum)
         self.spectrum_type = spectrum_type
     
 
@@ -23,9 +23,9 @@ class Spectrum:
         """Parse the provided mass spectrum into the internal format"""
         
         # Handle the spectrum string format
-        if type(spectrum) is str and re.match(self.SPECTRUM_REGEX, spectrum):
+        if type(spectrum) is str and re.match(self.SPECTRUM_REGEX, spectrum.strip()):
             # Split the spectrum into m/z and intensity pairs as floats
-            spectrum = [list(map(float, x.split(':'))) for x in spectrum.split()]
+            spectrum = [list(map(float, x.split(':'))) for x in spectrum.strip().split()]
 
             # Normalize spectrum
             max_intensity = max(intensity for _, intensity in spectrum)

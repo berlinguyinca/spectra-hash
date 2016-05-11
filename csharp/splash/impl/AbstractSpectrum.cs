@@ -28,8 +28,9 @@ namespace NSSplash.impl {
 	
 	public abstract class AbstractSpectrum : ISpectrum {
 		private const int MAX_RELATIVE_INTENSITY = 100;
-		protected SpectrumType type;
 
+		#region fields and Properties
+		protected SpectrumType type;
 		public SpectrumType Type { 
 			get { return this.type; }
 			internal set { type = value; }
@@ -40,7 +41,13 @@ namespace NSSplash.impl {
 			get { return ions; }
 			internal set { ions = value; }
 		}
+		#endregion
 
+		#region Constructors
+		/// <summary>
+		/// Creates a new spectrum based on a string of ions
+		/// </summary>
+		/// <param name="data"></param>
 		public AbstractSpectrum (string data) {
 			//checke data has data 
 			if ("" == data) {
@@ -61,8 +68,24 @@ namespace NSSplash.impl {
 			}
 
 			Ions = this.toRelative(MAX_RELATIVE_INTENSITY);
-
 		}
+
+
+		/// <summary>
+		/// Creates a spectrum based on a list of ions
+		/// </summary>
+		/// <param name="ions"></param>
+		public AbstractSpectrum(List<Ion> ions)
+		{
+			if(ions.Count <= 0)
+			{
+				throw new ArgumentException("The spectrum data can't be null or empty.");
+			}
+
+			Ions = ions;
+			Ions = this.toRelative(MAX_RELATIVE_INTENSITY);
+		}
+		#endregion
 
 		public override string ToString() {
 			StringBuilder ionList = new StringBuilder();
@@ -130,6 +153,9 @@ namespace NSSplash.impl {
 
 			return relativeIons;
 		}
+
+		// returns list of ions
+		public abstract List<Ion> GetIons();
 	}
 }
 

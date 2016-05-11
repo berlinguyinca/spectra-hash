@@ -5,11 +5,14 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.Splash;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashBlock;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashListener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.listener.SplashingEvent;
-import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThanIntensityComperator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.sort.IntensityThenMassComparator;
+import edu.ucdavis.fiehnlab.spectra.hash.core.sort.MassThenIntensityComparator;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.Ion;
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType;
+import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectrumImpl;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -31,8 +34,6 @@ public class SplashVersion1 implements Splash {
             'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     };
-
-    private static final int FINAL_SCALE_FACTOR = 35;
 
     /**
      * how to scale the spectrum
@@ -84,7 +85,7 @@ public class SplashVersion1 implements Splash {
     /**
      * adds a new listener
      *
-     * @param listener
+     * @param listener listener
      */
     public void addListener(SplashListener listener) {
         this.listeners.add(listener);
@@ -93,7 +94,7 @@ public class SplashVersion1 implements Splash {
     /**
      * notify listeners
      *
-     * @param e
+     * @param e event
      */
     protected void notifyListener(SplashingEvent e) {
         for (SplashListener listener : listeners) {
@@ -105,8 +106,8 @@ public class SplashVersion1 implements Splash {
     /**
      * notify listeneres that the hash is complete
      *
-     * @param spectrum
-     * @param hash
+     * @param spectrum spectrum
+     * @param hash computed splash
      */
     protected void notifyListenerHashComplete(Spectrum spectrum, String hash) {
         for (SplashListener listener : listeners) {
@@ -117,8 +118,8 @@ public class SplashVersion1 implements Splash {
     /**
      * formats a m/z value to our defined fixedPrecissionOfMasses
      *
-     * @param value
-     * @return
+     * @param value m/z value
+     * @return formatted m/z value
      */
     String formatMZ(double value) {
         return String.format("%d", (long)((value + EPS_CORRECTION) * MZ_PRECISION_FACTOR));
@@ -127,8 +128,8 @@ public class SplashVersion1 implements Splash {
     /**
      * formats an intensity value to our defined fixedPrecissionOfIntensites
      *
-     * @param value
-     * @return
+     * @param value intensity value
+     * @return formatted intensity value
      */
     String formatIntensity(double value) {
         return String.format("%d", (long)((value + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR));
@@ -137,8 +138,8 @@ public class SplashVersion1 implements Splash {
     /**
      * encodes the actual spectrum
      *
-     * @param spectrum
-     * @return
+     * @param spectrum spectrum
+     * @return spectral hash
      */
     protected String encodeSpectrum(Spectrum spectrum) {
 
@@ -147,7 +148,7 @@ public class SplashVersion1 implements Splash {
         StringBuilder buffer = new StringBuilder();
 
         //sort by mass
-        Collections.sort(ions, new MassThanIntensityComperator());
+        Collections.sort(ions, new MassThenIntensityComparator());
 
 
         //build the first string
@@ -179,8 +180,8 @@ public class SplashVersion1 implements Splash {
     /**
      * calculates our spectral hash
      *
-     * @param spectrum
-     * @return
+     * @param spectrum spectrum
+     * @return computed splash
      */
     public final String splashIt(Spectrum spectrum) {
         if (spectrum.getType() == SpectraType.MS) {
@@ -197,14 +198,17 @@ public class SplashVersion1 implements Splash {
         //convert the spectrum to relative values
         spectrum = spectrum.toRelative(scalingOfRelativeIntensity);
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         //first block
         buffer.append(buildFirstBlock(spectrum));
         buffer.append("-");
 
         //prefilter block
-        buffer.append(translateBase(calculateHistogramBlock(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4));
+        Spectrum filteredSpectrum = filterSpectrum(spectrum, 10, 0.1);
+        String prefilterHistogram = calculateHistogramBlock(filteredSpectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE);
+
+        buffer.append(translateBase(prefilterHistogram, PREFILTER_BASE, 36, 4));
         buffer.append("-");
 
         //similarity block
@@ -227,7 +231,7 @@ public class SplashVersion1 implements Splash {
 
 
     /**
-     * @return
+     * @return splash version
      */
     protected char getVersion() {
         return '0';
@@ -244,7 +248,7 @@ public class SplashVersion1 implements Splash {
      *   5. Convert/truncate each intensity value to a 2-digit integer value,
      *      concatenated into the final string histogram representation
      *
-     * @param spectrum
+     * @param spectrum spectrum
      * @return histogram
      */
     protected String calculateHistogramBlock(Spectrum spectrum, int base, int length, int binSize) {
@@ -281,6 +285,67 @@ public class SplashVersion1 implements Splash {
         this.notifyListener(new SplashingEvent(data, data, SplashBlock.SECOND, spectrum));
 
         return result.toString();
+    }
+
+
+    /**
+     * Filters spectrum by number of highest abundance ions
+     * @param s spectrum
+     * @param topIons number of top ions to retain
+     * @return filtered spectrum
+     */
+    protected Spectrum filterSpectrum(Spectrum s, int topIons) {
+        return filterSpectrum(s, topIons, -1);
+    }
+
+    /**
+     * Filters spectrum by base peak percentage
+     * @param s spectrum
+     * @param basePeakPercentage percentage of base peak above which to retain
+     * @return filtered spectrum
+     */
+    protected Spectrum filterSpectrum(Spectrum s, double basePeakPercentage) {
+        return filterSpectrum(s, -1, basePeakPercentage);
+    }
+
+    /**
+     * Filters spectrum by number of highest abundance ions and by base peak percentage
+     * @param s spectrum
+     * @param topIons number of top ions to retain
+     * @param basePeakPercentage percentage of base peak above which to retain
+     * @return filtered spectrum
+     */
+    protected Spectrum filterSpectrum(Spectrum s, int topIons, double basePeakPercentage) {
+        List<Ion> ions = s.getIons();
+
+        // Find base peak intensity
+        double basePeakIntensity = 0.0;
+
+        for(Ion ion: ions) {
+            if (ion.getIntensity() > basePeakIntensity)
+                basePeakIntensity = ion.getIntensity();
+        }
+
+        // Filter by base peak percentage if needed
+        if (basePeakPercentage >= 0) {
+            List<Ion> filteredIons = new ArrayList<Ion>();
+
+            for(Ion ion : ions) {
+                if (ion.getIntensity() + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
+                    filteredIons.add(new Ion(ion.getMass(), ion.getIntensity()));
+            }
+
+            ions = filteredIons;
+        }
+
+        // Filter by top ions if necessary
+        if (topIons > 0 && ions.size() > topIons) {
+            Collections.sort(ions, new IntensityThenMassComparator());
+
+            ions = ions.subList(0, topIons);
+        }
+
+        return new SpectrumImpl(ions, s.getOrigin(), s.getType());
     }
 
     /**

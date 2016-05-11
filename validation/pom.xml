@@ -3,7 +3,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>splash</artifactId>
-        <version>1.5</version>
+        <version>1.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.splash</groupId>
             <artifactId>core</artifactId>
-            <version>1.4</version>
+            <version>1.7</version>
         </dependency>
 
         <dependency>

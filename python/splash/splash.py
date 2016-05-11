@@ -4,22 +4,21 @@ from __future__ import division
 import hashlib
 import string
 
+from .spectrum import Spectrum
+
+
+EPS_CORRECTION = 1.0e-7
+
+# Full spectrum hash properties
+ION_SEPARATOR = ' '
+ION_PAIR_SEPARATOR = ':'
+MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20
 
 MZ_PRECISION = 6
 MZ_PRECISION_FACTOR = 10**MZ_PRECISION
 
 INTENSITY_PRECISION = 0
 INTENSITY_PRECISION_FACTOR = 10**INTENSITY_PRECISION
-
-EPS = 1.0e-6
-
-# Separator for building spectrum strings
-ION_SEPARATOR = ' '
-
-# Full spectrum hash properties
-ION_PAIR_SEPARATOR = ':'
-MAX_HASH_CHARATERS_ENCODED_SPECTRUM = 20
-EPS_CORRECTION = 1.0e-7
 
 # Prefilter properties
 PREFILTER_BASE = 3
@@ -77,6 +76,21 @@ class SplashVersion1():
         # Return histogram string with value substitutions
         return ''.join(map(INTENSITY_MAP.__getitem__, histogram))
 
+    def filter_spectrum(self, s, top_ions = None, base_peak_percentage = None):
+        spectrum = s.spectrum
+
+        # Filter first by base peak percentage if meeded
+        if base_peak_percentage is not None:
+            base_peak_intensity = max(intensity for mz, intensity in spectrum)
+
+            spectrum = [(mz, intensity) for mz, intensity in spectrum \
+                if intensity + EPS_CORRECTION >= base_peak_percentage * base_peak_intensity]
+
+        # Filter by top ions if needed
+        if top_ions is not None:
+            spectrum = sorted(spectrum, key = lambda x: (-x[1], x[0]))[: top_ions]
+
+        return Spectrum(spectrum, s.spectrum_type)
 
     def translate_base(self, s, initial_base, final_base, fill_length):
         n = int(s, initial_base)
@@ -91,12 +105,18 @@ class SplashVersion1():
 
 
     def splash(self, spectrum):
+        # Filtered spectrum for the prefilter block
+        filtered_spectrum = self.filter_spectrum(spectrum, 10, 0.1)
+
         return '-'.join([
             # Initial splash block
             self.build_initial_block(spectrum),
 
             # Prefilter block
-            self.translate_base(self.calculate_histogram(spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), PREFILTER_BASE, 36, 4),
+            self.translate_base(
+                self.calculate_histogram(filtered_spectrum, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE), 
+                PREFILTER_BASE, 36, 4
+            ),
 
             # Similarity histogram block
             self.calculate_histogram(spectrum, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE),

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 class SpectrumType:
     MS = 1
     NMR = 2

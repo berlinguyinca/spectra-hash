@@ -341,7 +341,7 @@ public class ValidationController implements CommandLineRunner {
                                 counterValid++;
                             }
                             if (counter % interval == 0) {
-                                status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, " + (counter - counterValid) + " invalid");
+                                status(cmd, "splashes valid: " + String.format("%.2f", (double) counterValid / (double) counter * 100) + "%, " + (counter - counterValid) + " invalid\n");
                             }
 
                         } else {

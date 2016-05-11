@@ -97,7 +97,7 @@ class EvaluationStartup extends ApplicationRunner {
     val similarActor = system.actorOf(Props(new SimilarActor(new FileWriter("similarSpectra.txt"))))
 
 
-    applicationArguments.getOptionValues("inchiKeys").foreach 0
+    applicationArguments.getOptionValues("inchiKeys").foreach {
       x => {
         for (line <- Source.fromFile(new File(x)).getLines()) {
           val data = line.split("\t")

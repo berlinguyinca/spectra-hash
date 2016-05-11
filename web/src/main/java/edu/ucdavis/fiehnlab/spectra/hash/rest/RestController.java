@@ -16,6 +16,7 @@ import java.util.Arrays;
 /**
  * simple rest service, which hashes submitted spectra data, as well as validate provided spectra hashes against the current reference implementation
  */
+@CrossOrigin
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
 

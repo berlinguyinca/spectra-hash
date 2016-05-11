@@ -53,7 +53,7 @@ describe('Splash Key Test: ', function() {
 
     it('generate a splashkey', function(done) {
         var callback = function(data) {
-            expect(data).toBe('splash10-0z00000000-f5bf6f6a4a1520a35d4f');
+            expect(data).toBe('splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f');
         };
         generateSplash(spectra,callback);
         done();
@@ -86,7 +86,7 @@ var spectraToValidate = {
         ],
         "type": "MS"
     },
-    "splash": "splash10-0z00000000-f5bf6f6a4a1520a35d4f"
+    "splash": "splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
 };
 
 

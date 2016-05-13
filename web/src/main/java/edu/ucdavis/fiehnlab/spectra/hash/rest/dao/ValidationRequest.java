@@ -4,14 +4,11 @@ package edu.ucdavis.fiehnlab.spectra.hash.rest.dao;
  * defines how a validation request should look
  */
 public class ValidationRequest {
-
     private Spectrum spectrum;
 
     private String splash;
 
-    public ValidationRequest(){
-
-    }
+    public ValidationRequest() {}
 
     public Spectrum getSpectrum() {
         return spectrum;

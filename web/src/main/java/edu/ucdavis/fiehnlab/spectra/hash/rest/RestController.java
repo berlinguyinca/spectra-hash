@@ -70,11 +70,10 @@ public class RestController {
 
             ValidationResponse validationResponse = new ValidationResponse();
             validationResponse.setRequest(validationRequest);
-            validationResponse.setRefrenceSplash(reference);
+            validationResponse.setReferenceSplash(reference);
             validationResponse.setValidationSuccessful(reference.equals(provided));
 
             return validationResponse;
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);

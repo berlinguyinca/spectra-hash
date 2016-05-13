@@ -13,7 +13,6 @@ import java.util.Map;
  * simple persistent spectra model
  */
 public class Spectrum implements edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum {
-
     public List<Ion> getIons() {
         return ions;
     }
@@ -22,11 +21,9 @@ public class Spectrum implements edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum
         this.ions = ions;
     }
 
-
-
     private List<Ion> ions = new ArrayList<Ion>();
 
-    public Spectrum(){
+    public Spectrum() {
 
     }
 

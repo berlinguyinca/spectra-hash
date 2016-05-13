@@ -4,8 +4,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.rest.dao;
  * defines the response from the validation
  */
 public class ValidationResponse {
-
-    String refrenceSplash;
+    String referenceSplash;
 
     boolean validationSuccessful;
 
@@ -25,12 +24,12 @@ public class ValidationResponse {
         this.request = request;
     }
 
-    public String getRefrenceSplash() {
-        return refrenceSplash;
+    public String getReferenceSplash() {
+        return referenceSplash;
     }
 
-    public void setRefrenceSplash(String refrenceSplash) {
-        this.refrenceSplash = refrenceSplash;
+    public void setReferenceSplash(String refrenceSplash) {
+        this.referenceSplash = refrenceSplash;
     }
 
     ValidationRequest request;

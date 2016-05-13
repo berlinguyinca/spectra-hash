@@ -11,3 +11,5 @@ __pycache__
 build
 *.pyc
 .Rproj.user
+
+cpp/splash

@@ -17,32 +17,30 @@
 
 <div class="container">
     <div class="header clearfix">
-        <h3 class="text-muted">Splash - The Spectral Hash Identifier</h3>
+        <h3 class="text-muted">SPLASH - The Spectral Hash Identifier</h3>
     </div>
 
     <div class="jumbotron">
-        <h1>Splash</h1>
+        <h1>SPLASH</h1>
 
-        <p class="lead">Welcome to the Splash validation and computational page.</p>
+        <p class="lead">Welcome to the SPLASH Validation and Computational Page</p>
     </div>
 
     <div class="row marketing">
         <div class="col-lg-4">
-
-
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    What is the splash?
+                    What is the SPLASH?
                 </div>
                 <div class="panel-body">
                     <p>
-                        The Splash, is an unique identifier for Spectra, as the InChI Key is an unique identifier for
+                        The SPLASH, is an unique identifier for Spectra, as the InChI Key is an unique identifier for
                         chemical compounds.
                     </p>
 
                     <p>
-                        The first implementation of the Splash, was the MoNA (<a
-                            href="http://mona.fiehnlab.ucdavis.edu" target="_blank">Massbank of North America</a>) hash
+                        The first implementation of the SPLASH, was the <a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">
+                        MoNA (Massbank of North America)</a> hash
                         and during the 2015 Metabolomics conference in turned out that people like the idea of an unique
                         spectra identifier, similar to the InChI Key. Based on the received feedback, a subset of the
                         attendies started to develop a set of specifications, which allowed us to easily calculate
@@ -51,11 +49,9 @@
                     </p>
 
                     <p>If you like to contribute to the development of the splash or just want to let us know what you
-                        think
-                        about the concept, please contact us at <a
-                                href="mailto:wohlgemuth@ucdavis.edu?Subject=Splash">wohlgemuth@ucdavis.edu</a>
+                        think about the concept, please contact us at <a href="mailto:wohlgemuth@ucdavis.edu?Subject=Splash">
+                            wohlgemuth@ucdavis.edu</a>
                     </p>
-
                 </div>
             </div>
 
@@ -65,18 +61,18 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        The main usage of the splash is to be used as database identifier, as well as easily allowing
-                        you to see if 2 spectra are similar to each other. We hope that people will adopt it in their
-                        systems as well, so we can easily compute overlap of databases or use it to reference spectra
-                        between publications.
+                        The primary usage of the SPLASH is as a database identifier for unique spectra, and can thereby
+                        be used as an easy lookup tool and for cross-reference identification. It also allows for coarse
+                        similarity comparisons without any knowledge of the spectra themselves. We hope that developers
+                        will adopt the SPLASH into their systems so that we may easily discover overlap between mass
+                        spectral databases and begin to use it to reference spectra between publications.
                     </p>
-
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Available Implementations of the splash algorithm
+                    Available implementations of the SPLASH algorithm
                 </div>
                 <div class="panel-body">
                     <table class="table">
@@ -122,7 +118,7 @@
                             <td>Ruby</td>
                             <td><a href="https://github.com/wilsonmichael/spectrum_hash" target="_blank">source code</a>
                             </td>
-                            <td> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
                         </tr>
 
                         <tr>
@@ -131,8 +127,6 @@
                             </td>
                             <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
                         </tr>
-
-
                         </tbody>
                     </table>
                 </div>
@@ -140,28 +134,24 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Where can I find the specification, to compute the splash
+                    Where can I find the SPLASH specification?
                 </div>
                 <div class="panel-body">
                     <p>
-                        We are currently in the process of publishing a paper, providing in detail documentation of how
-                        the splash is calculated and it's requirements. If you want to implement it now and can't wait,
-                        we recommend that you look at the reference implementation.
+                        The SPLASH specification is currently under review for publication.  If you wish to implement
+                        the SPLASH or learn more about the algorithm, please refer to the provided reference implementations.
                     </p>
-
                 </div>
             </div>
 
-
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Who is using splash?
+                    Who is using SPLASH?
                 </div>
                 <div class="panel-body">
                     <p>
-                       currently the following software packages and databases are using the splash key.
+                       Currently the following software packages and databases are using the splash key.
                     </p>
-
 
                     <table class="table">
                         <thead>
@@ -172,53 +162,75 @@
                         </thead>
                         <tbody>
                         <tr>
+                            <td><a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">MoNA (MassBank of North America)</a></td>
+                            <td>database/repository</td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://massbank.jp" target="_blank">MassBank</a></td>
+                            <td>database/repository</td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://hmdb.ca" target="_blank">HMDB (Human Metabolome Database)</a></td>
+                            <td>database</td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://gnps.ucsd.edu/" target="_blank">GNPS (Global National Products Social Molecular Networking)</a></td>
+                            <td>database</td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://www.ebi.ac.uk/metabolights/" target="_blank">MetaboLights</a></td>
+                            <td>database</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.mzcloud.org/" target="_blank">mzCloud</a></td>
+                            <td>database</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/HUPO-PSI/psi-ms-CV" target="_blank">>HUPO Mass Spectrometry Ontology</a></td>
+                            <td>mass spectrometry controlled vocabulary</td>
+                        </tr>
+                        <tr>
                             <td>BinBase</td>
                             <td>database/software</td>
                         </tr>
                         <tr>
-                            <td>BinView</td>
+                            <td><a href="https://bioconductor.org/packages/release/bioc/html/RMassBank.html" target="_blank">BinView</a></td>
                             <td>software</td>
                         </tr>
                         <tr>
-                            <td>MoNA</td>
-                            <td>database/repository</td>
+                            <td><a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html" target="_blank">MS-DIAL</a></td>
+                            <td>software</td>
                         </tr>
                         <tr>
-                            <td>HMDB - Human Metabolome Database</td>
-                            <td>database</td>
-                        </tr>
-                        <tr>
-                            <td>mzML</td>
-                            <td>masspectral data format</td>
-                        </tr>
-                        <tr>
-                            <td>MSDK - Mass Spectrometry Development Kit</td>
+                            <td><a href="http://msdk.github.io/" target="_blank">MSDK (Mass Spectrometry Development Kit)</a></td>
                             <td>programming framework</td>
                         </tr>
                         <tr>
-                            <td>RMassBank</td>
+                            <td><a href="http://mzmine.github.io/" target="_blank">MZmine</a></td>
+                            <td>programming framework</td>
+                        </tr>
+                        <tr>
+                            <td><a href="http://fiehnlab.ucdavis.edu/projects/binbase_setupx" target="_blank">RMassBank</a></td>
                             <td>MS Processing Workflow</td>
                         </tr>
                         <tr>
-                            <td>MassBank</td>
-                            <td>database/repository</td>
+                            <td><a href="http://bioclipse.net/" target="_blank">Bioclipse</a></td>
+                            <td>programming framework</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
-
 
         <div class="col-lg-8">
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Splash your Spectra
+                    SPLASH Your Spectra
                 </div>
                 <div class="panel-body">
-                    <p>To 'splash' your spectra easily, we provide you with a simple REST api, this can be easily
+                    <p>To 'SPLASH' your spectra easily, we provide you with a simple REST api, this can be easily
                         utilized from any programming language and so allows you to compute the splash as easily as
                         possible, without the need of providing your own implementation</p>
 
@@ -230,7 +242,7 @@
                     </blockquote>
 
                     <h5>Example load</h5>
-            <pre>
+                    <pre>
 {
     "ions":
         [
@@ -249,9 +261,9 @@
          ],
          "type": "MS"
 }
-            </pre>
+                    </pre>
 
-                    <p>for the type, please pick one of these values.</p>
+                    <p>The type codes are as followed (please note that at this time, only the MS SPLASH is available):</p>
 
                     <ol>
                         <li>MS</li>
@@ -261,27 +273,26 @@
                         <li>RAMAN</li>
                     </ol>
 
-
                     <h5>Example response</h5>
 
-                    <p>upon complication of your request, your response should be a splash.</p>
-                    splash10-0z00000000-1b4311859c90696129e2"
+                    <p>Upon complication of your request, your response should be a SPLASH code:</p>
+                    <pre>splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f</pre>
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Validate your splash Implementation
+                    Validate Your Splash Implementation
                 </div>
                 <div class="panel-body">
-                    <p>Since we plan on only maintaining a limited set of reference implementation, we are providing you
-                        with a simple REST based tool, to easily validate your
-                        implementation against the reference implementation. This does not mean, you should not
-                        developed your own suite of test's to ensure your api works.
+                    <p>Since we plan on only maintaining a limited set of reference implementation, we are providing
+                        a simple REST-based tool to easily validate your implementation against the reference
+                        implementation. This does not mean you should not developed your own suite of test's to ensure
+                        your API works as desired.
                     </p>
 
-                    <p>The main advantage of the validation api, is to test if your splash algorithm, produces the
-                        identical output, for the same input</p>
+                    <p>The main advantage of the validation api is to test that your SPLASH implementation produces results
+                    consistent with the reference implementation</p>
 
                     <h5>Request URL:</h5>
 
@@ -313,26 +324,39 @@
             ],
             "type": "MS"
     },
-    "splash":"splash10-0z00000000-1b4311859c90696129e2""
+    "splash":"splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
 }
             </pre>
 
                     <h5>Example response</h5>
 
-                    <p>
-                        this is an exspected response, for your successful request.
-                    </p>
+                    <p>The following is an example validation response:</p>
 
-
+                    <pre>
+{
+    "request": {
+        "spectrum": {
+            "origin": None,
+            "ions": [
+                {"mass": 100.0, "intensity": 1.0},
+                {"mass": 101.0, "intensity": 2.0},
+                {"mass": 102.0, "intensity": 3.0}
+            ],
+            "type": "MS"
+        },
+        "splash": "splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
+    },
+    "validationSuccessful": true,
+    "referenceSplash": "splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
+ }
+                    </pre>
                 </div>
             </div>
-
         </div>
     </div>
     <footer class="footer">
-        <p>&copy; The splash was an outcome of the 2015 Metabolomics Hackathon and included the contributions of several key members.</p>
+        <p>&copy; 2016 SPLASH Collaboration</p>
     </footer>
-
 </div>
 <!-- /container -->
 

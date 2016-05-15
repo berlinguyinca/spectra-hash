@@ -16,7 +16,7 @@
     <parent>
         <artifactId>splash</artifactId>
         <groupId>edu.ucdavis.fiehnlab</groupId>
-        <version>1.7</version>
+        <version>1.8</version>
     </parent>
 
     <dependencies>
@@ -96,4 +96,5 @@
             </plugin>
         </plugins>
     </build>
+    <version>1.8</version>
 </project>

@@ -4,7 +4,7 @@
 
 	<groupId>edu.ucdavis.fiehnlab.splash</groupId>
 	<artifactId>specgen</artifactId>
-	<version>1.7</version>
+	<version>1.8</version>
 	<packaging>jar</packaging>
 
 	<name>Spectrum Generator</name>
@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>edu.ucdavis.fiehnlab.splash</groupId>
 			<artifactId>core</artifactId>
-			<version>1.7</version>
+			<version>1.8</version>
 		</dependency>
 		
 		<dependency>

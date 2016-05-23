@@ -1,4 +1,4 @@
-# The splash
+# The SPLASH
 
 a spectral hash code
 
@@ -11,14 +11,14 @@ Or use one any of the available implementations, which should have been validate
 # usage
 
 ## java api:
-The reference implementation jar file can be downloaded from: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.7/core-1.7.jar
+The reference implementation jar file can be downloaded from: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.8/core-1.8.jar
 
 The Maven dependency information is:
 ```
     <dependency>
         <groupId>edu.ucdavis.fiehnlab.splash</groupId>
         <artifactId>core</artifactId>
-        <version>1.7</version>
+        <version>1.8</version>
     </dependency>
 ```
 
@@ -144,12 +144,12 @@ the documentation for the REST service, is available as a dedicated index page, 
 
 As part of the splash specificitation, we are providing a simple validation tool, in the validation folder.
 
-	The latest jar can be found at: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.7/validation-1.7.jar
+	The latest jar can be found at: http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.8/validation-1.8.jar
 
 to run this tool (from the sources) please clone and build the project and afterwards run
 
 ```
-java -jar validation-1.7.jar
+java -jar validation-1.8.jar
 ```
 
 this will present you with the usage for this tool. 
@@ -160,7 +160,7 @@ An example to validate a file against the reference implementation and saving th
 (run from the root of the project)
 
 ```
-java -jar validation/target/validation-1.7.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
+java -jar validation/target/validation-1.8.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
 ```
 
 The specified flags in the example mean:

@@ -34,7 +34,7 @@ INTENSITY_MAP = string.digits + string.ascii_lowercase
 FINAL_SCALE_FACTOR = len(INTENSITY_MAP) - 1
 
 
-class SplashVersion1():
+class Splash():
     def build_initial_block(self, spectrum):
         # Build initial block to indicate version and spectrum type
         return 'splash%s0' % spectrum.spectrum_type

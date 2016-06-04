@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 import re
 
 
@@ -20,21 +21,29 @@ class Spectrum:
     
 
     def parse_spectrum(self, spectrum):
-        """Parse the provided mass spectrum into the internal format"""
+        """Parse the provided mass spectrum into the internal format and normalize the spectrum"""
         
         # Handle the spectrum string format
         if type(spectrum) is str and re.match(self.SPECTRUM_REGEX, spectrum.strip()):
             # Split the spectrum into m/z and intensity pairs as floats
             spectrum = [list(map(float, x.split(':'))) for x in spectrum.strip().split()]
 
-            # Normalize spectrum
-            max_intensity = max(intensity for _, intensity in spectrum)
-            return [(mz, intensity / max_intensity * self.RELATIVE_INTENSITY_SCALE) for mz, intensity in spectrum]
+            return self.normalize_spectrum(spectrum)
         
         # Handle the internal format    
         elif type(spectrum) is list and all(type(x) is tuple and len(x) == 2 for x in spectrum):
-            return spectrum
+            return self.normalize_spectrum(spectrum)
         
         # Otherwise, throw an invalid format exception
         else:
             raise ValueError('Invalid spectrum format')
+
+
+    def normalize_spectrum(self, spectrum):
+        """Normalize intensities to the constant RELATIVE_INTENSITY_SCALE value"""
+
+        # Compute the maxmimum intensity
+        max_intensity = max(intensity for _, intensity in spectrum)
+
+        # Normalize spectrum
+        return [(mz, intensity / max_intensity * self.RELATIVE_INTENSITY_SCALE) for mz, intensity in spectrum]

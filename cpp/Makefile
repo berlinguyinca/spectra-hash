@@ -8,8 +8,8 @@ TARGET = splash
 
 all: $(TARGET)
 
-$(TARGET): $(TARGET).cpp
-	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(TARGET) splash.cpp splashIt.cpp $(LDLIBS)
+$(TARGET): src/$(TARGET).cpp
+	$(CC) $(CXXFLAGS) $(LDFLAGS) -o $(TARGET) src/*.cpp $(LDLIBS)
 
 clean:
 	$(RM) $(TARGET)

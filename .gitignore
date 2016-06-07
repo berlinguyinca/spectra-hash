@@ -13,3 +13,5 @@ build
 .Rproj.user
 
 cpp/splash
+cpp/splash_test
+*.gch

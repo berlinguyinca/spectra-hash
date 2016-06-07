@@ -35,10 +35,10 @@ int main(int argc, char** argv) {
             string id = input.substr(0, delim_pos);
             string spectrum_string = input.substr(delim_pos + 1);
 
-            // Print the spectrum id with the calculated splash id
+            // Print the spectrum id with the calculated splash id and spectrum
             cout << splashIt(spectrum_string, '1') << "," << id << "," << spectrum_string << endl;
         } else {
-            // Print the spectrum id with the calculated splash id
+            // Print the calculated splash id and spectrum
             cout << splashIt(input, '1') << "," << input << endl;
         }
         

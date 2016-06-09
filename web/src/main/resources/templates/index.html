@@ -22,7 +22,6 @@
 
     <div class="jumbotron">
         <h1>SPLASH</h1>
-
         <p class="lead">Welcome to the SPLASH Validation and Computational Page</p>
     </div>
 
@@ -34,53 +33,42 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        The SPLASH, is an unique identifier for Spectra, as the InChI Key is an unique identifier for
-                        chemical compounds.
+                        The SPLASH is an unambiguous, database-independent spectral identifier, just as the <a href="http://www.inchi-trust.org/technical-faq/#2.7">InChIKey</a> is designed to serve as a unique identifier for chemical structures.  It contains separate blocks that define different layers of information, separated by dashes. For example, the full SPLASH of a <a href="http://massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026">caffeine mass spectrum</a> above is <code>splash10-0002-0900000000-b112e4e059e1ecf98c5f</code>. The first block is the SPLASH identifier, the second and third are summary blocks, and the fourth is the unique hash block.
                     </p>
 
                     <p>
-                        The first implementation of the SPLASH, was the <a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">
-                        MoNA (Massbank of North America)</a> hash
-                        and during the 2015 Metabolomics conference in turned out that people like the idea of an unique
-                        spectra identifier, similar to the InChI Key. Based on the received feedback, a subset of the
-                        attendies started to develop a set of specifications, which allowed us to easily calculate
-                        unique and short identifiers for a wide range of Spectra. This includes MS, IR, UV and NMR
-                        spectra at this point.
+                        The SPLASH began as the <a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">
+                        MoNA (Massbank of North America)</a> hash, designed to identify duplicate spectra within the database.  This idea developed further during the 2015 Metabolomics conference, where the SPLASH collaboration was formed.  Currently, the specification has been formalized for mass spectrometry data.  Additional specifications for IR, UV and NMR spectrometry are planned.
                     </p>
 
-                    <p>If you like to contribute to the development of the splash or just want to let us know what you
-                        think about the concept, please contact us at <a href="mailto:wohlgemuth@ucdavis.edu?Subject=Splash">
-                            wohlgemuth@ucdavis.edu</a>
+                    <p>
+                        If you would like to contribute to the development of the SPLASH, report an issue, or suggest improvements, please visit our <a href="https://github.com/berlinguyinca/spectra-hash">GitHub Repository</a> and create a new Issue or Pull Request.
                     </p>
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    What can I use it for?
+                    What can I use SPLASH for?
                 </div>
                 <div class="panel-body">
                     <p>
-                        The primary usage of the SPLASH is as a database identifier for unique spectra, and can thereby
-                        be used as an easy lookup tool and for cross-reference identification. It also allows for coarse
-                        similarity comparisons without any knowledge of the spectra themselves. We hope that developers
-                        will adopt the SPLASH into their systems so that we may easily discover overlap between mass
-                        spectral databases and begin to use it to reference spectra between publications.
+                        The primary usage of the SPLASH is as a database identifier for unique spectra, and can thereby be used as an easy lookup tool and for cross-reference identification. It also allows for coarse similarity comparisons without any knowledge of the spectra themselves. We hope that developers will adopt the SPLASH into their systems so that we may easily discover overlap between mass spectral databases and begin to use it to reference spectra between publications.
                     </p>
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Available implementations of the SPLASH algorithm
+                    Available implementations of the SPLASH algorithm:
                 </div>
                 <div class="panel-body">
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>language</th>
-                            <th>source</th>
-                            <th>validated</th>
+                            <th>Language</th>
+                            <th>Source</th>
+                            <th>Validated</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -150,14 +138,14 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                       Currently the following software packages and databases are using the splash key.
+                       Currently the following software packages and databases have implemented the SPLASH:
                     </p>
 
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>name</th>
-                            <th>type</th>
+                            <th>Name</th>
+                            <th>Type</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -186,15 +174,15 @@
                             <td>database</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/HUPO-PSI/psi-ms-CV" target="_blank">>HUPO Mass Spectrometry Ontology</a></td>
+                            <td><a href="https://github.com/HUPO-PSI/psi-ms-CV" target="_blank">HUPO Mass Spectrometry Ontology</a></td>
                             <td>mass spectrometry controlled vocabulary</td>
                         </tr>
                         <tr>
-                            <td>BinBase</td>
+                            <td><a href="http://fiehnlab.ucdavis.edu/projects/binbase_setupx" target="_blank">BinBase</a></td>
                             <td>database/software</td>
                         </tr>
                         <tr>
-                            <td><a href="https://bioconductor.org/packages/release/bioc/html/RMassBank.html" target="_blank">BinView</a></td>
+                            <td>BinView</td>
                             <td>software</td>
                         </tr>
                         <tr>
@@ -210,7 +198,7 @@
                             <td>programming framework</td>
                         </tr>
                         <tr>
-                            <td><a href="http://fiehnlab.ucdavis.edu/projects/binbase_setupx" target="_blank">RMassBank</a></td>
+                            <td><a href="https://bioconductor.org/packages/release/bioc/html/RMassBank.html" target="_blank">RMassBank</a></td>
                             <td>MS Processing Workflow</td>
                         </tr>
                         <tr>
@@ -282,17 +270,16 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Validate Your Splash Implementation
+                    Validate Your SPLASH Implementation
                 </div>
                 <div class="panel-body">
-                    <p>Since we plan on only maintaining a limited set of reference implementation, we are providing
-                        a simple REST-based tool to easily validate your implementation against the reference
-                        implementation. This does not mean you should not developed your own suite of test's to ensure
-                        your API works as desired.
+                    <p>
+                        Since we plan on only maintaining a limited set of reference implementation, we are providing a simple REST-based tool to easily validate your implementation against the reference implementation. This does not mean you should not developed your own suite of test's to ensure your API works as desired.
                     </p>
 
-                    <p>The main advantage of the validation api is to test that your SPLASH implementation produces results
-                    consistent with the reference implementation</p>
+                    <p>
+                        The main advantage of the validation api is to test that your SPLASH implementation produces results consistent with the reference implementation
+                    </p>
 
                     <h5>Request URL:</h5>
 
@@ -302,8 +289,9 @@
 
                     <h5>Example load</h5>
 
-                    this is an example for a validate object, send to the validation system. Please be aware that you
-                    need to provide all the fields.
+                    <p>
+                        This is an example for a validate object, send to the validation system. Please be aware that you need to provide all the fields.
+                    </p>
             <pre>
 {
     "spectrum": {

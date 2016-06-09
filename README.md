@@ -2,8 +2,7 @@
 
 ## The Spectral Hash
 
-The SPLASH (SPectraL hASH) is an unambiguous, database-independent spectral identifier, just as the [InChIKey](http://www.inchi-trust.org/technical-faq/#2.7) is designed to serve as a unique identifier for chemical structures.  It 
-contains separate blocks that define different layers of information, separated by dashes. For example, the full SPLASH of a [caffeine mass spectrum](http://massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026) above is `splash10-0002-0900000000-b112e4e059e1ecf98c5f`. The first block is the SPLASH identifier, the second and third are summary blocks, and the fourth is the unique hash block.
+The SPLASH (SPectraL hASH) is an unambiguous, database-independent spectral identifier, just as the [InChIKey](http://www.inchi-trust.org/technical-faq/#2.7) is designed to serve as a unique identifier for chemical structures.  It contains separate blocks that define different layers of information, separated by dashes. For example, the full SPLASH of a [caffeine mass spectrum](http://massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026) above is `splash10-0002-0900000000-b112e4e059e1ecf98c5f`. The first block is the SPLASH identifier, the second and third are summary blocks, and the fourth is the unique hash block.
 
 This repository contains:
 

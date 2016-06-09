@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.ucdavis.fiehnlab</groupId>
         <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.8-SNAPSHOT</version>
+        <version>1.0.11-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -22,7 +22,6 @@
 
     <modules>
         <module>core</module>
-        <module>utilities</module>
         <module>web</module>
         <module>validation</module>
         <module>scala</module>

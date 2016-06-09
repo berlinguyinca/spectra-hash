@@ -8,12 +8,16 @@ pySPLASH is compatable with
 
 Install from source by downloading the [source code (ZIP)](https://github.com/berlinguyinca/spectra-hash/zipball/master) or cloning this git repository
 
-    $ git clone git://github.com/berlinguyinca/spectra-hash.git
+```
+$ git clone git://github.com/berlinguyinca/spectra-hash.git
+```
 
 and running:
 
-    $ cd spectra-hash/python
-    $ python setup.py install
+```bash
+$ cd spectra-hash/python
+$ python setup.py install
+```
 
 Python 2.7, 3.3, 3.4 & 3.5 are supported.  Tests can be run using
 
@@ -25,25 +29,35 @@ Python 2.7, 3.3, 3.4 & 3.5 are supported.  Tests can be run using
 
 To generate a SPLASH for the following [mass spectrum of caffeine](http://www.massbank.jp/jsp/FwdRecord.jsp?id=PR100026) with MassBank identifier PR100026,
 
-    m/z        intensity
-    138.0641   71.59
-    195.0815   261.7
+```
+m/z        intensity
+138.0641   71.59
+195.0815   261.7
+```
 
 begin by importing:
 
-    from splash import Spectrum, SpectrumType, Splash
+```python
+from splash import Spectrum, SpectrumType, Splash
+```
 
 Create a `Spectrum` object from a string representation
 
-    spectrum = Spectrum('138.0641:71.59 195.0815:261.7', SpectrumType.MS)
+```python
+spectrum = Spectrum('138.0641:71.59 195.0815:261.7', SpectrumType.MS)
+```
 
 or from a list of ion-intnsity pairs
 
-    spectrum = Spectrum([(138.0641, 71.59), (195.0815, 261.7)], SpectrumType.MS)
+```python
+spectrum = Spectrum([(138.0641, 71.59), (195.0815, 261.7)], SpectrumType.MS)
+```
 
 Finally, call the SPLASHer
 
-    Splash().splash(spectrum)
+```python
+Splash().splash(spectrum)
+```
 
 ### Command-line tool
 
@@ -51,16 +65,21 @@ The pySPLASH repository also contains a command-line tool `pySplash.py` to quick
 
 A file containing mass spectral entries on each line matching the format `identifier,spectrum`:
 
-    PR100026,138.0641:71.59 195.0815:261.7
+```
+PR100026,138.0641:71.59 195.0815:261.7
+```
 
 can be processed with
-
-    $ python bin/pySplash.py -o1 -s2 -T, -t MS /path/to/spectrum_file
-    splash10-0002-0900000000-b112e4e059e1ecf98c5f,PR100026,138.0641:71.59 195.0815:261.7
+```
+$ python bin/pySplash.py -o1 -s2 -T, -t MS /path/to/spectrum_file
+splash10-0002-0900000000-b112e4e059e1ecf98c5f,PR100026,138.0641:71.59 195.0815:261.7
+```
 
 The SPLASH is added as a new first column with the rest of the data exported in the same order as in the input file.  Note that Please to the usage documentation for more information about the command-line options:
 
-    python bin/pySplash.py -h
+```
+python bin/pySplash.py -h
+```
 
 ## Credits
 

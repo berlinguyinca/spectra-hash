@@ -23,17 +23,23 @@ On OS X Yosemite (10.10) or older, Xcode 5.0+ required.  Compiling will generate
 
 On OSX El Capitan (10.11), the OpenSSL headers were removed, and so we recommend installing OpenSSL with [Homebrew](brew.sh).
 
-    brew update
-    brew install openssh
+```bash
+brew update
+brew install openssh
+```
 
 Then, either force Homebrew create symlinks to `/usr/local`
 
-    brew link openssl --force
-    make
+```bash
+brew link openssl --force
+make
+```
 
 or add the OpenSSL link/library paths as environmental variables
 
-    EXTRA_CPPFLAGS=-I/usr/local/opt/openssl/include EXTRA_LDFLAGS=-L/usr/local/opt/openssl/lib make
+```
+EXTRA_CPPFLAGS=-I/usr/local/opt/openssl/include EXTRA_LDFLAGS=-L/usr/local/opt/openssl/lib make
+```
 
 This will generate a binary named `splash`
 
@@ -46,14 +52,18 @@ The compiled version of SPLASH++ is a command-line tool for efficient processing
 
 To generate the SPLASH of the following [mass spectrum of caffeine](http://www.massbank.jp/jsp/FwdRecord.jsp?id=PR100026) with MassBank identifier PR100026,
 
-    m/z        intensity
-    138.0641   71.59
-    195.0815   261.7
+```
+m/z        intensity
+138.0641   71.59
+195.0815   261.7
+```
 
 can be processed with
 
-    $ echo "PR100026,138.0641:71.59 195.0815:261.7" | ./splash
-    splash10-0002-0900000000-b112e4e059e1ecf98c5f,PR100026,138.0641:71.59 195.0815:261.7
+```
+$ echo "PR100026,138.0641:71.59 195.0815:261.7" | ./splash
+splash10-0002-0900000000-b112e4e059e1ecf98c5f,PR100026,138.0641:71.59 195.0815:261.7
+```
 
 The SPLASH is added as a new column with the given identifier and spectrum following.  SPLASH++ can process multiple lines of standard input, with each line corresponding to a mass spectral entry matching the format  `identifier,spectrum`.
     
@@ -61,19 +71,25 @@ The SPLASH is added as a new column with the given identifier and spectrum follo
 
 After adding the SPLASH++ to your project, include the header in your code:
 
-    #include "splash/splash.hpp"
+```cpp
+#include "splash/splash.hpp"
+```
 
 The `splashIt` function supports two mass spectral representations as parameters: a single-line string representation:
 
-    std::string splash = splashIt("138.0641:71.59 195.0815:261.7", '1');
+```cpp
+std::string splash = splashIt("138.0641:71.59 195.0815:261.7", '1');
+```
 
 or a vector of pairs of m/z and intensity values as double-precision floats:
 
-    std::vector<std::pair<double, double> > spectrum;
-    spectrum.push_back(std::make_pair(138.0641, 71.59));
-    spectrum.push_back(std::make_pair(195.0815, 261.7));
+```cpp
+std::vector<std::pair<double, double> > spectrum;
+spectrum.push_back(std::make_pair(138.0641, 71.59));
+spectrum.push_back(std::make_pair(195.0815, 261.7));
 
-    std::string splash = splashIt(spectrum, '1');
+std::string splash = splashIt(spectrum, '1');
+```
 
 The `'1'` given as the second parameter indicates the MS SPLASH type.  This will be improved in later iterations of SPLASH++.
 

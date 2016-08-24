@@ -3,7 +3,7 @@
 from setuptools import setup
 
 
-setup(name = 'Splash (Spectrum Hash)',
+setup(name = 'splash',
       version = '1.0',
       description = 'Python implementation of the SPLASH spectral hash algorithm',
       author='Sajjan Singh Mehta',

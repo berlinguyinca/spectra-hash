@@ -14,7 +14,7 @@ This repository contains:
 
 SPLASH has been published in Nature Biotechnology.  If using SPLASH, please cite:
 
-> Wohlgemuth, Gert, et al., *SPLASH, a Hashed Identifier for Mass Spectra*. Nature Biotechnology **34**, 1099-101 (2016). [doi:10.1038/nbt.3689](http://www.nature.com/nbt/journal/v34/n11/full/nbt.3689.html)
+> Wohlgemuth, G, et al., *SPLASH, a Hashed Identifier for Mass Spectra*. Nature Biotechnology **34**, 1099-101 (2016). [doi:10.1038/nbt.3689](http://www.nature.com/nbt/journal/v34/n11/full/nbt.3689.html)
 
 ## Contents
 

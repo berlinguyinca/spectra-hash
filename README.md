@@ -12,6 +12,9 @@ This repository contains:
 * A Java validation tool 
 * A web service with REST endpoints written in Java (accessible at http://splash.fiehnlab.ucdavis.edu) with Docker build files
 
+SPLASH has been published in Nature Biotechnology.  If using SPLASH, please cite:
+
+> Wohlgemuth, Gert, et al., *SPLASH, a Hashed Identifier for Mass Spectra*. Nature Biotechnology **34**, 1099-101 (2016). [doi:10.1038/nbt.3689](http://www.nature.com/nbt/journal/v34/n11/full/nbt.3689.html)
 
 ## Contents
 

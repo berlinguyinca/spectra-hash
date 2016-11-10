@@ -1,352 +1,143 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8"/>
-    <title>Splash</title>
+# SPLASH
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+## The Spectral Hash
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+The SPLASH (SPectraL hASH) is an unambiguous, database-independent spectral identifier, just as the [InChIKey](http://www.inchi-trust.org/technical-faq/#2.7) is designed to serve as a unique identifier for chemical structures.  It contains separate blocks that define different layers of information, separated by dashes. For example, the full SPLASH of a [caffeine mass spectrum](http://massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026) above is `splash10-0002-0900000000-b112e4e059e1ecf98c5f`. The first block is the SPLASH identifier, the second and third are summary blocks, and the fourth is the unique hash block.
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-</head>
-<body>
+This repository contains:
 
-<div class="container">
-    <div class="header clearfix">
-        <h3 class="text-muted">SPLASH - The Spectral Hash Identifier</h3>
-    </div>
+*  The current reference implementations for the SPLASH written in Java
+* Additional implementations in C++, Python, C# and R
+* API wrappers in Scala and JavaScript
+* A Java validation tool 
+* A web service with REST endpoints written in Java (accessible at http://splash.fiehnlab.ucdavis.edu) with Docker build files
 
-    <div class="jumbotron">
-        <h1>SPLASH</h1>
-        <p class="lead">Welcome to the SPLASH Validation and Computational Page</p>
-    </div>
+SPLASH has been published in [Nature Biotechnology](http://www.nature.com/nbt/journal/v34/n11/full/nbt.3689.html).  If using SPLASH, please cite:
 
-    <div class="row marketing">
-        <div class="col-lg-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    What is the SPLASH?
-                </div>
-                <div class="panel-body">
-                    <p>
-                        The SPLASH is an unambiguous, database-independent spectral identifier, just as the <a href="http://www.inchi-trust.org/technical-faq/#2.7">InChIKey</a> is designed to serve as a unique identifier for chemical structures.  It contains separate blocks that define different layers of information, separated by dashes. For example, the full SPLASH of a <a href="http://massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026">caffeine mass spectrum</a> above is <code>splash10-0002-0900000000-b112e4e059e1ecf98c5f</code>. The first block is the SPLASH identifier, the second and third are summary blocks, and the fourth is the unique hash block.
-                    </p>
+> Wohlgemuth, Gert, et al., *SPLASH, a Hashed Identifier for Mass Spectra*. Nature Biotechnology **34**, 1099-101 (2016).
 
-                    <p>
-                        The SPLASH began as the <a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">
-                        MoNA (Massbank of North America)</a> hash, designed to identify duplicate spectra within the database.  This idea developed further during the 2015 Metabolomics conference, where the SPLASH collaboration was formed.  Currently, the specification has been formalized for mass spectrometry data.  Additional specifications for IR, UV and NMR spectrometry are planned.
-                    </p>
+## Contents
 
-                    <p>
-                        If you would like to contribute to the development of the SPLASH, report an issue, or suggest improvements, please visit our <a href="https://github.com/berlinguyinca/spectra-hash">GitHub Repository</a> and create a new Issue or Pull Request.
-                    </p>
-                </div>
-            </div>
+* [Java API](#java-api)
+* [C# API](csharp)
+* [C++ API](cpp)
+* [Python API](python)
+* [R API](splashR)
+* [JavaScript API](javascript)
+* [Scala API](scala)
+* [Validation Tool](#validation-tool)
+* [REST Service](#rest-service)
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    What can I use SPLASH for?
-                </div>
-                <div class="panel-body">
-                    <p>
-                        The primary usage of the SPLASH is as a database identifier for unique spectra, and can thereby be used as an easy lookup tool and for cross-reference identification. It also allows for coarse similarity comparisons without any knowledge of the spectra themselves. We hope that developers will adopt the SPLASH into their systems so that we may easily discover overlap between mass spectral databases and begin to use it to reference spectra between publications.
-                    </p>
-                </div>
-            </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Available implementations of the SPLASH algorithm:
-                </div>
-                <div class="panel-body">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Language</th>
-                            <th>Source</th>
-                            <th>Validated</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Java</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        <tr>
-                            <td>C++</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        <tr>
-                            <td>Python</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        <tr>
-                            <td>C#</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        <tr>
-                            <td>R</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        <tr>
-                            <td>Ruby</td>
-                            <td><a href="https://github.com/wilsonmichael/spectrum_hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
 
-                        <tr>
-                            <td>Scala</td>
-                            <td><a href="http://github.com/berlinguyinca/spectra-hash" target="_blank">source code</a>
-                            </td>
-                            <td> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Where can I find the SPLASH specification?
-                </div>
-                <div class="panel-body">
-                    <p>
-                        The SPLASH specification is currently under review for publication.  If you wish to implement
-                        the SPLASH or learn more about the algorithm, please refer to the provided reference implementations.
-                    </p>
-                </div>
-            </div>
+## Java API
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Who is using SPLASH?
-                </div>
-                <div class="panel-body">
-                    <p>
-                       Currently the following software packages and databases have implemented the SPLASH:
-                    </p>
+### Building
 
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><a href="http://mona.fiehnlab.ucdavis.edu" target="_blank">MoNA (MassBank of North America)</a></td>
-                            <td>database/repository</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://massbank.jp" target="_blank">MassBank</a></td>
-                            <td>database/repository</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://hmdb.ca" target="_blank">HMDB (Human Metabolome Database)</a></td>
-                            <td>database</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://gnps.ucsd.edu/" target="_blank">GNPS (Global National Products Social Molecular Networking)</a></td>
-                            <td>database</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://www.ebi.ac.uk/metabolights/" target="_blank">MetaboLights</a></td>
-                            <td>database</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://www.mzcloud.org/" target="_blank">mzCloud</a></td>
-                            <td>database</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/HUPO-PSI/psi-ms-CV" target="_blank">HUPO Mass Spectrometry Ontology</a></td>
-                            <td>mass spectrometry controlled vocabulary</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://fiehnlab.ucdavis.edu/projects/binbase_setupx" target="_blank">BinBase</a></td>
-                            <td>database/software</td>
-                        </tr>
-                        <tr>
-                            <td>BinView</td>
-                            <td>software</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html" target="_blank">MS-DIAL</a></td>
-                            <td>software</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://msdk.github.io/" target="_blank">MSDK (Mass Spectrometry Development Kit)</a></td>
-                            <td>programming framework</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://mzmine.github.io/" target="_blank">MZmine</a></td>
-                            <td>programming framework</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://bioconductor.org/packages/release/bioc/html/RMassBank.html" target="_blank">RMassBank</a></td>
-                            <td>MS Processing Workflow</td>
-                        </tr>
-                        <tr>
-                            <td><a href="http://bioclipse.net/" target="_blank">Bioclipse</a></td>
-                            <td>programming framework</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+To build the project, run all tests and install the SPLASH jar files in the local Maven repository, simply run:
 
-        <div class="col-lg-8">
+    mvn clean install
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    SPLASH Your Spectra
-                </div>
-                <div class="panel-body">
-                    <p>To 'SPLASH' your spectra easily, we provide you with a simple REST api, this can be easily
-                        utilized from any programming language and so allows you to compute the splash as easily as
-                        possible, without the need of providing your own implementation</p>
 
-                    <h5>Request URL:</h5>
+### Maven Dependency
 
-                    <blockquote>
-                        http://splash.fiehnlab.ucdavis.edu/splash/it
-                        <footer>the request needs to be done, as POST with a JSON load.</footer>
-                    </blockquote>
+The reference implementation jar file is available from the [Fiehn Lab Public Maven Repository](http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/core/1.8/core-1.8.jar):
 
-                    <h5>Example load</h5>
-                    <pre>
-{
-    "ions":
-        [
-                {
-                    "mass": 100,
-                    "intensity": 1
-                },
-                {
-                    "mass": 101,
-                    "intensity": 2
-                },
-                {
-                    "mass": 102,
-                    "intensity": 3
-                }
-         ],
-         "type": "MS"
-}
-                    </pre>
+    <repository>
+        <id>releases</id>
+        <name>Fiehnlab Public Maven Repository</name>
+        <url>http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public</url>
+    </repository>
 
-                    <p>The type codes are as followed (please note that at this time, only the MS SPLASH is available):</p>
+To use SPLASH in a Maven project, add the following section to the project's `pom.xml` file:
 
-                    <ol>
-                        <li>MS</li>
-                        <li>NMR</li>
-                        <li>UV</li>
-                        <li>IR</li>
-                        <li>RAMAN</li>
-                    </ol>
+    <dependency>
+        <groupId>edu.ucdavis.fiehnlab.splash</groupId>
+        <artifactId>core</artifactId>
+        <version>1.8</version>
+    </dependency>
 
-                    <h5>Example response</h5>
 
-                    <p>Upon complication of your request, your response should be a SPLASH code:</p>
-                    <pre>splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f</pre>
-                </div>
-            </div>
+### Usage
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Validate Your SPLASH Implementation
-                </div>
-                <div class="panel-body">
-                    <p>
-                        Since we plan on only maintaining a limited set of reference implementation, we are providing a simple REST-based tool to easily validate your implementation against the reference implementation. This does not mean you should not developed your own suite of test's to ensure your API works as desired.
-                    </p>
+To generate a SPLASH for the following [mass spectrum of caffeine](http://www.massbank.jp/jsp/FwdRecord.jsp?id=PR100026) with MassBank identifier PR100026,
 
-                    <p>
-                        The main advantage of the validation api is to test that your SPLASH implementation produces results consistent with the reference implementation
-                    </p>
+```
+m/z        intensity
+138.0641   71.59
+195.0815   261.7
+```
 
-                    <h5>Request URL:</h5>
+build a `Spectrum` object from a list of ion-intnsity pairs and use the `SplashFactory` to utilize the default SPLASHer:
 
-                    <blockquote>http://splash.fiehnlab.ucdavis.edu/splash/validate
-                        <footer>the request needs to be done, as POST with a JSON load.</footer>
-                    </blockquote>
+```java
+Splash splash = SplashFactory.create();
+Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(138.0641, 71.59), new Ion(195.0815, 261.7)), SpectraType.MS);
+String splash = splash.splashIt(spectrum);
+```
 
-                    <h5>Example load</h5>
+Alternatively, you can also utilize the `SplashUtil` class to directly SPLASH a spectrum in a string representation:
 
-                    <p>
-                        This is an example for a validate object, send to the validation system. Please be aware that you need to provide all the fields.
-                    </p>
-            <pre>
-{
-    "spectrum": {
-        "ions":
-            [
-                {
-                    "mass": 100,
-                    "intensity": 1
-                },
-                {
-                    "mass": 101,
-                    "intensity": 2
-                },
-                {
-                    "mass": 102,
-                    "intensity": 3
-                }
-            ],
-            "type": "MS"
-    },
-    "splash":"splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
-}
-            </pre>
+```java
+String splash = SplashUtil.splash("138.0641:71.59 195.0815:261.7", SpectraType.MS);
+```
 
-                    <h5>Example response</h5>
+We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplashListener to your Splash instance or alternativly using the util like this
 
-                    <p>The following is an example validation response:</p>
+```java
+String splash = SplashUtils.splash("138.0641:71.59 195.0815:261.7", SpectraType.MS, new SplashListener() {
+    @Override
+    public void eventReceived(SplashingEvent e) {}
 
-                    <pre>
-{
-    "request": {
-        "spectrum": {
-            "origin": None,
-            "ions": [
-                {"mass": 100.0, "intensity": 1.0},
-                {"mass": 101.0, "intensity": 2.0},
-                {"mass": 102.0, "intensity": 3.0}
-            ],
-            "type": "MS"
-        },
-        "splash": "splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
-    },
-    "validationSuccessful": true,
-    "referenceSplash": "splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f"
- }
-                    </pre>
-                </div>
-            </div>
-        </div>
-    </div>
-    <footer class="footer">
-        <p>&copy; 2016 SPLASH Collaboration</p>
-    </footer>
-</div>
-<!-- /container -->
+    @Override
+    public void complete(Spectrum spectrum, String splash) {}
+});
+```
 
-</body>
-</html>
+
+## Validation Tool
+
+In addition to the reference implementations, we provide a simple validation tool that is used to ensure consistent and accurate SPLASH generation between tools and implementations.  The latest jar file is available from the [Fiehn Lab Public Maven Repository](http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.8/validation-1.8.jar).  
+
+to run this tool (from the sources) please clone and build the project and afterwards run
+
+```
+java -jar validation-1.8.jar
+```
+
+For example, to validate a file against thr reference implementation, run the following from the project root:
+
+```
+java -jar validation/target/validation-1.8.jar -c -s 2 -t ms ./base-dataset/spectra/notsplashed/test-set-v1.csv base-dataset/spectra/test-set-with-splash-v1.csv
+```
+
+The specified flags indicate:
+
+* k = column number of the generated SPLASH
+* o = column number of the spectrum ID/origin
+* s = column number of the full mass spectrum in single-line string representation
+* t = type of spectrum to SPLASH (default: MS)
+* T = column delimiter
+* X = enable debug messages
+
+The format for single-line string spectral representation follows:
+
+```
+ion:intensity ion:intensity ...
+```
+
+## REST Service
+
+The documentation for the REST service is available as a dedicated index page  once you start the REST server using:
+
+```
+java -jar web/target/web-1.8.jar
+```
+
+If you like to use the official REST API, you can find it at: http://splash.fiehnlab.ucdavis.edu
+
+
+# Contributing
+
+If you would like to contribute to this project, please feel submit issues or create a pull request. 

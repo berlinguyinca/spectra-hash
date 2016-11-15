@@ -13,7 +13,6 @@
 
 using namespace std;
 
-
 // Version
 const char SPLASH_VERSION = '0';
 
@@ -22,10 +21,12 @@ const bool DEBUG = false;
 
 // Precision of floating point operations and representations
 const double MZ_PRECISION = 6;
-const long long MZ_PRECISION_FACTOR = static_cast<long long>(pow(10, MZ_PRECISION));
+const long long MZ_PRECISION_FACTOR =
+    static_cast<long long>(pow(10, MZ_PRECISION));
 
 const double INTENSITY_PRECISION = 0;
-const long long INTENSITY_PRECISION_FACTOR = static_cast<long long>(pow(10, INTENSITY_PRECISION));
+const long long INTENSITY_PRECISION_FACTOR =
+    static_cast<long long>(pow(10, INTENSITY_PRECISION));
 
 const double EPS = 1.0e-6;
 
@@ -51,13 +52,10 @@ const int SIMILARITY_LENGTH = 10;
 const int SIMILARITY_BIN_SIZE = 100;
 
 // Map to convert up to base 36
-const char BASE_36_MAP[] = {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c',
-    'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-};
-
-
+const char BASE_36_MAP[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
+                            '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+                            'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
+                            'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
 string sha256(const string s) {
     unsigned char digest[SHA256_DIGEST_LENGTH];
@@ -69,13 +67,12 @@ string sha256(const string s) {
 
     stringstream ss;
 
-    for(int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
         ss << hex << setw(2) << setfill('0') << (int)digest[i];
     }
 
     return ss.str();
 }
-
 
 // http://stackoverflow.com/a/236803
 vector<string> split(const string &s, char delimeter) {
@@ -83,72 +80,79 @@ vector<string> split(const string &s, char delimeter) {
     stringstream ss(s);
     string element;
 
-    while(getline(ss, element, delimeter)) {
+    while (getline(ss, element, delimeter)) {
         elements.push_back(element);
     }
 
     return elements;
 }
 
-
-bool ionPairMzComparator(const pair<double, double> a, const pair<double, double> b) {
-    if(abs(a.first - b.first) < EPS) {
+bool ionPairMzComparator(const pair<double, double> a,
+                         const pair<double, double> b) {
+    if (abs(a.first - b.first) < EPS) {
         return a.second > b.second;
     } else {
         return a.first < b.first;
     }
 }
 
-
-bool ionPairIntensityComparator(const pair<double, double> a, const pair<double, double> b) {
-    if(abs(a.second - b.second) < EPS) {
+bool ionPairIntensityComparator(const pair<double, double> a,
+                                const pair<double, double> b) {
+    if (abs(a.second - b.second) < EPS) {
         return a.first < b.first;
     } else {
         return a.second > b.second;
     }
 }
 
-
-string buildInitialBlock(vector<pair<double, double> > &spectrum, char spectrum_type) {
+string buildInitialBlock(const vector<pair<double, double> > &spectrum,
+                         char spectrum_type) {
     stringstream ss;
     ss << "splash" << spectrum_type << SPLASH_VERSION;
     return ss.str();
 }
 
-string encodeSpectrum(vector<pair<double, double> > &spectrum, char spectrum_type) {
+string encodeSpectrum(const vector<pair<double, double> > &input,
+                      char spectrum_type) {
+    vector<pair<double, double> > spectrum = input;
     sort(spectrum.begin(), spectrum.end(), ionPairMzComparator);
 
     unsigned int i = 0;
     stringstream ss;
 
-    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-        ss << static_cast<long long>(((*it).first + EPS_CORRECTION) * MZ_PRECISION_FACTOR)
+    for (vector<pair<double, double> >::const_iterator it = spectrum.begin();
+         it != spectrum.end(); ++it) {
+        ss << static_cast<long long>(((*it).first + EPS_CORRECTION) *
+                                     MZ_PRECISION_FACTOR)
            << ION_PAIR_SEPARATOR
-           << static_cast<long long>(((*it).second + EPS_CORRECTION) * INTENSITY_PRECISION_FACTOR);
+           << static_cast<long long>(((*it).second + EPS_CORRECTION) *
+                                     INTENSITY_PRECISION_FACTOR);
 
-        if(++i < spectrum.size()) {
+        if (++i < spectrum.size()) {
             ss << ION_SEPARATOR;
         }
     }
 
-    if(DEBUG) {
+    if (DEBUG) {
         cerr << "Encoded Spectrum: '" << ss.str() << "'" << endl;
     }
 
     return sha256(ss.str()).substr(0, MAX_HASH_CHARATERS_ENCODED_SPECTRUM);
 }
 
-
-string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum_type, int base, int length, int bin_size) {
-    double* histogram = new double[length]();
+string calculateHistogram(const vector<pair<double, double> > &spectrum,
+                          char spectrum_type, int base, int length,
+                          int bin_size) {
+    vector<double> histogram(length);
     double maxIntensity = 0;
 
     // Bin ions using the histogram wrapping strategy
-    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+    for (vector<pair<double, double> >::const_iterator it = spectrum.begin();
+         it != spectrum.end(); ++it) {
         int idx = static_cast<int>((*it).first / bin_size) % length;
         histogram[idx] += (*it).second;
 
-        if(histogram[idx] > maxIntensity)
+        if (histogram[idx] > maxIntensity)
             maxIntensity = histogram[idx];
     }
 
@@ -159,7 +163,7 @@ string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum
 
     stringstream ss;
 
-    for(int i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
         int bin = static_cast<int>(EPS_CORRECTION + histogram[i]);
         ss << BASE_36_MAP[bin];
     }
@@ -168,38 +172,39 @@ string calculateHistogram(vector<pair<double, double> > &spectrum, char spectrum
     return ss.str();
 }
 
-
-vector<pair<double, double> > filterSpectrum(vector<pair<double, double> > &spectrum, unsigned int topIons, double basePeakPercentage) {
-    vector<pair<double, double> > filteredSpectrum;
+vector<pair<double, double> >
+filterSpectrum(const vector<pair<double, double> > &spectrum,
+               unsigned int topIons, double basePeakPercentage) {
+    vector<pair<double, double> > filteredSpectrum = spectrum;
     double basePeakIntensity = 0;
 
     // Populate the filtered spectrum
-    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
-        filteredSpectrum.push_back(*it);
-
-        if((*it).second > basePeakIntensity)
+    for (vector<pair<double, double> >::const_iterator it = spectrum.begin();
+         it != spectrum.end(); ++it) {
+        if ((*it).second > basePeakIntensity)
             basePeakIntensity = (*it).second;
     }
 
-    if(basePeakPercentage >= 0) {
+    if (basePeakPercentage >= 0) {
         vector<pair<double, double> >::iterator it = filteredSpectrum.begin();
 
-        while(it != filteredSpectrum.end()) {
-            if((*it).second + EPS_CORRECTION >= basePeakPercentage * basePeakIntensity)
+        while (it != filteredSpectrum.end()) {
+            if ((*it).second + EPS_CORRECTION >=
+                basePeakPercentage * basePeakIntensity)
                 ++it;
             else
                 it = filteredSpectrum.erase(it);
         }
     }
 
-    if(topIons > 0 && filteredSpectrum.size() > topIons) {
-        sort(filteredSpectrum.begin(), filteredSpectrum.end(), ionPairIntensityComparator);
+    if (topIons > 0 && filteredSpectrum.size() > topIons) {
+        sort(filteredSpectrum.begin(), filteredSpectrum.end(),
+             ionPairIntensityComparator);
         filteredSpectrum.resize(topIons);
     }
 
     return filteredSpectrum;
 }
-
 
 string translateBase(string number, int initialBase, int finalBase, int fill) {
     long int n = strtol(number.c_str(), NULL, initialBase);
@@ -207,13 +212,13 @@ string translateBase(string number, int initialBase, int finalBase, int fill) {
     stringstream ss;
     int length = 0;
 
-    while(n > 0) {
+    while (n > 0) {
         ss << BASE_36_MAP[n % finalBase];
         n /= finalBase;
         length++;
     }
 
-    for(int i = 0; i < fill - length; i++) {
+    for (int i = 0; i < fill - length; i++) {
         ss << "0";
     }
 
@@ -223,37 +228,42 @@ string translateBase(string number, int initialBase, int finalBase, int fill) {
     return s;
 }
 
-
-
-string splashIt(vector<pair<double, double> > &spectrum, char spectrum_type) {
+string splashIt(const vector<pair<double, double> > &spectrum,
+                char spectrum_type) {
     stringstream ss;
 
-    vector<pair<double, double> > filteredSpectrum = filterSpectrum(spectrum, 10, 0.1);
-    
+    vector<pair<double, double> > filteredSpectrum =
+        filterSpectrum(spectrum, 10, 0.1);
+
     ss << buildInitialBlock(spectrum, spectrum_type) << '-';
-    ss << translateBase(
-        calculateHistogram(filteredSpectrum, spectrum_type, PREFILTER_BASE, PREFILTER_LENGTH, PREFILTER_BIN_SIZE),
-        PREFILTER_BASE, 36, 4) << '-';
-    ss << calculateHistogram(spectrum, spectrum_type, SIMILARITY_BASE, SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE) << '-';
+    ss << translateBase(calculateHistogram(filteredSpectrum, spectrum_type,
+                                           PREFILTER_BASE, PREFILTER_LENGTH,
+                                           PREFILTER_BIN_SIZE),
+                        PREFILTER_BASE, 36, 4)
+       << '-';
+    ss << calculateHistogram(spectrum, spectrum_type, SIMILARITY_BASE,
+                             SIMILARITY_LENGTH, SIMILARITY_BIN_SIZE)
+       << '-';
     ss << encodeSpectrum(spectrum, spectrum_type);
 
     return ss.str();
 }
 
-string splashIt(string spectrum_string, char spectrum_type) {
+string splashIt(const string &spectrum_string, char spectrum_type) {
     // Convert spectrum to a vector of ion pairs and find the max intensity
     vector<string> ion_strings = split(spectrum_string, ' ');
     vector<pair<double, double> > spectrum;
 
     double maxIntensity = 0;
 
-    for(vector<string>::iterator it = ion_strings.begin(); it != ion_strings.end(); ++it) {
+    for (vector<string>::iterator it = ion_strings.begin();
+         it != ion_strings.end(); ++it) {
         size_t delim_pos = (*it).find(':');
 
         double mz = atof((*it).substr(0, delim_pos).c_str());
         double intensity = atof((*it).substr(delim_pos + 1).c_str());
 
-        if(intensity > maxIntensity)
+        if (intensity > maxIntensity)
             maxIntensity = intensity;
 
         // Store ion as a pair object, with 'first' corresponding to m/z
@@ -262,10 +272,11 @@ string splashIt(string spectrum_string, char spectrum_type) {
     }
 
     // Normalize spectrum
-    for(vector<pair<double, double> >::iterator it = spectrum.begin(); it != spectrum.end(); ++it) {
+    for (vector<pair<double, double> >::iterator it = spectrum.begin();
+         it != spectrum.end(); ++it) {
         (*it).second = (*it).second / maxIntensity * RELATIVE_INTENSITY_SCALE;
     }
-    
+
     // Return the calculated splash id
     return splashIt(spectrum, '1');
 }

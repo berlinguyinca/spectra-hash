@@ -17,3 +17,6 @@ clean:
 test:
 	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(TARGET) -I src -o $(TARGET)_test src/$(TARGET).cpp tests/test_$(TARGET).cpp $(LDLIBS) && \
 	./$(TARGET)_test
+
+format:
+	clang-format -style="{BasedOnStyle: llvm, IndentWidth: 4, Standard: Cpp03}" -i src/splash*

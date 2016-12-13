@@ -1,0 +1,77 @@
+citHeader("Please cite the SPLASH publication in Nature Biotechnology:")
+citEntry(entry = "Article",
+  author = personList(
+    person(
+      given="G",family="Wohlgemuth"
+    ),
+    person(
+      given="SS",family="Mehta"
+    ),
+    person(
+      given="RF",family="Meija"
+    ),
+    person(
+      given="S",family="Neumann"
+    ),
+    person(
+      given="D",family="Pedrosa"
+    ),
+    person(
+      given="T",family="Pluskal"
+    ),
+    person(
+      given="EL",family="Schymanski"
+    ),
+    person(
+      given="EL",family="Willighagen"
+    ),
+    person(
+      given="M",family="Wilson"
+    ),
+    person(
+      given="DS",family="Wishart"
+    ),
+    person(
+      given="M",family="Arita"
+    ),
+    person(
+      given="PC",family="Dorrestein"
+    ),
+    person(
+      given="N",family="Bandeira"
+    ),
+    person(
+      given="M",family="Wang"
+    ),
+    person(
+      given="T",family="Schulze"
+    ),
+    person(
+      given="RM",family="Salek"
+    ),
+    person(
+      given="C",family="Steinbeck"
+    ),
+    person(
+      given="VC",family="Nainala"
+    ),
+    person(
+      given="R",family="Mistrik"
+    ),
+    person(
+      given="T",family="Nishioka"
+    ),
+    person(
+      given="O",family="Fiehn"
+    )
+  ),
+  journal = "Nature Biotechnology",
+  month = 11,
+  pages = "1099--1101",
+  volume = 34,
+  number = 11,
+  title = "{SPLASH}, a hashed identifier for mass spectra",
+  year = 2016,
+  textVersion = "Wohlgemuth, G., Mehta, S. S., Mejia, R. F., Neumann, S., Pedrosa, D., Pluskal, T., Schymanski, E. L., Willighagen, E. L., Wilson, M., Wishart, D. S., Arita, M., Dorrestein, P. C., Bandeira, N., Wang, M., Schulze, T., Salek, R. M., Steinbeck, C., Nainala, V. C., Mistrik, R., Nishioka, T., Fiehn, O., Nov. 2016. SPLASH, a hashed identifier for mass spectra. Nature Biotechnology 34 (11), 1099-1101",
+  note = "http://doi.org/10.1038/nbt.3689"
+)

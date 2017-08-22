@@ -13,12 +13,13 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="splash_spectrumForm.js"></script>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
         ga('create', 'UA-87692241-4', 'auto');
         ga('send', 'pageview');
     </script>
@@ -289,6 +290,38 @@
                     <pre>splash10-0udi-0900000000-f5bf6f6a4a1520a35d4f</pre>
                 </div>
             </div>
+            <div class="enter data">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Enter Your Spectra
+                    </div>
+                    <div class="panel-body">
+                        <h5>Format Examples:</h5>
+
+                        <blockquote>
+                            <font size="2"> 100:1 101:2 102:3 </font>
+                        </blockquote>
+                        <blockquote>
+                            <font size="2"> 100 1;101 2;102 3 </font>
+                        </blockquote>
+                        <blockquote>
+                            <font size="2"> 100 1 <br />101 2 <br />102 3 </font>
+                        </blockquote>
+
+                        <div class="form-group">
+                          <label for="spectrum" <h5>Enter Spectrum:</h5> </label>
+                          <textarea class="form-control" id="data" rows ="5"></textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-primary pull-right">Submit </button>
+                        <br> </br>
+
+                        <pre id="code"> <output id="response"></output> </pre>
+                    </div>
+               </div>
+             </div>
+
 
             <div class="panel panel-default">
                 <div class="panel-heading">

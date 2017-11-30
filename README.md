@@ -72,9 +72,9 @@ m/z        intensity
 build a `Spectrum` object from a list of ion-intnsity pairs and use the `SplashFactory` to utilize the default SPLASHer:
 
 ```java
-Splash splash = SplashFactory.create();
+Splash splashFactory = SplashFactory.create();
 Spectrum spectrum = new SpectrumImpl(Arrays.asList(new Ion(138.0641, 71.59), new Ion(195.0815, 261.7)), SpectraType.MS);
-String splash = splash.splashIt(spectrum);
+String splash = splashFactory.splashIt(spectrum);
 ```
 
 Alternatively, you can also utilize the `SplashUtil` class to directly SPLASH a spectrum in a string representation:

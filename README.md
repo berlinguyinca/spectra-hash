@@ -61,7 +61,7 @@ To use SPLASH in a Maven project, add the following section to the project's `po
 
 ### Usage
 
-To generate a SPLASH for the following [mass spectrum of caffeine](http://www.massbank.jp/jsp/FwdRecord.jsp?id=PR100026) with MassBank identifier PR100026,
+To generate a SPLASH for the following [mass spectrum of caffeine](http://www.massbank.eu/MassBank/jsp/FwdRecord.jsp?id=PR100026) with MassBank identifier PR100026,
 
 ```
 m/z        intensity

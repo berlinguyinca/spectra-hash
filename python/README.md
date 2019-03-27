@@ -23,6 +23,18 @@ Python 2.7, 3.3, 3.4 & 3.5 are supported.  Tests can be run using
 
     $ python setup.py test
 
+## Using is as python package dependency in PIP
+
+please create a file called requirements.txt and add the following line
+
+```
+git+git://github.com/berlinguyinca/spectra-hash.git@#egg=splash&subdirectory=python
+```
+
+afterwards execute a pip install -r requirements.txt
+
+and it should install splash into your local env.
+
 ## Usage
 
 ### API

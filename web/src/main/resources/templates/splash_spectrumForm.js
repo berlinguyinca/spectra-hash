@@ -5,6 +5,8 @@ $(document).ready(function(){
               var entry = $("#data").val();
               var ions = [];
 
+              entry = entry.trim();
+
               if(/^(\d+(\.\d+)?:\d+\s)*(\d+(\.\d+)?:\d+)$/.test(entry)){
 
               }
@@ -20,8 +22,8 @@ $(document).ready(function(){
                 $('#response').val("Incorrect Format\nEnter data in correct formatting")
                 $('#code').show();
                 return;
-
               }
+
               var mass = entry.match(/\d+(\.\d+)?:/g);
               var intensity = entry.match(/:\d+/g);
 
@@ -35,7 +37,7 @@ $(document).ready(function(){
               }
 
               $.ajax({
-                url:"http://splash.fiehnlab.ucdavis.edu/splash/it",
+                url:"https://splash.fiehnlab.ucdavis.edu/splash/it",
                 type: "POST",
                 data: JSON.stringify({"ions":	ions,
                 "type": "MS"}),
@@ -55,6 +57,5 @@ $(document).ready(function(){
                   $('#code').show();
                 }
                });
-
           });
  });

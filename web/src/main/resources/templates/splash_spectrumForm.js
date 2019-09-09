@@ -37,7 +37,7 @@ $(document).ready(function(){
               }
 
               $.ajax({
-                url:"https://splash.fiehnlab.ucdavis.edu/splash/it",
+                url:"/splash/it",
                 type: "POST",
                 data: JSON.stringify({"ions":	ions,
                 "type": "MS"}),

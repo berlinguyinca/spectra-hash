@@ -2,7 +2,7 @@
 #  this docker file creates a the complete image for deployment of the Splash id website and test framework
 ###
 
-FROM java
+FROM openjdk:8-jre
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq upgrade
 

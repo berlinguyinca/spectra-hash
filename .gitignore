@@ -7,6 +7,8 @@ target
 *.Rcheck/
 .DS_Store
 
+python/dist
+python/*.egg*
 __pycache__
 build
 *.pyc

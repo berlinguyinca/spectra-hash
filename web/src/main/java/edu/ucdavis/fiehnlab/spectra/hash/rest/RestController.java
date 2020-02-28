@@ -38,10 +38,14 @@ public class RestController {
         try {
             logger.info("received spectrum: " + spectrum);
 
+            if (spectrum.getIons().isEmpty()) {
+                throw new RuntimeException("spectrum must have at least one ion");
+            }
+
             String hash = spectraHash.splashIt(spectrum);
             logger.info("generated hash: " + hash);
-            return hash;
 
+            return hash;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);

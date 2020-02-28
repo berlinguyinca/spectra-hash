@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.ValidationResponse;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -31,9 +30,11 @@ public class RestController {
 
     /**
      * converts a spectra to the hash code
+     * @param spectrum
+     * @return splash code
      */
     @RequestMapping(value = "/splash/it", method = RequestMethod.POST)
-    public String convert(@RequestBody Spectrum spectrum) throws NoSuchAlgorithmException {
+    public String convert(@RequestBody Spectrum spectrum) {
 
         try {
             logger.info("received spectrum: " + spectrum);
@@ -64,9 +65,11 @@ public class RestController {
 
     /**
      * converts a spectra to the hash code
+     * @param validationRequest
+     * @return validation response
      */
     @RequestMapping(value = "/splash/validate", method = RequestMethod.POST)
-    public ValidationResponse validate(@RequestBody ValidationRequest validationRequest) throws NoSuchAlgorithmException {
+    public ValidationResponse validate(@RequestBody ValidationRequest validationRequest) {
 
         try {
             String reference = spectraHash.splashIt(validationRequest.getSpectrum());

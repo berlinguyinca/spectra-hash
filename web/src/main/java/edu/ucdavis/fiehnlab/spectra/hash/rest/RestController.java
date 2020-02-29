@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.spectra.hash.rest.dao.ValidationResponse;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -31,17 +30,23 @@ public class RestController {
 
     /**
      * converts a spectra to the hash code
+     * @param spectrum
+     * @return splash code
      */
     @RequestMapping(value = "/splash/it", method = RequestMethod.POST)
-    public String convert(@RequestBody Spectrum spectrum) throws NoSuchAlgorithmException {
+    public String convert(@RequestBody Spectrum spectrum) {
 
         try {
             logger.info("received spectrum: " + spectrum);
 
+            if (spectrum.getIons().isEmpty()) {
+                throw new RuntimeException("spectrum must have at least one ion");
+            }
+
             String hash = spectraHash.splashIt(spectrum);
             logger.info("generated hash: " + hash);
-            return hash;
 
+            return hash;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -60,9 +65,11 @@ public class RestController {
 
     /**
      * converts a spectra to the hash code
+     * @param validationRequest
+     * @return validation response
      */
     @RequestMapping(value = "/splash/validate", method = RequestMethod.POST)
-    public ValidationResponse validate(@RequestBody ValidationRequest validationRequest) throws NoSuchAlgorithmException {
+    public ValidationResponse validate(@RequestBody ValidationRequest validationRequest) {
 
         try {
             String reference = spectraHash.splashIt(validationRequest.getSpectrum());

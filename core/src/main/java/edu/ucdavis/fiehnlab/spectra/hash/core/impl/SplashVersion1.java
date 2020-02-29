@@ -184,13 +184,14 @@ public class SplashVersion1 implements Splash {
      * @return computed splash
      */
     public final String splashIt(Spectrum spectrum) {
+
         if (spectrum.getType() == SpectraType.MS) {
             for (Ion ion : spectrum.getIons()) {
                 if (ion.getIntensity() < 0) {
-                    throw new RuntimeException("ion's need to have an intensity larger than zero");
+                    throw new RuntimeException("ions need to have an intensity larger than zero");
                 }
                 if (ion.getMass() < 0) {
-                    throw new RuntimeException("ion's need to have an mass larger than zero");
+                    throw new RuntimeException("ions need to have an mass larger than zero");
                 }
             }
         }

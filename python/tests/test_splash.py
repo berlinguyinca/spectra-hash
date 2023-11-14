@@ -25,5 +25,21 @@ class TestSplash(unittest.TestCase):
 
         self.assertEqual(Splash().splash(Spectrum(spectrum_string, SpectrumType.MS)), splash_code)
 
+    def test_small_intensities(self):
+        # tests for the initial SPLASH issue reported in:
+        # https://github.com/MassBank/MassBank-data/issues/248
+        spectrum_string = "44.998:0.2 80.0261:0.1 93.0321:0.4 108.0227:0.3"
+        splash_code = 'splash10-052f-9300000000-5cd70311703e2423a1c5'
+
+        self.assertEqual(Splash().splash(Spectrum(spectrum_string, SpectrumType.MS)), splash_code)
+
+        # using MassBank scaled intensities
+        # should yield the same histogram blocks but different hash block
+        spectrum_string = "44.998:499 80.0261:249 93.0321:999 108.0227:749"
+        splash_code = 'splash10-052f-9300000000-a485843aed0475c0a1b9'
+
+        self.assertEqual(Splash().splash(Spectrum(spectrum_string, SpectrumType.MS)), splash_code)
+
+
 if __name__ == '__main__':
     unittest.main()

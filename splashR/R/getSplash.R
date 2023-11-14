@@ -96,11 +96,10 @@ getBlockHist <- function(peaks, histBase, histLength, binSize) {
     summedintensities <- tapply(peaks[,2], binindex, sum)
     wrappedbinindex <- unique(binindex) %% histLength
     wrappedintensities <- tapply(summedintensities, wrappedbinindex, sum)
-    normalisedintensities <- as.integer(wrappedintensities/max(wrappedintensities)*(histBase-1))
+    normalisedintensities <- as.integer(EPS_CORRECTION + (histBase-1) * wrappedintensities / max(wrappedintensities))
     
     wrappedhist[sort(unique(wrappedbinindex))+1] <- normalisedintensities
     paste(integer2base36(wrappedhist), collapse="")
-  
 }
 
 getSplash <- function(peaks) {

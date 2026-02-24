@@ -17,3 +17,5 @@ build
 cpp/splash
 cpp/splash_test
 *.gch
+
+*.jar

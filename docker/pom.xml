@@ -17,6 +17,14 @@
             <version>1.8</version>
         </dependency>
     </dependencies>
+
+
+    <properties>
+        <!-- default behavior when running mvn clean install -->
+        <docker.tag>latest</docker.tag>
+        <docker.push>no</docker.push>
+    </properties>
+
     <build>
         <plugins>
             <!-- builds the actual docker image -->
@@ -29,9 +37,10 @@
                         <configuration>
                             <target>
                                 <exec executable="bash">
-                                    <arg line="build.sh push" />
+                                    <arg value="build.sh"/>
+                                    <arg value="${docker.push}"/>
+                                    <arg value="${docker.tag}"/>
                                 </exec>
-
                             </target>
                         </configuration>
                         <goals>

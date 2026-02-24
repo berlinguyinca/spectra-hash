@@ -2,7 +2,7 @@
 #  this docker file creates a the complete image for deployment of the Splash id website and test framework
 ###
 
-FROM eclipse-temurin:8-jre-jammy
+FROM eclipse-temurin:8-jre-focal
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq upgrade
 

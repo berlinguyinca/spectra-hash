@@ -2,7 +2,7 @@
 #  this docker file creates a the complete image for deployment of the Splash id website and test framework
 ###
 
-FROM openjdk:8-jre
+FROM eclipse-temurin:8-jre-jammy
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq upgrade
 
@@ -28,7 +28,7 @@ RUN \
       links2 \
       ant
 
-ADD target/splash.jar /opt/splash.jar
+ADD splash.jar /opt/splash.jar
 
 RUN rm /etc/nginx/sites-enabled/default
 

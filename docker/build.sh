@@ -4,12 +4,15 @@ set -o pipefail
 NAME="splash/web"
 IMAGE="eros.fiehnlab.ucdavis.edu/$NAME"
 
+cp target/web-1.8.jar ../docker/splash.jar || exit 1
 cd ../docker
 pwd
-docker build -t ${IMAGE} --rm=true . | tee build.log || exit 1
-ID=$(tail -1 build.log | awk '{print $3;}')
-docker tag -f $ID ${IMAGE}:latest
-docker tag -f $ID ${NAME}:latest
+docker build -t ${IMAGE} --iidfile build.log --rm=true . || exit 1
+ID=$(tail -1 build.log | awk -F: '{print $2;}')
+echo "tagging: $ID ${IMAGE}:wcag"
+docker tag $ID ${IMAGE}:wcag
+echo "tagging: $ID ${NAME}:wcag"
+docker tag $ID ${NAME}:wcag
 
 echo "push: $1"
 if [ "$1" == "push" ]; then

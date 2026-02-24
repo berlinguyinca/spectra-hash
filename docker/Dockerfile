@@ -28,7 +28,7 @@ RUN \
       links2 \
       ant
 
-ADD splash.jar /opt/splash.jar
+ADD target/splash.jar /opt/splash.jar
 
 RUN rm /etc/nginx/sites-enabled/default
 

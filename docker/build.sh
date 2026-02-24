@@ -4,7 +4,6 @@ set -o pipefail
 NAME="splash/web"
 IMAGE="eros.fiehnlab.ucdavis.edu/$NAME"
 
-cp target/web-1.8.jar ../docker/splash.jar || exit 1
 cd ../docker
 pwd
 docker build -t ${IMAGE} --iidfile build.log --rm=true . || exit 1

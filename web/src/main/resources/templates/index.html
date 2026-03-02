@@ -33,29 +33,48 @@
             text-decoration: underline;
         }
 
+        pre {
+            color: black;
+        }
+
         .github {
             font-size: medium;
+        }
+
+        .jumbotron {
+            color: #FFCD00;
+            background-color: #022851;
+        }
+
+        .jumbotron a {
+            color: white;
+        }
+
+        .panel-default > .panel-heading {
+            color: #FFCD00;
+            background-color: #022851;
+            background-image: none;
+            font-size: larger;
         }
     </style>
 </head>
 
 <body>
-    <main>
-        <div class="container">
-            <div class="header clearfix">
-                <h1 class="text-muted" style="font-size: 3rem;">SPLASH: The Spectral Hash Identifier</h1>
-            </div>
-
-            <div class="jumbotron">
-                <div>
-                    <span class="pull-right github"><a href="https://github.com/berlinguyinca/spectra-hash" target="_blank">View
-                            on GitHub <i class="fa fa-github"></i></a></span>
-                </div>
-
-                <h2 style="font-size: 5.5rem;">SPLASH</h2>
+    <div class="container">
+        <div>
+            <div class="jumbotron" role="navigation">
+                <h1 style="font-size: 5.5rem;">SPLASH</h1>
+                <h2>The Spectral Hash Identifier</h2>
                 <p class="lead">Welcome to the SPLASH Validation and Computational Page</p>
+                <div class="">
+                    <span class="pull-right github">
+                        <a href="https://github.com/berlinguyinca/spectra-hash" target="_blank">View on GitHub <i class="fa fa-github"></i></a>
+                    </span>
+                </div>
             </div>
+        </div>
 
+        <main>
             <div class="row marketing">
                 <div class="col-lg-4">
                     <div class="panel panel-default">
@@ -458,12 +477,11 @@
                     </div>
                 </div>
             </div>
-            <footer class="footer">
-                <p>&copy; 2016 SPLASH Collaboration</p>
-            </footer>
-        </div>
-        <!-- /container -->
-    </main>
+        </main>
+        <footer class="footer">
+            <p>&copy; 2016 SPLASH Collaboration</p>
+        </footer>
+    </div><!-- /container -->
 </body>
 
 </html>

@@ -56,7 +56,7 @@ namespace NSSplash {
 		/// <summary>
 		/// how should ions in the string representation be separated
 		/// </summary>
-		private static readonly string ION_SEPERATOR = " ";
+		private static readonly string ION_SEPARATOR = " ";
 
 		/// <summary>
 		/// how many character should be in the spectrum block. Basically this reduces the SHA256 code down
@@ -188,7 +188,7 @@ namespace NSSplash {
 			foreach (Ion i in ions)
 			{
 				strIons.Append(string.Format("{0}:{1}", formatMZ(i.MZ), formatIntensity(i.Intensity)));
-				strIons.Append(ION_SEPERATOR);
+				strIons.Append(ION_SEPARATOR);
 			}
 
 			//string to hash

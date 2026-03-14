@@ -43,7 +43,7 @@ public class SplashVersion1 implements Splash {
     /**
      * how should ions in the string representation be separated
      */
-    private static final String ION_SEPERATOR = " ";
+    private static final String ION_SEPARATOR = " ";
 
     /**
      * how many character should be in the spectrum block. Basically this reduces the SHA256 code down
@@ -159,7 +159,7 @@ public class SplashVersion1 implements Splash {
 
             //add our separator
             if (i < ions.size() - 1) {
-                buffer.append(ION_SEPERATOR);
+                buffer.append(ION_SEPARATOR);
             }
         }
 

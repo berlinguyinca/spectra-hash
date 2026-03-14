@@ -41,18 +41,18 @@ public class SplashVersion1 implements Splash {
     public static final int scalingOfRelativeIntensity = 100;
 
     /**
-     * how should ions in the string representation be separeted
+     * how should ions in the string representation be separated
      */
     private static final String ION_SEPERATOR = " ";
 
     /**
      * how many character should be in the spectrum block. Basically this reduces the SHA256 code down
-     * to a fixed length of N characater
+     * to a fixed length of N character
      */
     private static final int maxCharactersForSpectrumBlockTruncation = 20;
 
     /**
-     * Fixed precission of masses
+     * Fixed precision of masses
      */
     private static final int fixedPrecissionOfMasses = 6;
 
@@ -62,7 +62,7 @@ public class SplashVersion1 implements Splash {
     private static final long MZ_PRECISION_FACTOR = (long)Math.pow(10, fixedPrecissionOfMasses);
 
     /**
-     * Fixed precission of intensites
+     * Fixed precision of intensites
      */
     private static final int fixedPrecissionOfIntensities = 0;
 
@@ -78,7 +78,7 @@ public class SplashVersion1 implements Splash {
     private static final double EPS_CORRECTION = 1.0e-7;
 
     /**
-     * registered listeneres
+     * registered listeners
      */
     private ConcurrentLinkedDeque<SplashListener> listeners = new ConcurrentLinkedDeque<SplashListener>();
 
@@ -104,7 +104,7 @@ public class SplashVersion1 implements Splash {
     }
 
     /**
-     * notify listeneres that the hash is complete
+     * notify listeners that the hash is complete
      *
      * @param spectrum spectrum
      * @param hash computed splash

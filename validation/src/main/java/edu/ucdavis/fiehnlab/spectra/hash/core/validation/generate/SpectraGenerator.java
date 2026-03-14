@@ -21,15 +21,15 @@ public class SpectraGenerator {
      *
      * @param type
      * @param count
-     * @param seperator
+     * @param separator
      * @param cmd
      */
-    public int generate(SpectraType type, int count, String seperator, CommandLine cmd, Serializer serializer) throws Exception {
+    public int generate(SpectraType type, int count, String separator, CommandLine cmd, Serializer serializer) throws Exception {
 
         String spectra = "1:1 2:2";
         String splash = SplashUtil.splash(spectra, type);
 
-        serializer.serialize(new Result(splash, spectra, "generated", type, seperator));
+        serializer.serialize(new Result(splash, spectra, "generated", type, separator));
         return 1;
     }
 }

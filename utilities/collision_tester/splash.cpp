@@ -76,12 +76,12 @@ string md5(const string s) {
 
 
 // http://stackoverflow.com/a/236803
-vector<string> split(const string &s, char delimeter) {
+vector<string> split(const string &s, char delimiter) {
     vector<string> elements;
     stringstream ss(s);
     string element;
 
-    while(getline(ss, element, delimeter)) {
+    while(getline(ss, element, delimiter)) {
         elements.push_back(element);
     }
 

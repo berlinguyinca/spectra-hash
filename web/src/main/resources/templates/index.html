@@ -28,6 +28,22 @@
     </script>
 
     <style>
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            z-index: 1000;
+            padding: 8px 16px;
+            background-color: #022851;
+            color: #FFCD00;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            left: 0;
+            color: #FFCD00;
+        }
+
         a {
             color: #022851;
             text-decoration: underline;
@@ -56,10 +72,22 @@
             background-image: none;
             font-size: larger;
         }
+
+        .btn-primary,
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active,
+        .btn-primary:active:focus {
+            color: #FFCD00;
+            background-color: #022851;
+            border-color: #022851;
+            background-image: none;
+        }
     </style>
 </head>
 
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div class="container">
         <div>
             <div class="jumbotron" role="navigation">
@@ -74,7 +102,7 @@
             </div>
         </div>
 
-        <main>
+        <main id="main-content">
             <div class="row marketing">
                 <div class="col-lg-4">
                     <div class="panel panel-default">

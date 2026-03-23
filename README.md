@@ -9,7 +9,7 @@ This repository contains:
 *  The current reference implementations for the SPLASH written in Java
 * Additional implementations in C++, Python, C# and R
 * API wrappers in Scala and JavaScript
-* A Java validation tool 
+* A Java validation tool
 * A web service with REST endpoints written in Java (accessible at http://splash.fiehnlab.ucdavis.edu) with Docker build files
 
 SPLASH has been published in Nature Biotechnology.  If using SPLASH, please cite:
@@ -33,11 +33,39 @@ SPLASH has been published in Nature Biotechnology.  If using SPLASH, please cite
 
 ## Java API
 
+### Requirements
+
+- Requires Java 1.8
+
 ### Building
 
 To build the project, run all tests and install the SPLASH jar files in the local Maven repository, simply run:
 
     mvn clean install
+
+
+It's a Maven project. To build for deployment:
+
+Build the JAR (without Docker):
+
+    mvn clean package -pl web -am
+
+This produces the runnable Spring Boot JAR at web/target/web-1.8.jar.
+
+Build everything including the Docker image:
+
+    mvn clean package
+
+This builds all modules and triggers the docker/build.sh script, which creates a Docker image with nginx in front of the Spring Boot app.
+
+To push the Docker image, pass the flags:
+
+    mvn clean package -Ddocker.push=yes -Ddocker.tag=your-tag
+
+To run the JAR directly (without Docker):
+
+    java -jar web/target/web-1.8.jar
+
 
 
 ### Maven Dependency
@@ -98,7 +126,7 @@ String splash = SplashUtils.splash("138.0641:71.59 195.0815:261.7", SpectraType.
 
 ## Validation Tool
 
-In addition to the reference implementations, we provide a simple validation tool that is used to ensure consistent and accurate SPLASH generation between tools and implementations.  The latest jar file is available from the [Fiehn Lab Public Maven Repository](http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.8/validation-1.8.jar).  
+In addition to the reference implementations, we provide a simple validation tool that is used to ensure consistent and accurate SPLASH generation between tools and implementations.  The latest jar file is available from the [Fiehn Lab Public Maven Repository](http://gose.fiehnlab.ucdavis.edu:55000/content/groups/public/edu/ucdavis/fiehnlab/splash/validation/1.8/validation-1.8.jar).
 
 to run this tool (from the sources) please clone and build the project and afterwards run
 
@@ -140,4 +168,4 @@ If you like to use the official REST API, you can find it at: http://splash.fieh
 
 # Contributing
 
-If you would like to contribute to this project, please feel submit issues or create a pull request. 
+If you would like to contribute to this project, please feel submit issues or create a pull request.

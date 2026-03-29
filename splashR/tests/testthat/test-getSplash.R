@@ -8,6 +8,17 @@ test_that("caffeine", {
   expect_equal(hash, "splash10-0002-0900000000-b112e4e059e1ecf98c5f")
 })
 
+test_that("MassBank-data/issues/248", {
+    spectrum <- cbind(mz=c(42.0443, 58.0706, 65.0436, 91.0554),
+                      intensity=c(4.6, 7.6, 32.2, 11.5))
+    hash <- getSplash(spectrum)
+
+    ## check against reference result from 
+    ## curl -X POST -H 'Content-Type: application/json' -d '{"ions":[{"mass": 42.0443, "intensity": 4.6},{"mass": 58.0706, "intensity": 7.6},{"mass": 65.0436, "intensity": 32.2},{"mass": 91.0554, "intensity": 11.5}], "type": "MS"}' https://splash.fiehnlab.ucdavis.edu/splash/it
+    expect_equal(hash, "splash10-014l-9000000000-508039bd516ba9b5a8ab")
+})
+
+
 test_that("hashes", {
   filedata <- read.csv(
     system.file("extdata", "test-set-v1-splashed-with-validation-1.6.csv", package = "splashR"),

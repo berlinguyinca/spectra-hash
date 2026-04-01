@@ -410,4 +410,24 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
         }
     }
 
+    /**
+     * tests for the SPLASH histogram issue reported in:
+     * https://github.com/MassBank/MassBank-data/issues/248
+     */
+    @Test
+    public void testSplashItHistogramSmallIntensities() {
+
+        Splash splash = getHashImpl();
+
+        Spectrum spectrum = new SpectrumImpl(Arrays.asList(
+                new Ion(44.998, 0.2),
+                new Ion(80.0261, 0.1),
+                new Ion(93.0321, 0.4),
+                new Ion(108.0227, 0.3)
+
+        ), SpectraType.MS);
+
+        String hash = splash.splashIt(spectrum);
+        assertEquals(hash, "splash10-052f-9300000000-5cd70311703e2423a1c5");
+    }
 }

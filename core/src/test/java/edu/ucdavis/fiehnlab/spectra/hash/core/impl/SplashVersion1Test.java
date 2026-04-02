@@ -127,7 +127,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             assertEquals(content.length, 2);
             String hash = content[1];
 
-            //check if it matches the exspected pattern
+            //check if it matches the expected pattern
             assertTrue(pattern.matcher(hash).matches());
 
         }
@@ -272,7 +272,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
     }
 
     /**
-     * tests if we keep very very small values as well as 0 values in our spectra. This is in regard to us keeping only digitis and so causing smaller values to disapeer and be represented as 0
+     * tests if we keep very very small values as well as 0 values in our spectra. This is in regard to us keeping only digits and so causing smaller values to disappear and be represented as 0
      */
     @Test
     public void testSplashItRetentionOfVerySmallValuesAndZeroValues() {
@@ -335,7 +335,7 @@ public class SplashVersion1Test extends AbstractSpectraHashImplTester {
             splash.splashIt(spectrum);
             success = false;
         } catch (Exception e) {
-            //exspected
+            //expected
         } finally {
             assertTrue(success);
         }

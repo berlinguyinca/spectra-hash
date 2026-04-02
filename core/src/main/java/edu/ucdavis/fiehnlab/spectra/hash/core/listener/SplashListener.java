@@ -14,7 +14,7 @@ public interface SplashListener {
     void eventReceived(SplashingEvent e);
 
     /**
-     * notificaton that the hashing is finished
+     * notification that the hashing is finished
      * @param spectrum
      * @param splash
      */

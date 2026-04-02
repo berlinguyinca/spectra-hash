@@ -54,18 +54,18 @@ namespace NSSplash {
 		private static readonly string INTENSITY_MAP = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 		/// <summary>
-		/// how should ions in the string representation be separeted
+		/// how should ions in the string representation be separated
 		/// </summary>
-		private static readonly string ION_SEPERATOR = " ";
+		private static readonly string ION_SEPARATOR = " ";
 
 		/// <summary>
 		/// how many character should be in the spectrum block. Basically this reduces the SHA256 code down
-		/// to a fixed length of N characater
+		/// to a fixed length of N character
 		/// </summary>
 		private static readonly int maxCharactersForSpectrumBlockTruncation = 20;
 
 		/// <summary>
-		/// Fixed precission of masses
+		/// Fixed precision of masses
 		/// </summary>
 		private static readonly int fixedPrecissionOfMasses = 6;
 
@@ -75,7 +75,7 @@ namespace NSSplash {
 		private static readonly long MZ_PRECISION_FACTOR = (long)Math.Pow(10, fixedPrecissionOfMasses);
 
 		/// <summary>
-		/// Fixed precission of intensites
+		/// Fixed precision of intensites
 		/// </summary>
 		private static readonly int fixedPrecissionOfIntensities = 0;
 
@@ -188,7 +188,7 @@ namespace NSSplash {
 			foreach (Ion i in ions)
 			{
 				strIons.Append(string.Format("{0}:{1}", formatMZ(i.MZ), formatIntensity(i.Intensity)));
-				strIons.Append(ION_SEPERATOR);
+				strIons.Append(ION_SEPARATOR);
 			}
 
 			//string to hash

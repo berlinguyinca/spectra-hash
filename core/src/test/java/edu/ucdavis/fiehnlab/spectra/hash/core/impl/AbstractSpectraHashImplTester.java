@@ -188,7 +188,7 @@ public abstract class AbstractSpectraHashImplTester{
      */
     protected class TestResult {
         /**
-         * link to the file, containg output information
+         * link to the file, containing output information
          */
         public File file;
 

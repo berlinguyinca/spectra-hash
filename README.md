@@ -111,7 +111,7 @@ Alternatively, you can also utilize the `SplashUtil` class to directly SPLASH a 
 String splash = SplashUtil.splash("138.0641:71.59 195.0815:261.7", SpectraType.MS);
 ```
 
-We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplashListener to your Splash instance or alternativly using the util like this
+We are also providing an easy way to connect a listener to the splashing algorithm, so that you can inspect the different blocks, before they are hashed. This can be done with directly adding a SplashListener to your Splash instance or alternatively using the util like this
 
 ```java
 String splash = SplashUtils.splash("138.0641:71.59 195.0815:261.7", SpectraType.MS, new SplashListener() {

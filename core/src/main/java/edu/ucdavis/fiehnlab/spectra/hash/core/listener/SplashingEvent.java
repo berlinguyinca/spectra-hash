@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.listener;
 import edu.ucdavis.fiehnlab.spectra.hash.core.Spectrum;
 
 /**
- * simple event, recevied by SplashListener
+ * simple event, received by SplashListener
  */
 public class SplashingEvent {
 

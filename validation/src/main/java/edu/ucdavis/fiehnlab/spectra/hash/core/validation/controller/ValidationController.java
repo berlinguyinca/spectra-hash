@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
- * a small util to print out validation and processing information, while doing splashing in comparrison of different api's
+ * a small util to print out validation and processing information, while doing splashing in comparison of different api's
  */
 @Controller
 public class ValidationController implements CommandLineRunner {
@@ -59,7 +59,7 @@ public class ValidationController implements CommandLineRunner {
             }
         }
 
-        //exspected datatype for serialization
+        //expected datatype for serialization
         Class<? extends Result> type;
         if (cmd.hasOption("create")) {
             type = Result.class;
@@ -100,11 +100,11 @@ public class ValidationController implements CommandLineRunner {
 
             displayUtilizedOptions(cmd);
 
-            String seperator = ",";
+            String separator = ",";
 
 
             if (cmd.hasOption("separator")) {
-                seperator = cmd.getOptionValue("separator");
+                separator = cmd.getOptionValue("separator");
             }
 
 
@@ -165,7 +165,7 @@ public class ValidationController implements CommandLineRunner {
             int hashes = 0;
 
 
-            hashes = processFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType);
+            hashes = processFile(cmd, separator, columnSplash, columnSpectra, columnOrigin, msType);
 
             //only show statistics, if we save the output in a file
             status(cmd, "finished processing, processing took: " + String.format("%.2f", (double) (System.currentTimeMillis() - time) / 1000.0) + " s.\n");
@@ -225,14 +225,14 @@ public class ValidationController implements CommandLineRunner {
      * process the actual file for us
      *
      * @param cmd
-     * @param seperator
+     * @param separator
      * @param columnSplash
      * @param columnSpectra
      * @param columnOrigin
      * @param msType
      * @throws FileNotFoundException
      */
-    private int processFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType) throws Exception {
+    private int processFile(CommandLine cmd, String separator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType) throws Exception {
 
         if (cmd.hasOption("create")) {
             status(cmd, "splashing your data...\n");
@@ -260,7 +260,7 @@ public class ValidationController implements CommandLineRunner {
 
                 Serializer serializer = createSerialzier(cmd, file);
                 serializer.init();
-                counter += splashFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType, serializer, file);
+                counter += splashFile(cmd, separator, columnSplash, columnSpectra, columnOrigin, msType, serializer, file);
             }
 
             return counter;
@@ -269,12 +269,12 @@ public class ValidationController implements CommandLineRunner {
             Serializer serializer = createSerialzier(cmd, inputFile);
             serializer.init();
 
-            return splashFile(cmd, seperator, columnSplash, columnSpectra, columnOrigin, msType, serializer, inputFile);
+            return splashFile(cmd, separator, columnSplash, columnSpectra, columnOrigin, msType, serializer, inputFile);
         }
 
     }
 
-    private int splashFile(CommandLine cmd, String seperator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType, Serializer stream, File inputFile) throws Exception {
+    private int splashFile(CommandLine cmd, String separator, int columnSplash, int columnSpectra, int columnOrigin, SpectraType msType, Serializer stream, File inputFile) throws Exception {
         Scanner scanner = new Scanner(inputFile);
 
         status(cmd, "current file: " + inputFile + "\n");
@@ -295,7 +295,7 @@ public class ValidationController implements CommandLineRunner {
                 if (!line.isEmpty()) {
 
                     try {
-                        String[] columns = line.split(seperator);
+                        String[] columns = line.split(separator);
 
 
                         if (cmd.hasOption("debugExtraFine")) {
@@ -335,7 +335,7 @@ public class ValidationController implements CommandLineRunner {
                                 throw new ParseException("sorry, we did not find a splash, did you specify the right column?");
                             }
 
-                            boolean valid = validateIt(splash, spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
+                            boolean valid = validateIt(splash, spectra, origin, msType, stream, separator, cmd, !scanner.hasNextLine());
 
                             if (valid) {
                                 counterValid++;
@@ -349,7 +349,7 @@ public class ValidationController implements CommandLineRunner {
                             if (counter % interval == 0) {
                                 status(cmd, "splashing, ");
                             }
-                            splashIt(spectra, origin, msType, stream, seperator, cmd, !scanner.hasNextLine());
+                            splashIt(spectra, origin, msType, stream, separator, cmd, !scanner.hasNextLine());
                         }
 
                         if ((counter % interval) == 0) {
@@ -361,7 +361,7 @@ public class ValidationController implements CommandLineRunner {
                         errorCounter++;
                         if (cmd.hasOption("ignoreErrorsSuppressed")) {
 
-                            //nothign to see here
+                            //nothing to see here
                         } else if (cmd.hasOption("ignoreErrors")) {
                             status(cmd, "encountered error, ignoring it!\n");
                             status(cmd, "error was: " + e.getMessage() + "\n");
@@ -403,15 +403,15 @@ public class ValidationController implements CommandLineRunner {
      * @param origin
      * @param msType
      * @param stream
-     * @param seperator
+     * @param separator
      * @param cmd
      */
-    private void splashIt(String spectra, String origin, SpectraType msType, Serializer stream, String seperator, CommandLine cmd, boolean last) throws Exception {
+    private void splashIt(String spectra, String origin, SpectraType msType, Serializer stream, String separator, CommandLine cmd, boolean last) throws Exception {
 
         String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
 
-        serializeResult(new Result(code, spectra, origin, msType, seperator), stream, cmd);
+        serializeResult(new Result(code, spectra, origin, msType, separator), stream, cmd);
 
     }
 
@@ -423,10 +423,10 @@ public class ValidationController implements CommandLineRunner {
      * @param origin
      * @param msType
      * @param stream
-     * @param seperator
+     * @param separator
      * @param cmd
      */
-    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, Serializer stream, String seperator, final CommandLine cmd, boolean last) throws Exception {
+    private boolean validateIt(String splash, String spectra, String origin, SpectraType msType, Serializer stream, String separator, final CommandLine cmd, boolean last) throws Exception {
         String code = SplashUtil.splash(spectra, msType, new Listener(cmd));
 
         boolean valid = (splash.equals(code));
@@ -455,7 +455,7 @@ public class ValidationController implements CommandLineRunner {
             status(cmd, "\n");
         }
 
-        serializeResult(new ValidationResult(code, spectra, origin, msType, seperator, valid, splash), stream, cmd);
+        serializeResult(new ValidationResult(code, spectra, origin, msType, separator, valid, splash), stream, cmd);
 
         return valid;
     }

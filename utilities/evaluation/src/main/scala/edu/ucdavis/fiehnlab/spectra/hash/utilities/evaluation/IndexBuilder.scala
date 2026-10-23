@@ -32,7 +32,7 @@ class IndexBuilder {
   }
 
   /**
-    * a list of predifined indexes to utilize
+    * a list of predefined indexes to utilize
     *
     * @return
     */

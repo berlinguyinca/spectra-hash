@@ -42,7 +42,7 @@ class Spectrum:
     def normalize_spectrum(self, spectrum):
         """Normalize intensities to the constant RELATIVE_INTENSITY_SCALE value"""
 
-        # Compute the maxmimum intensity
+        # Compute the maximum intensity
         max_intensity = max(intensity for _, intensity in spectrum)
 
         # Normalize spectrum

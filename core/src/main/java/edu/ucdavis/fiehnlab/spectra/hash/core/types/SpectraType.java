@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.spectra.hash.core.types;
 
 /**
- * an enumaration with the different valid spectra types
+ * an enumeration with the different valid spectra types
  */
 public enum SpectraType {
     MS('1'),
@@ -16,7 +16,7 @@ public enum SpectraType {
     private final char identifier;
 
     /**
-     * creates a new spectra type with the assoicated reference number
+     * creates a new spectra type with the associated reference number
      *
      * @param referenceNumber
      */

@@ -49,7 +49,7 @@ namespace NSSplash.impl {
 		/// </summary>
 		/// <param name="data"></param>
 		public AbstractSpectrum (string data) {
-			//checke data has data 
+			//check data has data 
 			if ("" == data) {
 				throw new ArgumentException ("The spectrum data can't be null or empty.");
 			}

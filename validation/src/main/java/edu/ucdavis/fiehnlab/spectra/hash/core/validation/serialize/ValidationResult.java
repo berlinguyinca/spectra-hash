@@ -31,8 +31,8 @@ public class ValidationResult extends Result {
         return this.getSplash() + this.getSeparator() + this.getOrigin() + this.getSeparator() + this.isValid() + this.getSeparator() + this.getSplashToValidate() + this.getSeparator() + this.getSpectra();
     }
 
-    public ValidationResult(String code, String spectra, String origin, SpectraType msType, String seperator, boolean valid, String splash) {
-        super(code, spectra, origin, msType, seperator);
+    public ValidationResult(String code, String spectra, String origin, SpectraType msType, String separator, boolean valid, String splash) {
+        super(code, spectra, origin, msType, separator);
         this.valid = valid;
         this.splash = splash;
 

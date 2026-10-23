@@ -4,7 +4,7 @@ A Python implementation of the [SPLASH](http://splash.fiehnlab.ucdavis.edu) (SPe
 
 ## Installation
 
-pySPLASH is compatable with 
+pySPLASH is compatible with 
 
 Install from source by downloading the [source code (ZIP)](https://github.com/berlinguyinca/spectra-hash/zipball/master) or cloning this git repository
 

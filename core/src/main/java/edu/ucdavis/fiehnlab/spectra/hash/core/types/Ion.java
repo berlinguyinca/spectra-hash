@@ -4,7 +4,7 @@ package edu.ucdavis.fiehnlab.spectra.hash.core.types;
  * defines a basic ion for a spectra key
  */
 public class Ion implements Comparable<Ion> {
-    private static String SEPERATOR = ":";
+    private static String SEPARATOR = ":";
     private static int PRECESSION = 6;
 
     private Double mass;
@@ -54,7 +54,7 @@ public class Ion implements Comparable<Ion> {
     }
 
     public String toString() {
-        return String.format("%."+PRECESSION+"f",this.getMass()) + SEPERATOR + String.format("%." + PRECESSION + "f", this.getIntensity());
+        return String.format("%."+PRECESSION+"f",this.getMass()) + SEPARATOR + String.format("%." + PRECESSION + "f", this.getIntensity());
     }
 
     public int compareTo(Ion o) {
